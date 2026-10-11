@@ -1,0 +1,10 @@
+# Core: Python 3.10+
+# No runtime dependencies — pure standard library.
+
+# Optional: for reading Excel analysis files
+openpyxl>=3.1
+pandas>=2.0
+
+# Dev
+pytest>=7.0
+pytest-cov>=4.0

@@ -1,0 +1,46 @@
+{
+  "model": "DSV4Pro",
+  "version": "v1",
+  "description": "DeepSeek V4 Pro — MLA+MoE architecture with CSA/HCA/mHC attention and sparse routing",
+  "hidden_size": 7168,
+  "num_layers": 61,
+  "vocab_size": 129280,
+  "max_seq_len": 131072,
+  "dtype": "bf16",
+  "tie_word_embeddings": false,
+  "layers": {
+    "first_k_dense_replace": 3,
+    "csa_layers": 3,
+    "hca_layers": 16,
+    "mtp_layers": 1,
+    "attention": {
+      "kv_lora_rank": 512,
+      "q_lora_rank": 1536,
+      "num_heads": 128,
+      "head_dim": 192,
+      "qk_nope_head_dim": 128,
+      "qk_rope_head_dim": 64,
+      "v_head_dim": 128,
+      "sparse_topk": 256,
+      "block_size": 128,
+      "topk_blocks": 16
+    },
+    "moe": {
+      "moe_intermediate_size": 2048,
+      "num_experts": 256,
+      "num_activated_experts": 8,
+      "num_shared_experts": 1,
+      "expert_group_size": 8,
+      "gate_dtype": "fp32"
+    },
+    "dense_ffn": {
+      "intermediate_size": 18432
+    },
+    "indexer": {
+      "enabled": true,
+      "indexer_inter_dim": 512,
+      "indexer_topk": 16,
+      "num_blocks": 0
+    }
+  }
+}
