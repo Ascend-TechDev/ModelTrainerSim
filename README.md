@@ -1,1 +1,180 @@
-# ModelTrainerSim
+# ModelTrainerSimulator
+
+LLM 架构参数建模与显存/算力分析工具包。
+
+支持通过 `config.json` 配置模型架构参数，自动计算各模块（CSA / HCA / mHC / Indexer / MoE）的：
+- **参数量** (Parameter count)
+- **显存占用** (Weight / Activation / KV-cache memory)
+- **运算量** (FLOPs)
+- **训练显存估算** (Gradients + Optimizer states)
+
+## 项目结构
+
+```
+ModelTrainerSimluator/
+├── src/
+│   ├── main.py                      # CLI 统一入口
+│   ├── core/                        # 核心框架
+│   │   ├── base_module.py           # BaseModule 抽象基类
+│   │   ├── config_parser.py         # JSON 配置解析器
+│   │   ├── model_registry.py        # 模型注册表（支持扩展）
+│   │   ├── dtype.py                 # 数据类型定义 (fp32/bf16/fp8/int4...)
+│   │   ├── formatter.py             # 数字/字节格式化工具
+│   │   └── reporter.py              # 报告渲染器
+│   └── models/                      # 各模型家族
+│       ├── dsv4pro/                 # DeepSeek V4 Pro
+│       │   └── modules/
+│       │       ├── csa.py           # Compressed Sparse Attention
+│       │       ├── hca.py           # Hierarchical Compressed Attention
+│       │       ├── mhc.py           # mini Hierarchical Compression
+│       │       ├── indexer.py       # Sparse Block Indexer
+│       │       ├── moe.py           # Mixture of Experts
+│       │       └── model.py         # DSV4ProModel 顶层组装
+│       ├── kimi/                    # (placeholder) TODO
+│       ├── glm/                     # (placeholder) TODO
+│       ├── qwen/                    # (placeholder) TODO
+│       └── hunyuan/                 # (placeholder) TODO
+├── configs/
+│   └── dsv4pro_config.json          # DSV4Pro 配置文件
+├── examples/
+│   └── quick_start.py               # 示例脚本
+├── tests/
+│   └── test_dsv4pro.py              # 单元测试
+├── pyproject.toml
+├── requirements.txt
+└── README.md
+```
+
+## 快速开始
+
+### CLI 使用
+
+```bash
+# 分析 DSV4Pro 模型
+python -m src.main --config configs/dsv4pro_config.json
+
+# 指定序列长度和 batch size
+python -m src.main --config configs/dsv4pro_config.json --seq-len 8192 --batch-size 4
+
+# 输出 JSON 格式
+python -m src.main --config configs/dsv4pro_config.json --format json --output report.json
+
+# 列出所有已注册的模型家族
+python -m src.main --list-models
+```
+
+### Python API 使用
+
+```python
+from src.core.config_parser import ConfigParser
+from src.core.model_registry import ModelRegistry
+from src.core.reporter import render_report
+
+# 1. 加载配置
+config = ConfigParser("configs/dsv4pro_config.json").load()
+
+# 2. 构建模型
+model = ModelRegistry.build(config["model"], config)
+
+# 3. 分析（参数量、显存、FLOPs）
+report = model.analyze(seq_len=4096, batch_size=1)
+
+# 4. 查看报告
+print(render_report(report))
+
+# 或直接访问数据
+print(f"Total params: {report['model_params']['total_params']:,}")
+print(f"Weight memory: {report['model_params']['total_weight_bytes'] / 1e9:.2f} GB")
+print(f"FLOPs/token: {report['compute']['flops_per_token']:.2e}")
+```
+
+## DSV4Pro 官网架构更新
+
+DSV4Pro 引入了以下核心创新模块：
+
+| 模块 | 全称 | 说明 |
+|------|------|------|
+| **CSA** | Compressed Sparse Attention | 低秩压缩 + 稀疏 top-k 注意力，用于早期层 |
+| **HCA** | Hierarchical Compressed Attention | 分层（block级 + token级）压缩注意力，用于长上下文层 |
+| **mHC** | mini Hierarchical Compression | 轻量级压缩注意力 + GQA，用于后期层 |
+| **Indexer** | Sparse Block Indexer | 路由模块，决定每个 query 访问哪些 KV 块 |
+| **MoE** | Mixture of Experts | 细粒度专家网络 + 共享专家 + GLSE 路由 |
+
+### 配置示例 (`config.json`)
+
+```json
+{
+  "model": "DSV4Pro",
+  "hidden_size": 7168,
+  "num_layers": 61,
+  "vocab_size": 129280,
+  "max_seq_len": 131072,
+  "dtype": "bf16",
+  "layers": {
+    "first_k_dense_replace": 3,
+    "csa_layers": 3,
+    "hca_layers": 16,
+    "attention": {
+      "kv_lora_rank": 512,
+      "num_heads": 128,
+      "head_dim": 192
+    },
+    "moe": {
+      "moe_intermediate_size": 2048,
+      "num_experts": 256,
+      "num_activated_experts": 8,
+      "num_shared_experts": 1
+    }
+  }
+}
+```
+
+## 扩展新模型家族
+
+添加新模型（如 Kimi、GLM、Qwen、Hunyuan）只需三步：
+
+1. **创建模块类**：继承 `BaseModule`，实现 `compute_params()` 和 `compute_flops()`：
+
+```python
+# src/models/qwen/modules/attention.py
+from ....core.base_module import BaseModule, ModuleParamBreakdown
+
+class QwenAttention(BaseModule):
+    module_type = "QwenAttention"
+
+    def compute_params(self):
+        # 返回参数分解
+        ...
+
+    def compute_flops(self, seq_len, batch_size=1):
+        # 返回 FLOPs
+        ...
+```
+
+2. **创建模型类**：组装各模块，参考 `src/models/dsv4pro/modules/model.py`
+
+3. **注册模型**：在 `src/models/<family>/__init__.py` 中注册：
+
+```python
+from ...core.model_registry import ModelRegistry
+
+ModelRegistry.register("Qwen")(QwenModel)
+```
+
+4. **更新 `model_registry.py`** 的自动发现逻辑
+
+### BaseModule 接口
+
+| 方法 | 用途 | 必须 |
+|------|------|------|
+| `compute_params()` | 返回 `list[ModuleParamBreakdown]`，每个子权重张量的形状和数量 | ✅ |
+| `compute_flops(seq_len, batch_size)` | 返回该模块前向一次的 FLOPs | ✅ |
+| `compute_activations(seq_len, batch_size)` | 返回前向激活显存（bytes），默认 0 | ❌ |
+| `analyze(seq_len, batch_size)` | 便捷方法，返回完整 `ModuleStats` | ✅ (已实现) |
+
+## 运行测试
+
+```bash
+pip install -e ".[dev]"
+pytest tests/ -v
+```
