@@ -11,6 +11,8 @@ class DType(str, Enum):
     FP16 = "fp16"
     BF16 = "bf16"
     FP8 = "fp8"
+    FP4 = "fp4"
+    FP4_HALF = "fp4_half"
     INT8 = "int8"
     INT4 = "int4"
     BOOL = "bool"
@@ -27,6 +29,8 @@ _DTYPE_INFO: dict[DType, _DTypeInfo] = {
     DType.FP16: _DTypeInfo(bits=16, bytes_per_element=2.0),
     DType.BF16: _DTypeInfo(bits=16, bytes_per_element=2.0),
     DType.FP8: _DTypeInfo(bits=8, bytes_per_element=1.0),
+    DType.FP4: _DTypeInfo(bits=4, bytes_per_element=1.0),
+    DType.FP4_HALF: _DTypeInfo(bits=4, bytes_per_element=0.5),
     DType.INT8: _DTypeInfo(bits=8, bytes_per_element=1.0),
     DType.INT4: _DTypeInfo(bits=4, bytes_per_element=0.5),
     DType.BOOL: _DTypeInfo(bits=1, bytes_per_element=0.125),

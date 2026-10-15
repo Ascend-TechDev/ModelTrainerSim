@@ -56,17 +56,25 @@ def render_report(report: dict[str, Any]) -> str:
     lines.append(f"    - master weights : {format_bytes(tb['master_weights'])}")
     lines.append(f"    - optimizer ({tb['optimizer']:>8}): {format_bytes(tb['optimizer_states'])}")
 
-    # Per-module summary
-    pms = report["per_module_summary"]
+    # Excel Per-Module Summary order (matches sheet rows 89-95):
+    #   mHC, Gate, SWA, CSA, HCA, MoE — but we report wordembedding first,
+    #   then the Excel-ordered rows (gate/routed/shared are MoE components).
+    pms = report.get("per_module_summary_excel") or report["per_module_summary"]
+    excel_order = ["wordembedding", "gate", "routedexpert", "sharedexpert",
+                    "swa", "csa", "hca", "mhc"]
+    if pms and all(k in pms for k in excel_order):
+        ordered = [(k, pms[k]) for k in excel_order if k in pms]
+    else:
+        ordered = sorted(pms.items())
     lines.append("")
     lines.append("── Per-Module Summary ──────────────────────────────────────────")
-    lines.append(f"  {'Module':<12} {'Count':>6} {'Params':>16} {'Bytes':>14} "
+    lines.append(f"  {'Module':<14} {'Count':>6} {'Params':>16} {'Bytes':>14} "
                   f"{'FLOPs/token':>16} {'Act Bytes':>14}")
     lines.append("  " + "-" * 76)
-    for mod_type, s in sorted(pms.items()):
+    for mod_type, s in ordered:
         flops_per_tok = s["flops"] / c["seq_len"] if c["seq_len"] > 0 else 0
         lines.append(
-            f"  {mod_type:<12} {s['count']:>6} {format_number(s['params']):>16} "
+            f"  {mod_type:<14} {s['count']:>6} {format_number(s['params']):>16} "
             f"{format_bytes(s['bytes']):>14} {format_flops(flops_per_tok):>16} "
             f"{format_bytes(s['act_bytes']):>14}"
         )
