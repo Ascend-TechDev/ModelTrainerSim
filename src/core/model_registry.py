@@ -58,10 +58,11 @@ class ModelRegistry:
         """Trigger auto-discovery of model modules."""
         if cls._loaded:
             return
+        cls._loaded = True
         # Import all model packages so that their @register decorators run
-        try:
-            importlib.import_module("src.models.dsv4pro")
-        except ImportError:
-            pass
-        # Future: kimi, glm, qwen, hunyuan will be imported here
+        for pkg in ("src.models.dsv4pro", "src.models.glm"):
+            try:
+                importlib.import_module(pkg)
+            except ImportError:
+                pass
         cls._loaded = True

@@ -60,10 +60,23 @@ def render_report(report: dict[str, Any]) -> str:
     #   mHC, Gate, SWA, CSA, HCA, MoE — but we report wordembedding first,
     #   then the Excel-ordered rows (gate/routed/shared are MoE components).
     pms = report.get("per_module_summary_excel") or report["per_module_summary"]
-    excel_order = ["wordembedding", "gate", "routedexpert", "sharedexpert",
-                    "swa", "csa", "hca", "mhc"]
-    if pms and all(k in pms for k in excel_order):
-        ordered = [(k, pms[k]) for k in excel_order if k in pms]
+    excel_order_dsv4pro = ["wordembedding", "gate", "routedexpert", "sharedexpert",
+                            "swa", "csa", "hca", "mhc"]
+    excel_order_glm = ["wordembedding", "inputlayernorm", "mla", "indexer",
+                         "dsa", "denseffn", "sharedexperts", "routedexperts",
+                         "moerouter", "outputlayernorm", "lmhead"]
+    # Decide which order to use based on the model family — DSV4Pro has
+    # its own module list (gate/routedexpert/swa/csa/hca/mhc), GLM has
+    # (mla/indexer/dsa/denseffn/sharedexperts/routedexperts/moerouter/...).
+    model_family = report.get("model_family", "")
+    if model_family == "GLM-5.2":
+        ordered = [(k, pms[k]) for k in excel_order_glm if k in pms]
+    elif model_family == "DSV4Pro":
+        ordered = [(k, pms[k]) for k in excel_order_dsv4pro if k in pms]
+    elif pms and any(k in pms for k in excel_order_glm):
+        ordered = [(k, pms[k]) for k in excel_order_glm if k in pms]
+    elif pms and any(k in pms for k in excel_order_dsv4pro):
+        ordered = [(k, pms[k]) for k in excel_order_dsv4pro if k in pms]
     else:
         ordered = sorted(pms.items())
     lines.append("")
@@ -81,10 +94,15 @@ def render_report(report: dict[str, Any]) -> str:
 
     # Per-layer breakdown (first 5 + last 3)
     layers = report["layers"]
+    is_glm = layers and "is_dense" in layers[0]
     lines.append("")
     lines.append("── Per-Layer Summary ───────────────────────────────────────────")
-    lines.append(f"  {'Layer':>5} {'Attn':>5} {'FFN':>5} {'Idx':>5} "
-                  f"{'Params':>16} {'Bytes':>14} {'FLOPs':>16}")
+    if is_glm:
+        lines.append(f"  {'Layer':>5} {'FFN':>5} {'Idx':>5} "
+                      f"{'Params':>16} {'Bytes':>14} {'FLOPs':>16}")
+    else:
+        lines.append(f"  {'Layer':>5} {'Attn':>5} {'FFN':>5} {'Idx':>5} "
+                      f"{'Params':>16} {'Bytes':>14} {'FLOPs':>16}")
     lines.append("  " + "-" * 72)
 
     show_indices = list(range(min(5, len(layers)))) + list(
@@ -95,11 +113,21 @@ def render_report(report: dict[str, Any]) -> str:
         if idx != prev + 1 and prev >= 0:
             lines.append(f"  {'...':>5}")
         lr = layers[idx]
-        lines.append(
-            f"  {lr['layer_id']:>5} {lr['attention_type']:>5} {lr['ffn_type']:>5} "
-            f"{str(lr['use_indexer']):>5} {format_number(lr['params']):>16} "
-            f"{format_bytes(lr['bytes']):>14} {format_flops(lr['flops']):>16}"
-        )
+        # GLM vs DSV4Pro have different per-layer summary fields.
+        is_glm = "is_dense" in lr
+        if is_glm:
+            ffn_tag = "Dense" if lr["is_dense"] else "MoE"
+            lines.append(
+                f"  {lr['layer_id']:>5} {ffn_tag:>5} "
+                f"{str(lr['use_indexer']):>5} {format_number(lr['params']):>16} "
+                f"{format_bytes(lr['bytes']):>14} {format_flops(lr['flops']):>16}"
+            )
+        else:
+            lines.append(
+                f"  {lr['layer_id']:>5} {lr['attention_type']:>5} {lr['ffn_type']:>5} "
+                f"{str(lr['use_indexer']):>5} {format_number(lr['params']):>16} "
+                f"{format_bytes(lr['bytes']):>14} {format_flops(lr['flops']):>16}"
+            )
         prev = idx
 
     lines.append("")
