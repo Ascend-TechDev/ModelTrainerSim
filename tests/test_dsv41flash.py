@@ -33,7 +33,7 @@ class TestDSV41Flash(unittest.TestCase):
         return ModelRegistry.build("DSV41Flash", cfg or self.config).analyze(S, B)
 
     def test_registry_preserves_pro(self):
-        self.assertEqual(ModelRegistry.list_models(), ["DSV41Flash", "DSV4Pro"])
+        self.assertEqual(ModelRegistry.list_models(), ["DSV41Flash", "DSV4Pro", "GLM-5.2"])
 
     def test_40_backbone_layer_types(self):
         self.assertEqual(self.report["scope"]["layer_counts"], {"SWA": 2, "Full": 4, "Reuse": 30, "Reindex": 4})
@@ -223,6 +223,26 @@ class TestDSV41Flash(unittest.TestCase):
         self.assertIn("Reindex", layer_text)
         self.assertIn("...", layer_text)
         self.assertNotIn("Parameter groups:", flash)
+
+    def test_shared_report_supports_glm_layer_schema(self):
+        cfg = ConfigParser(ROOT / "configs/glm_5_2_config.json").load()
+        report = ModelRegistry.build("GLM-5.2", cfg).analyze(4096, 1)
+        before = copy.deepcopy(report)
+        text = render_report(report)
+        module_text = text.split("── Per-Module Summary", 1)[1].split("── Per-Layer Summary", 1)[0]
+        modules = [line.split()[0] for line in module_text.splitlines()
+                   if line.split() and line.split()[0] in report["per_module_summary_excel"]]
+        self.assertEqual(modules, ["wordembedding", "inputlayernorm", "mla", "indexer", "dsa",
+                                   "denseffn", "sharedexperts", "routedexperts", "moerouter",
+                                   "outputlayernorm", "lmhead"])
+        layer_text = text.split("── Per-Layer Summary", 1)[1]
+        header = next(line for line in layer_text.splitlines() if line.strip().startswith("Layer"))
+        self.assertNotIn("Attn", header)
+        rows = [line.split() for line in layer_text.splitlines()
+                if line.split() and line.split()[0].isdigit()]
+        self.assertEqual([int(row[0]) for row in rows], [0, 1, 2, 3, 4, 75, 76, 77])
+        self.assertEqual([row[1] for row in rows[:5]], ["Dense", "Dense", "Dense", "MoE", "MoE"])
+        self.assertEqual(report, before)
 
     def test_display_moe_split_conserves_all_totals_and_input(self):
         for expert_dtype in ("bf16", "fp32"):

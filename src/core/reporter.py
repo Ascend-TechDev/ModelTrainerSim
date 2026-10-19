@@ -7,6 +7,9 @@ from .formatter import format_bytes, format_flops, format_number
 
 REPORT_WIDTH = 91
 MODULE_ORDER = ["wordembedding", "gate", "routedexpert", "sharedexpert", "swa", "csa", "hca", "mhc"]
+GLM_MODULE_ORDER = ["wordembedding", "inputlayernorm", "mla", "indexer", "dsa",
+                    "denseffn", "sharedexperts", "routedexperts", "moerouter",
+                    "outputlayernorm", "lmhead"]
 
 
 def section(title: str) -> str:
@@ -69,7 +72,7 @@ def render_standard_report(
         lines.append(f"    - {label:<24}: {fmt(value)}")
 
     pms = report.get("per_module_summary_excel") or report["per_module_summary"]
-    order = module_order or MODULE_ORDER
+    order = module_order or (GLM_MODULE_ORDER if report["model_family"] == "GLM-5.2" else MODULE_ORDER)
     ordered = [(k, pms[k]) for k in order if k in pms]
     ordered.extend((k, pms[k]) for k in sorted(pms) if k not in order)
     name_width = max(14, *(len(k) for k, _ in ordered)) if ordered else 14
@@ -84,25 +87,34 @@ def render_standard_report(
                      f"{fmt(row['bytes']):>16} {format_flops(per_token):>16} {fmt(row['act_bytes']):>16}")
 
     layers = report["layers"]
-    attn_width = max(7, *(len(row["attention_type"]) for row in layers)) if layers else 7
-    header = (f"  {'Layer':>5} {'Attn':>{attn_width}} {'FFN':>5} {'Idx':>5} "
-              f"{'Params':>16} {'Bytes':>16} {'FLOPs':>16}")
+    is_glm = bool(layers) and "is_dense" in layers[0]
+    attn_width = max(7, *(len(row["attention_type"]) for row in layers)) if layers and not is_glm else 7
+    header = f"  {'Layer':>5} "
+    if not is_glm:
+        header += f"{'Attn':>{attn_width}} "
+    header += f"{'FFN':>5} {'Idx':>5} {'Params':>16} {'Bytes':>16} {'FLOPs':>16}"
     lines.extend(["", section("Per-Layer Summary"), header, "  " + "-" * (len(header) - 2)])
     selected = set(range(min(5, len(layers)))) | set(range(max(0, len(layers) - 3), len(layers)))
-    represented = {layers[idx]["attention_type"] for idx in selected}
-    for idx, row in enumerate(layers):
-        if row["attention_type"] not in represented:
-            selected.add(idx)
-            represented.add(row["attention_type"])
+    if not is_glm:
+        represented = {layers[idx]["attention_type"] for idx in selected}
+        for idx, row in enumerate(layers):
+            if row["attention_type"] not in represented:
+                selected.add(idx)
+                represented.add(row["attention_type"])
     show = sorted(selected)
     previous = -1
     for idx in show:
         if previous >= 0 and idx != previous + 1:
             lines.append(f"  {'...':>5}")
         row = layers[idx]
-        lines.append(f"  {row['layer_id']:>5} {row['attention_type']:>{attn_width}} {row['ffn_type']:>5} "
-                     f"{str(row['use_indexer']):>5} {format_number(row['params']):>16} "
-                     f"{fmt(row['bytes']):>16} {format_flops(row['flops']):>16}")
+        prefix = f"  {row['layer_id']:>5} "
+        if is_glm:
+            ffn_type = "Dense" if row["is_dense"] else "MoE"
+        else:
+            prefix += f"{row['attention_type']:>{attn_width}} "
+            ffn_type = row["ffn_type"]
+        lines.append(prefix + f"{ffn_type:>5} {str(row['use_indexer']):>5} "
+                     f"{format_number(row['params']):>16} {fmt(row['bytes']):>16} {format_flops(row['flops']):>16}")
         previous = idx
     if appendix:
         lines.extend(appendix)

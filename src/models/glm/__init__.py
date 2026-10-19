@@ -1,4 +1,8 @@
-"""GLM model family (placeholder — to be implemented).
+"""GLM-5.2 model package."""
 
-TODO: Add modules for GLM's architecture when available.
-"""
+from ...core.model_registry import ModelRegistry
+from .modules.model import GLMModel
+
+ModelRegistry.register("GLM-5.2")(GLMModel)
+
+__all__ = ["GLMModel"]

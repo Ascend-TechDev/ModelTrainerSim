@@ -59,10 +59,11 @@ class ModelRegistry:
         if cls._loaded:
             return
         # Import all model packages so that their @register decorators run
-        try:
-            importlib.import_module("src.models.dsv4pro")
-        except ImportError:
-            pass
+        for package in ("src.models.dsv4pro", "src.models.glm"):
+            try:
+                importlib.import_module(package)
+            except ImportError:
+                pass
         importlib.import_module("src.models.dsv41flash")
-        # Future: kimi, glm, qwen, hunyuan will be imported here
+        # Future: kimi, qwen, hunyuan will be imported here
         cls._loaded = True
