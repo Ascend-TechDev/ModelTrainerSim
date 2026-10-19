@@ -68,6 +68,9 @@ class ConfigParser:
         with open(self.config_path, "r", encoding="utf-8") as f:
             self._raw = json.load(f)
 
+        if isinstance(self._raw, dict) and self._raw.get("model") == "DSV41Flash":
+            from ..models.dsv41flash.modules.configuration import normalize_config
+            self._raw = normalize_config(self._raw, self.config_path.resolve().parent)
         self._validate(self._raw)
         return copy.deepcopy(self._raw)
 
@@ -129,5 +132,8 @@ class ConfigParser:
         """Validate a config dict without loading from disk."""
         parser = ConfigParser.__new__(ConfigParser)
         parser.config_path = Path("<dict>")
+        if isinstance(cfg, dict) and cfg.get("model") == "DSV41Flash":
+            from ..models.dsv41flash.modules.configuration import normalize_config
+            cfg = normalize_config(cfg)
         parser._validate(cfg)
         return copy.deepcopy(cfg)

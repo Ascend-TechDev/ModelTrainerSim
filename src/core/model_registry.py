@@ -63,5 +63,6 @@ class ModelRegistry:
             importlib.import_module("src.models.dsv4pro")
         except ImportError:
             pass
+        importlib.import_module("src.models.dsv41flash")
         # Future: kimi, glm, qwen, hunyuan will be imported here
         cls._loaded = True

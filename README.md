@@ -2,6 +2,18 @@
 
 LLM 架构参数建模与显存/算力分析工具包。
 
+已新增 **DeepSeek V4.1 Flash**：按源码拆分 40 层 SWA/Full/Reindex/Reuse、MoE、Engram、输入输出与可选 DSpark，支持按参数组配置训练状态、设备放置和分片，容量统一按十进制 GB 显示。使用方式、数据来源与统计边界见 [V4.1 Flash 分析说明](docs/DSV41_FLASH.md)。
+
+```bash
+python -m src.main --config configs/dsv41flash_config.json
+python -m src.main --config configs/dsv41flash_32gpu_config.json --seq-len 8192
+python -m unittest tests.test_dsv41flash -v
+```
+
+Flash 的前向张量体积预算与训练峰值不同；Pro 保留原有 Excel 对齐计算口径。
+
+Flash 的计算模块与 Pro 共用 `BaseModule` / `ModuleStats` 接口，分别实现 `compute_params()`、`compute_flops()`、`compute_activations()`，由顶层模型统一调用 `analyze()` 汇总。
+
 支持通过 `config.json` 配置模型架构参数，自动计算各模块（CSA / HCA / mHC / Indexer / MoE）的：
 - **参数量** (Parameter count)
 - **显存占用** (Weight / Activation / KV-cache memory)
@@ -30,16 +42,35 @@ ModelTrainerSimluator/
 │       │       ├── indexer.py       # Sparse Block Indexer
 │       │       ├── moe.py           # Mixture of Experts
 │       │       └── model.py         # DSV4ProModel 顶层组装
+│       ├── dsv41flash/              # DeepSeek V4.1 Flash
+│       │   ├── __init__.py          # 模型注册入口
+│       │   ├── config.json          # 原始架构配置
+│       │   └── modules/            # 核心实现，与 Pro 同级组织
+│       │       ├── model.py        # DSV41FlashModel 顶层组装
+│       │       ├── attention.py    # SWA / Full / Reindex / Reuse
+│       │       ├── moe.py          # Router 与专家
+│       │       ├── mhc.py          # mHC 与 RMSNorm
+│       │       ├── engram.py       # Engram
+│       │       ├── embedding.py    # 输入 Embedding
+│       │       ├── output.py       # 输出 LM Head
+│       │       ├── dspark.py       # DSpark 附加模块
+│       │       ├── accounting.py   # 参数与训练状态统计
+│       │       ├── common.py       # 模块公共工具
+│       │       ├── configuration.py # 配置加载与校验
+│       │       └── report.py       # 报告展示
 │       ├── kimi/                    # (placeholder) TODO
 │       ├── glm/                     # (placeholder) TODO
 │       ├── qwen/                    # (placeholder) TODO
 │       └── hunyuan/                 # (placeholder) TODO
 ├── configs/
-│   └── dsv4pro_config.json          # DSV4Pro 配置文件
+│   ├── dsv4pro_config.json          # DSV4Pro 配置文件
+│   ├── dsv41flash_config.json       # Flash 默认分析场景
+│   └── dsv41flash_32gpu_config.json # Flash 32 卡分析场景
 ├── examples/
 │   └── quick_start.py               # 示例脚本
 ├── tests/
-│   └── test_dsv4pro.py              # 单元测试
+│   ├── test_dsv4pro.py              # Pro 单元测试
+│   └── test_dsv41flash.py           # Flash 单元测试
 ├── pyproject.toml
 ├── requirements.txt
 └── README.md

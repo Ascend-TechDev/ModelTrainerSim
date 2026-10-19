@@ -29,6 +29,9 @@ mtsim = "src.main:main"
 [tool.setuptools.packages.find]
 where = ["."]
 
+[tool.setuptools.package-data]
+"src.models.dsv41flash" = ["config.json"]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 python_files = ["test_*.py"]

@@ -1,0 +1,20 @@
+{
+  "model": "DSV41Flash",
+  "architecture_file": "../src/models/dsv41flash/config.json",
+  "description": "Text backbone with Engram; BF16 training inventory. DSpark is opt-in.",
+  "max_seq_len": 4096,
+  "dtype": "bf16",
+  "activation_dtype": "bf16",
+  "logits_dtype": "fp32",
+  "cache_dtype": "bf16",
+  "include_engram": true,
+  "include_dspark": false,
+  "training": {
+    "num_devices": 1,
+    "groups": {
+      "dense": {"device": "gpu", "shards": 1, "optimizer": "adamw"},
+      "expert": {"device": "gpu", "shards": 1, "optimizer": "adamw"},
+      "engram": {"device": "gpu", "shards": 1, "optimizer": "momentum"}
+    }
+  }
+}

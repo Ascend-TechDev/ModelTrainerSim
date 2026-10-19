@@ -1,0 +1,22 @@
+{
+  "model": "DSV41Flash",
+  "architecture_file": "../src/models/dsv41flash/config.json",
+  "description": "Illustrative balanced 32-way dense/expert sharding; Engram tables and states on CPU. Placement is a scenario assumption, not an official training recipe.",
+  "max_seq_len": 4096,
+  "dtype": "bf16",
+  "include_engram": true,
+  "include_dspark": false,
+  "training": {
+    "num_devices": 32,
+    "groups": {
+      "dense": {"device": "gpu", "shards": 32, "optimizer": "adamw"},
+      "expert": {"device": "gpu", "shards": 32, "optimizer": "adamw"},
+      "engram": {"device": "cpu", "shards": 32, "optimizer": "momentum"}
+    },
+    "per_device_buffers_gb": {
+      "communication": 1,
+      "optimizer_temporary": 2,
+      "fsdp_cache": 2
+    }
+  }
+}

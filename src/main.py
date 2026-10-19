@@ -50,6 +50,10 @@ def main(argv: list[str] | None = None) -> int:
         help="List registered model families and exit")
 
     args = parser.parse_args(argv)
+    if args.seq_len is not None and args.seq_len <= 0:
+        parser.error("--seq-len must be positive")
+    if args.batch_size <= 0:
+        parser.error("--batch-size must be positive")
 
     # List models
     if args.list_models:
