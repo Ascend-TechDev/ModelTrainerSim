@@ -59,9 +59,9 @@ ModelTrainerSimluator/
 │       │       ├── configuration.py # 配置加载与校验
 │       │       └── report.py       # 报告展示
 │       ├── kimi/                    # (placeholder) TODO
-│       ├── glm/                     # (placeholder) TODO
+│       ├── glm/                     # GLM-5.2 (MoE + DSA + Indexer)
 │       ├── qwen/                    # (placeholder) TODO
-│       └── hunyuan/                 # (placeholder) TODO
+│       └── hunyuan/                 # Hunyuan Hy4 (10T: iHC + Gated MLA + 2048-expert MoE)
 ├── configs/
 │   ├── dsv4pro_config.json          # DSV4Pro 配置文件
 │   ├── dsv41flash_config.json       # Flash 默认分析场景
@@ -92,6 +92,9 @@ python -m src.main --config configs/dsv4pro_config.json --format json --output r
 
 # 列出所有已注册的模型家族
 python -m src.main --list-models
+
+# 分析 Hunyuan Hy4-preview 10T（iHC 四残差流 + Gated MLA + 2048 专家 MoE）
+python -m src.main --config configs/hy4_10t_config.json
 ```
 
 ### Python API 使用

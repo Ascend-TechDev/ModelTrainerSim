@@ -33,7 +33,8 @@ class TestDSV41Flash(unittest.TestCase):
         return ModelRegistry.build("DSV41Flash", cfg or self.config).analyze(S, B)
 
     def test_registry_preserves_pro(self):
-        self.assertEqual(ModelRegistry.list_models(), ["DSV41Flash", "DSV4Pro", "GLM-5.2"])
+        self.assertEqual(ModelRegistry.list_models(),
+                         ["DSV41Flash", "DSV4Pro", "GLM-5.2", "Hy4"])
 
     def test_40_backbone_layer_types(self):
         self.assertEqual(self.report["scope"]["layer_counts"], {"SWA": 2, "Full": 4, "Reuse": 30, "Reindex": 4})
