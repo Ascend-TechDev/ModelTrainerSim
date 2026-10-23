@@ -10,6 +10,9 @@ MODULE_ORDER = ["wordembedding", "gate", "routedexpert", "sharedexpert", "swa", 
 GLM_MODULE_ORDER = ["wordembedding", "inputlayernorm", "mla", "indexer", "dsa",
                     "denseffn", "sharedexperts", "routedexperts", "moerouter",
                     "outputlayernorm", "lmhead"]
+HY4_MODULE_ORDER = ["wordembedding", "ihcinit", "ihc", "sublayernorm", "mla",
+                    "indexerproj", "indexersel", "denseffn", "moe", "ihchead",
+                    "finalnorm", "outputlayer"]
 
 
 def section(title: str) -> str:
@@ -72,7 +75,10 @@ def render_standard_report(
         lines.append(f"    - {label:<24}: {fmt(value)}")
 
     pms = report.get("per_module_summary_excel") or report["per_module_summary"]
-    order = module_order or (GLM_MODULE_ORDER if report["model_family"] == "GLM-5.2" else MODULE_ORDER)
+    family = report["model_family"]
+    default_order = (HY4_MODULE_ORDER if family == "Hy4" else
+                     GLM_MODULE_ORDER if family == "GLM-5.2" else MODULE_ORDER)
+    order = module_order or default_order
     ordered = [(k, pms[k]) for k in order if k in pms]
     ordered.extend((k, pms[k]) for k in sorted(pms) if k not in order)
     name_width = max(14, *(len(k) for k, _ in ordered)) if ordered else 14
