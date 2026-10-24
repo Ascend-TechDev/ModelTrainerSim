@@ -59,7 +59,8 @@ class ModelRegistry:
         if cls._loaded:
             return
         # Import all model packages so that their @register decorators run
-        for package in ("src.models.dsv4pro", "src.models.glm", "src.models.hunyuan"):
+        for package in ("src.models.dsv4pro", "src.models.glm", "src.models.hunyuan",
+                        "src.models.kimi"):
             try:
                 importlib.import_module(package)
             except ImportError:

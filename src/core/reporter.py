@@ -13,6 +13,8 @@ GLM_MODULE_ORDER = ["wordembedding", "inputlayernorm", "mla", "indexer", "dsa",
 HY4_MODULE_ORDER = ["wordembedding", "ihcinit", "ihc", "sublayernorm", "mla",
                     "indexerproj", "indexersel", "denseffn", "moe", "ihchead",
                     "finalnorm", "outputlayer"]
+KIMI_MODULE_ORDER = ["wordembedding", "prenorm", "postnorm", "finalnorm", "mla",
+                     "kda", "denseffn", "moe", "outputlayer"]
 
 
 def section(title: str) -> str:
@@ -73,10 +75,22 @@ def render_standard_report(
                          ("master weights", tb["master_weights"]),
                          (f"optimizer ({tb['optimizer']})", tb["optimizer_states"])):
         lines.append(f"    - {label:<24}: {fmt(value)}")
+    # Per-rank static memory when the scenario actually shards (any group
+    # with shards > 1), e.g. the EP / FSDP / EFSDP strategy scenarios.
+    sharded = any(g.get("shards", 1) > 1 for g in tb.get("groups", {}).values())
+    dev = (tb.get("per_device") or {}).get("gpu")
+    if sharded and dev:
+        lines.append("    Per-device (gpu, sharded):")
+        for label, value in (("weights", dev["weights"]), ("gradients", dev["gradients"]),
+                             ("master weights", dev["master_weights"]),
+                             ("optimizer", dev["optimizer_states"]),
+                             ("static total", dev["total"])):
+            lines.append(f"      - {label:<22}: {fmt(value)}")
 
     pms = report.get("per_module_summary_excel") or report["per_module_summary"]
     family = report["model_family"]
     default_order = (HY4_MODULE_ORDER if family == "Hy4" else
+                     KIMI_MODULE_ORDER if family == "Kimi-10T" else
                      GLM_MODULE_ORDER if family == "GLM-5.2" else MODULE_ORDER)
     order = module_order or default_order
     ordered = [(k, pms[k]) for k in order if k in pms]

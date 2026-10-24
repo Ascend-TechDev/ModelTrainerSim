@@ -1,0 +1,30 @@
+{
+  "model": "Kimi-10T",
+  "architecture_file": "../src/models/kimi/config.json",
+  "variant": "wide-v2",
+  "description": "Kimi 10T 宽度-v2 analysis: 93 layers (1 Dense + 24 MLA + 69 KDA), E=2048, Top-32, wider experts (latent 5120 / moe_h 4096), seq 4096, world 2048 (EP 128).",
+  "architecture": {
+    "num_hidden_layers": 93,
+    "moe_layers": 92,
+    "mla_layers": 24,
+    "kda_layers": 69,
+    "top_k": 32,
+    "latent_moe_size": 5120,
+    "moe_intermediate_size": 4096
+  },
+  "parallelism": {
+    "world_size": 2048,
+    "ep": 128,
+    "gbs": 1
+  },
+  "max_seq_len": 4096,
+  "dtype": "bf16",
+  "batch_size": 1,
+  "training": {
+    "num_devices": 2048,
+    "groups": {
+      "adamw": {"device": "gpu", "shards": 1, "optimizer": "adamw", "optimizer_bytes_per_param": 12},
+      "muon": {"device": "gpu", "shards": 1, "optimizer": "muon", "optimizer_bytes_per_param": 8}
+    }
+  }
+}
