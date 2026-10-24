@@ -1,0 +1,38 @@
+{
+  "architecture": {
+    "hidden_size": 7168,
+    "num_heads": 96,
+    "qk_nope_head_dim": 128,
+    "qk_rope_head_dim": 64,
+    "q_head_dim": 192,
+    "v_head_dim": 128,
+    "head_dim": 128,
+    "q_lora_rank": 1536,
+    "kv_lora_rank": 512,
+    "vocab_size": 163840,
+    "intermediate_size": 33792,
+    "conv_size": 4,
+    "n_routed_experts": 2048,
+    "n_shared_experts": 2,
+    "dense_layers": 1,
+    "output_all_positions": true
+  },
+  "parallelism": {
+    "tp": 1,
+    "pp": 1,
+    "cp": 1,
+    "dp": 1,
+    "etp": 1,
+    "mbs": 1
+  },
+  "bytes": {
+    "param": 2,
+    "activation": 2,
+    "fp32": 4,
+    "grad": 2,
+    "optimizer_adamw": 12,
+    "optimizer_muon": 8,
+    "master": 0,
+    "logits": 4
+  }
+}

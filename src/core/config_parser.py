@@ -74,6 +74,9 @@ class ConfigParser:
         elif isinstance(self._raw, dict) and self._raw.get("model") == "Hy4":
             from ..models.hunyuan.modules.configuration import normalize_config
             self._raw = normalize_config(self._raw, self.config_path.resolve().parent)
+        elif isinstance(self._raw, dict) and self._raw.get("model") == "Kimi-10T":
+            from ..models.kimi.modules.configuration import normalize_config
+            self._raw = normalize_config(self._raw, self.config_path.resolve().parent)
         self._validate(self._raw)
         return copy.deepcopy(self._raw)
 
@@ -140,6 +143,9 @@ class ConfigParser:
             cfg = normalize_config(cfg)
         elif isinstance(cfg, dict) and cfg.get("model") == "Hy4":
             from ..models.hunyuan.modules.configuration import normalize_config
+            cfg = normalize_config(cfg)
+        elif isinstance(cfg, dict) and cfg.get("model") == "Kimi-10T":
+            from ..models.kimi.modules.configuration import normalize_config
             cfg = normalize_config(cfg)
         parser._validate(cfg)
         return copy.deepcopy(cfg)

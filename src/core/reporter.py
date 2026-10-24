@@ -13,6 +13,8 @@ GLM_MODULE_ORDER = ["wordembedding", "inputlayernorm", "mla", "indexer", "dsa",
 HY4_MODULE_ORDER = ["wordembedding", "ihcinit", "ihc", "sublayernorm", "mla",
                     "indexerproj", "indexersel", "denseffn", "moe", "ihchead",
                     "finalnorm", "outputlayer"]
+KIMI_MODULE_ORDER = ["wordembedding", "prenorm", "postnorm", "finalnorm", "mla",
+                     "kda", "denseffn", "moe", "outputlayer"]
 
 
 def section(title: str) -> str:
@@ -77,6 +79,7 @@ def render_standard_report(
     pms = report.get("per_module_summary_excel") or report["per_module_summary"]
     family = report["model_family"]
     default_order = (HY4_MODULE_ORDER if family == "Hy4" else
+                     KIMI_MODULE_ORDER if family == "Kimi-10T" else
                      GLM_MODULE_ORDER if family == "GLM-5.2" else MODULE_ORDER)
     order = module_order or default_order
     ordered = [(k, pms[k]) for k in order if k in pms]
