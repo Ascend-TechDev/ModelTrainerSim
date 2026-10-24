@@ -58,10 +58,10 @@ ModelTrainerSimluator/
 │       │       ├── common.py       # 模块公共工具
 │       │       ├── configuration.py # 配置加载与校验
 │       │       └── report.py       # 报告展示
-│       ├── kimi/                    # Kimi 10T (MLA + KDA + Latent MoE)
+│       ├── kimi/                    # Kimi (MLA + KDA + Latent MoE)
 │       ├── glm/                     # GLM-5.2 (MoE + DSA + Indexer)
 │       ├── qwen/                    # (placeholder) TODO
-│       └── hunyuan/                 # Hunyuan Hy4 (10T: iHC + Gated MLA + 2048-expert MoE)
+│       └── hunyuan/                 # Hunyuan Hy4 (iHC + Gated MLA + MoE)
 ├── configs/
 │   ├── dsv4pro_config.json          # DSV4Pro 配置文件
 │   ├── dsv41flash_config.json       # Flash 默认分析场景
@@ -93,10 +93,10 @@ python -m src.main --config configs/dsv4pro_config.json --format json --output r
 # 列出所有已注册的模型家族
 python -m src.main --list-models
 
-# 分析 Hunyuan Hy4-preview 10T（iHC 四残差流 + Gated MLA + 2048 专家 MoE）
+# 分析 Hunyuan Hy4（iHC 四残差流 + Gated MLA + MoE）
 python -m src.main --config configs/hy4_10t_config.json
 
-# 分析 Kimi 10T（深度-v2: 137 层 MLA+KDA 混合注意力 + Latent MoE；宽度-v2: 93 层）
+# 分析 Kimi（MLA + KDA 混合注意力 + Latent MoE，深度/宽度两个变体）
 python -m src.main --config configs/kimi_10t_deep_v2_config.json
 python -m src.main --config configs/kimi_10t_wide_v2_config.json
 ```
