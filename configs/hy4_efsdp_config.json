@@ -1,0 +1,21 @@
+{
+  "model": "Hy4",
+  "architecture_file": "../src/models/hunyuan/config.json",
+  "description": "Hy4-10T EFSDP 分析：路由专家 ÷ EP64，稠密参数 ÷ DP16（正交 mesh：1024 卡 = EP64 x DP16）。",
+  "architecture": {
+    "n_routed_experts": 2048,
+    "num_experts_per_tok": 64,
+    "moe_intermediate_size": 3456,
+    "output_all_positions": true
+  },
+  "max_seq_len": 4096,
+  "dtype": "bf16",
+  "training": {
+    "num_devices": 1024,
+    "groups": {
+      "dense": {"device": "gpu", "shards": 16, "optimizer": "adamw", "master_dtype": "none"},
+      "expert": {"device": "gpu", "shards": 64, "optimizer": "adamw", "master_dtype": "none"},
+      "buffer": {"device": "gpu", "shards": 16, "optimizer": "adamw", "master_dtype": "none", "trainable": false}
+    }
+  }
+}

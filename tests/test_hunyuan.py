@@ -212,6 +212,41 @@ class TestHy4(unittest.TestCase):
         self.assertIn("moe", text)
         self.assertIn("10.07T", text)
 
+    # -- EP / FSDP / EFSDP per-rank static memory ------------------------------------
+
+    def _strategy_report(self, name):
+        cfg = ConfigParser(ROOT / f"configs/{name}.json").load()
+        return ModelRegistry.build("Hy4", cfg).analyze(4096, 1)
+
+    def _strategy_expected(self, shards_dense, shards_expert):
+        expert_params = 77 * 2048 * (6144 * 6912 + 3456 * 6144)
+        dense_params = TOTAL_PARAMS - expert_params            # includes router bias
+        trainable_dense = dense_params - 77 * 2048             # bias excluded from grad/opt
+        weights = 2 * dense_params / shards_dense + 2 * expert_params / shards_expert
+        optimizer = 8 * trainable_dense / shards_dense + 8 * expert_params / shards_expert
+        return weights, optimizer
+
+    def test_ep_per_rank_static(self):
+        dev = self._strategy_report("hy4_ep_config")["memory"][
+            "training_breakdown"]["per_device"]["gpu"]
+        weights, optimizer = self._strategy_expected(1, 64)
+        self.assertAlmostEqual(dev["weights"], weights, places=9)
+        self.assertAlmostEqual(dev["optimizer_states"], optimizer, places=9)
+
+    def test_fsdp_per_rank_static(self):
+        dev = self._strategy_report("hy4_fsdp_config")["memory"][
+            "training_breakdown"]["per_device"]["gpu"]
+        weights, optimizer = self._strategy_expected(1024, 1024)
+        self.assertAlmostEqual(dev["weights"], weights, places=9)
+        self.assertAlmostEqual(dev["optimizer_states"], optimizer, places=9)
+
+    def test_efsdp_per_rank_static(self):
+        dev = self._strategy_report("hy4_efsdp_config")["memory"][
+            "training_breakdown"]["per_device"]["gpu"]
+        weights, optimizer = self._strategy_expected(16, 64)
+        self.assertAlmostEqual(dev["weights"], weights, places=9)
+        self.assertAlmostEqual(dev["optimizer_states"], optimizer, places=9)
+
     # -- config validation ----------------------------------------------------------
 
     def test_config_validation_errors(self):
