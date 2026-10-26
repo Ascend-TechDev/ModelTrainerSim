@@ -58,19 +58,52 @@ ModelTrainerSimluator/
 │       │       ├── common.py       # 模块公共工具
 │       │       ├── configuration.py # 配置加载与校验
 │       │       └── report.py       # 报告展示
-│       ├── kimi/                    # (placeholder) TODO
+│       ├── kimi/                    # Kimi (MLA + KDA + Latent MoE)
+│       │   ├── __init__.py          # 模型注册入口
+│       │   ├── config.json          # 10T 深度/宽度变体共用结构
+│       │   └── modules/
+│       │       ├── model.py         # KimiModel 顶层组装
+│       │       ├── attention.py     # MLA
+│       │       ├── kda.py           # KDA chunked 线性注意力
+│       │       ├── moe.py           # Latent MoE（路由/共享专家）
+│       │       ├── dense_ffn.py     # Dense FFN
+│       │       ├── embedding.py     # 词嵌入 / 输出头 / Norm
+│       │       ├── accounting.py    # 训练状态与分片统计
+│       │       └── configuration.py # 配置加载与校验
 │       ├── glm/                     # GLM-5.2 (MoE + DSA + Indexer)
 │       ├── qwen/                    # (placeholder) TODO
-│       └── hunyuan/                 # Hunyuan Hy4 (10T: iHC + Gated MLA + 2048-expert MoE)
+│       └── hunyuan/                 # Hunyuan Hy4 (iHC + Gated MLA + MoE)
+│           ├── __init__.py          # 模型注册入口
+│           ├── config.json          # 官方 Hy4-preview 结构，各规格共用
+│           └── modules/
+│               ├── model.py         # Hy4Model 顶层组装
+│               ├── attention.py     # Gated MLA（DSA 稀疏注意力）
+│               ├── ihc.py           # iHC 子层 / 最终 Head / RMSNorm
+│               ├── indexer.py       # Full Indexer（投影 + 选择）
+│               ├── moe.py           # MoE（路由 + 共享专家）
+│               ├── dense_ffn.py     # Dense FFN（第 0 层）
+│               ├── embedding.py     # 词嵌入与输出 LM Head
+│               ├── accounting.py    # 训练状态与分片统计
+│               └── configuration.py # 配置加载与校验
 ├── configs/
 │   ├── dsv4pro_config.json          # DSV4Pro 配置文件
 │   ├── dsv41flash_config.json       # Flash 默认分析场景
-│   └── dsv41flash_32gpu_config.json # Flash 32 卡分析场景
+│   ├── dsv41flash_32gpu_config.json # Flash 32 卡分析场景
+│   ├── glm_5_2_config.json          # GLM-5.2 分析场景
+│   ├── hy4_10t_config.json          # Hy4 10T 默认分析场景
+│   ├── hy4_ep_config.json           # Hy4 纯 EP 策略场景
+│   ├── hy4_fsdp_config.json         # Hy4 纯 FSDP 策略场景
+│   ├── hy4_efsdp_config.json        # Hy4 EFSDP 策略场景
+│   ├── kimi_10t_deep_v2_config.json # Kimi 10T 深度-v2 场景
+│   └── kimi_10t_wide_v2_config.json # Kimi 10T 宽度-v2 场景
 ├── examples/
-│   └── quick_start.py               # 示例脚本
+│   ├── quick_start.py               # 示例脚本
+│   └── hy4_strategies.py            # Hy4 EP/FSDP/EFSDP 对比脚本
 ├── tests/
 │   ├── test_dsv4pro.py              # Pro 单元测试
-│   └── test_dsv41flash.py           # Flash 单元测试
+│   ├── test_dsv41flash.py           # Flash 单元测试
+│   ├── test_hunyuan.py              # Hunyuan Hy4 单元测试
+│   └── test_kimi.py                 # Kimi 单元测试
 ├── pyproject.toml
 ├── requirements.txt
 └── README.md
@@ -93,8 +126,12 @@ python -m src.main --config configs/dsv4pro_config.json --format json --output r
 # 列出所有已注册的模型家族
 python -m src.main --list-models
 
-# 分析 Hunyuan Hy4-preview 10T（iHC 四残差流 + Gated MLA + 2048 专家 MoE）
+# 分析 Hunyuan Hy4（iHC 四残差流 + Gated MLA + MoE）
 python -m src.main --config configs/hy4_10t_config.json
+
+# 分析 Kimi（MLA + KDA 混合注意力 + Latent MoE，深度/宽度两个变体）
+python -m src.main --config configs/kimi_10t_deep_v2_config.json
+python -m src.main --config configs/kimi_10t_wide_v2_config.json
 ```
 
 ### Python API 使用
