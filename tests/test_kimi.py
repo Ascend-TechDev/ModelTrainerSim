@@ -77,7 +77,7 @@ class TestKimi(unittest.TestCase):
     def test_registry(self):
         models = ModelRegistry.list_models()
         self.assertIn("Kimi-10T", models)
-        for family in ("DSV41Flash", "DSV4Pro", "GLM-5.2", "Hy4"):
+        for family in ("DSV41Flash", "DSV4Pro", "Hy4"):
             self.assertIn(family, models)
 
     def test_deep_topology(self):

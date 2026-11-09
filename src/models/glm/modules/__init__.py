@@ -7,7 +7,7 @@ from .dense_ffn import DenseFFN
 from .shared_experts import SharedExperts
 from .routed_experts import RoutedExperts
 from .moe_router import MoERouter
-from .embedding import Embedding, InputLayerNorm, OutputLayerNorm, LMHead
+from .embedding import Embedding, InputLayerNorm, PostAttentionLayerNorm, OutputLayerNorm, LMHead
 from .model import GLMModel, LayerSpec
 
 __all__ = [
@@ -20,6 +20,7 @@ __all__ = [
     "MoERouter",
     "Embedding",
     "InputLayerNorm",
+    "PostAttentionLayerNorm",
     "OutputLayerNorm",
     "LMHead",
     "GLMModel",

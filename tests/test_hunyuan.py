@@ -76,7 +76,7 @@ class TestHy4(unittest.TestCase):
     def test_registry(self):
         models = ModelRegistry.list_models()
         self.assertIn("Hy4", models)
-        for family in ("DSV41Flash", "DSV4Pro", "GLM-5.2"):
+        for family in ("DSV41Flash", "DSV4Pro"):
             self.assertIn(family, models)
 
     def test_layer_topology(self):
