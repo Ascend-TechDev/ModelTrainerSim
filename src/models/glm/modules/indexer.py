@@ -3,7 +3,9 @@
 GLM-5.2's DSA (Dynamic Sparse Attention) uses an Indexer module built on
 top of the low-rank Q projection (``q_a_proj`` output, the ``q_lora_rank``
 vector).  The Indexer produces per-token, per-head routing scores that
-select the top-k KV tokens to attend to.
+select the top-k KV tokens to attend to.  Only ``full`` layers own this
+module; ``shared`` layers reuse the nearest preceding full layer's Top-K
+indices without another set of Indexer parameters or computation.
 
 Per the Excel reference (sheet 'GLM-5.2-743B', rows 19-23), one Indexer
 block contains:
@@ -23,7 +25,7 @@ q_lora_rank : int
 index_head_dim : int            – 128
 index_n_heads : int             – 32
 index_topk : int                – 2048
-num_indexer_layers : int        – 21 (Excel D23)
+num_indexer_layers : int        – number of full layers (21 in Excel D23)
 """
 
 from __future__ import annotations

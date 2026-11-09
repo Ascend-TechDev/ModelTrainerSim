@@ -1,33 +1,32 @@
 """GLM-5.2 top-level model.
 
-Assembles a stack of 78 transformer layers and surfaces the per-module
-parameter/memory/FLOPs breakdown defined in the Excel reference sheet
-``GLM-5.2-743B`` (file: GLM分析.xlsx).
+Assembles a stack of 78 transformer layers with parameter counts checked
+against the Excel reference sheet
+``GLM-5.2-743B-4k`` (file: GLM_future_analysis_v1.6.xlsx).
+Memory and FLOPs retain the individual modules' accounting assumptions.
 
-Layer composition (per config ``mlp_layer_types`` and ``indexer_types``):
+Layer composition (per config ``first_k_dense_replace`` and ``indexer_types``):
 
-  * First 3 layers are **dense** FFN layers (no MoE, no Indexer).
+  * First 3 layers are **dense** FFN layers (no MoE).
   * Remaining 75 layers are **sparse** MoE layers.
-  * Among the 75 MoE layers, ``num_indexer_layers`` (default 21) have a
-    shared Indexer module (``indexer_types == "shared"``).
-  * Every layer has: input_layernorm + MLA + (Indexer if shared) + DSA
-    output + (DenseFFN | SharedExperts + RoutedExperts + MoERouter)
-    + post-attention-layernorm.
+  * ``full`` layers own an Indexer; ``shared`` layers reuse the nearest
+    preceding full layer's Top-K indices, regardless of the FFN type.
+    The bundled config has 21 full layers, including the 3 dense layers.
+  * Every layer has: input_layernorm + MLA + (Indexer if full) + DSA
+    output + post-attention-layernorm
+    + (DenseFFN | SharedExperts + RoutedExperts + MoERouter).
 
-The model's ``analyze()`` returns a report that mirrors the Excel sheet:
+The parameter groups in ``analyze()`` correspond to these workbook rows:
 
-  WordEmbedding (Excel rows  2-3)
-  InputLayerNorm (Excel rows  6-7)
-  MLA            (Excel rows 10-16)
-  Indexer        (Excel rows 19-23)
-  DSA            (Excel rows 26-27)
-  DenseFFN        (Excel rows 30-33)
-  SharedExperts   (Excel rows 36-39)
-  RoutedExperts   (Excel rows 42-46)
-  MoERouter       (Excel rows 47-48)
-  OutputLayerNorm  (Excel rows 51-52)
-  LMHead          (Excel rows 55-56)
-  Total params (Excel L58/L59)
+  WordEmbedding          (Excel rows  2-4)
+  Input/PostAttentionNorm (Excel rows  7-10)
+  MLA + DSA              (Excel rows 14-21 and 32-35; same combined weights)
+  Indexer                (Excel rows 24-29)
+  DenseFFN               (Excel rows 38-42)
+  Shared/RoutedExperts   (Excel rows 46-55)
+  MoERouter              (Excel rows 60-62)
+  OutputLayerNorm/LMHead  (Excel rows 65-68)
+  Total / active params  (Excel H71/H72)
 """
 
 from __future__ import annotations
@@ -44,7 +43,7 @@ from .dense_ffn import DenseFFN
 from .shared_experts import SharedExperts
 from .routed_experts import RoutedExperts
 from .moe_router import MoERouter
-from .embedding import Embedding, InputLayerNorm, OutputLayerNorm, LMHead
+from .embedding import Embedding, InputLayerNorm, PostAttentionLayerNorm, OutputLayerNorm, LMHead
 
 
 # ---------------------------------------------------------------------------
@@ -56,7 +55,8 @@ class LayerSpec:
     """Description of a single GLM transformer layer."""
     layer_id: int
     is_dense: bool                          # True for first 3 layers
-    use_indexer: bool = False                 # True for shared-indexer MoE layers
+    use_indexer: bool = False               # True when this layer owns an Indexer
+    indexer_source_layer: int | None = None  # Self for full; previous full for shared
     attention_config: dict[str, Any] = field(default_factory=dict)
     indexer_config: dict[str, Any] = field(default_factory=dict)
     dense_ffn_config: dict[str, Any] = field(default_factory=dict)
@@ -87,15 +87,6 @@ class GLMModel:
         self.first_k_dense: int = config.get("first_k_dense_replace", 3)
         self.num_moe_layers: int = self.num_layers - self.first_k_dense
 
-        # Indexer scheduling
-        indexer_types = config.get("indexer_types", [])
-        # Count shared-indexer layers (each shared Indexer covers a small
-        # cluster of layers; GLM-5.2 uses 21 shared indexers across 75 MoE
-        # layers per Excel D23).
-        self.num_indexer_layers: int = sum(
-            1 for t in indexer_types if t == "shared"
-        ) if indexer_types else config.get("num_indexer_layers", 21)
-
         # Top-level modules
         self.embedding = Embedding("embedding", {
             "vocab_size": self.vocab_size,
@@ -103,7 +94,12 @@ class GLMModel:
             "dtype": self.dtype.value,
             "tie_word_embeddings": self.tie_word_embeddings,
         })
+        # Per-layer norm templates used by the grouped summary.
         self.input_layernorm = InputLayerNorm("input_layernorm", {
+            "hidden_size": self.hidden_size,
+            "dtype": self.dtype.value,
+        })
+        self.post_attention_layernorm = PostAttentionLayerNorm("post_attention_layernorm", {
             "hidden_size": self.hidden_size,
             "dtype": self.dtype.value,
         })
@@ -119,6 +115,8 @@ class GLMModel:
 
         # Build layer specs and module instances
         self.layer_specs: list[LayerSpec] = self._build_layer_specs()
+        # Derive every summary's count from the actual Indexer owners.
+        self.num_indexer_layers: int = sum(spec.use_indexer for spec in self.layer_specs)
         self.layers: list[list[BaseModule]] = self._build_layers()
 
     # -----------------------------------------------------------------
@@ -127,7 +125,12 @@ class GLMModel:
 
     def _build_layer_specs(self) -> list[LayerSpec]:
         specs: list[LayerSpec] = []
-        indexer_types = self.config.get("indexer_types", [])
+        # Without a schedule, every layer owns an independent Indexer.
+        indexer_types = self.config.get("indexer_types", ["full"] * self.num_layers)
+        if (not isinstance(indexer_types, list)
+                or len(indexer_types) != self.num_layers
+                or any(t not in ("full", "shared") for t in indexer_types)):
+            raise ValueError("indexer_types must cover every layer with full/shared")
 
         # Attention config (MLA plumbing)
         attn_base = {
@@ -186,15 +189,20 @@ class GLMModel:
             "gate_dtype": self.config.get("moe_router_dtype", "float32"),
         }
 
+        indexer_source_layer = None
         for i in range(self.num_layers):
             is_dense = (i < self.first_k_dense)
-            itype = indexer_types[i] if i < len(indexer_types) else "full"
-            use_indexer = (not is_dense) and (itype == "shared")
+            use_indexer = indexer_types[i] == "full"
+            if use_indexer:
+                indexer_source_layer = i
+            elif indexer_source_layer is None:
+                raise ValueError(f"Layer {i} is shared but no earlier full Indexer layer exists")
 
             specs.append(LayerSpec(
                 layer_id=i,
                 is_dense=is_dense,
                 use_indexer=use_indexer,
+                indexer_source_layer=indexer_source_layer,
                 attention_config=attn_base,
                 indexer_config=idx_base,
                 dense_ffn_config=dense_base,
@@ -206,8 +214,11 @@ class GLMModel:
 
     def _build_layers(self) -> list[list[BaseModule]]:
         layers: list[list[BaseModule]] = []
+        norm_config = {"hidden_size": self.hidden_size, "dtype": self.dtype.value}
         for spec in self.layer_specs:
             modules: list[BaseModule] = []
+            modules.append(InputLayerNorm(
+                f"layer{spec.layer_id}_InputLayerNorm", norm_config))
             modules.append(MLA(f"layer{spec.layer_id}_MLA",
                                 spec.attention_config))
             if spec.use_indexer:
@@ -216,6 +227,8 @@ class GLMModel:
                     spec.indexer_config))
             modules.append(DSA(f"layer{spec.layer_id}_DSA",
                                 spec.attention_config))
+            modules.append(PostAttentionLayerNorm(
+                f"layer{spec.layer_id}_PostAttentionLayerNorm", norm_config))
             if spec.is_dense:
                 modules.append(DenseFFN(
                     f"layer{spec.layer_id}_DenseFFN",
@@ -241,7 +254,7 @@ class GLMModel:
                 batch_size: int = 1) -> dict[str, Any]:
         """Run full analysis and return a structured report.
 
-        Aligns with Excel sheet 'GLM-5.2-743B' rows 2-59.
+        Parameter counts align with Excel sheet 'GLM-5.2-743B-4k'.
         """
         S = seq_len or self.seq_len
         B = batch_size
@@ -253,9 +266,8 @@ class GLMModel:
         total_flops = 0.0
         total_act = 0.0
 
-        # Top-level modules: Embedding, input_layernorm, output_layernorm, lm_head
-        top_modules = [self.embedding, self.input_layernorm,
-                       self.output_layernorm, self.lm_head]
+        # Pre/Post RMSNorms are counted inside every transformer layer.
+        top_modules = [self.embedding, self.output_layernorm, self.lm_head]
         top_stats: list[tuple[str, ModuleStats]] = []
         for mod in top_modules:
             stats = mod.analyze(S, B)
@@ -314,6 +326,8 @@ class GLMModel:
                 "layer_id": spec.layer_id,
                 "is_dense": spec.is_dense,
                 "use_indexer": spec.use_indexer,
+                "indexer_type": "full" if spec.use_indexer else "shared",
+                "indexer_source_layer": spec.indexer_source_layer,
                 "params": layer_params,
                 "bytes": layer_bytes,
                 "flops": layer_flops,
@@ -324,28 +338,11 @@ class GLMModel:
         # ------------------------------------------------------------------
         # Excel-aligned per-module summary
         #
-        # Mirrors the GLM-5.2-743B Excel sheet's grouped parameter/
-        # memory rows (columns L-N), where each row aggregates ALL
-        # instances of that module type with the appropriate count
-        # multiplier (H column):
-        #
-        #   H2  = 1            (word embedding)
-        #   H7  = num_layers    (input_layernorm, 1 per layer)
-        #   H11 = num_layers    (MLA)
-        #   H20 = 21            (Indexer — shared indexers)
-        #   H27 = num_layers    (DSA output proj)
-        #   H31 = 3             (Dense FFN — first 3 layers)
-        #   H37 = num_moe_layers * n_shared   (Shared experts)
-        #   H43 = num_moe_layers * n_routed    (Routed experts params)
-        #   H44 = num_moe_layers * topk        (Routed experts activated)
-        #   H48 = num_moe_layers  (MoE Router)
-        #   H52 = 1             (output_layernorm)
-        #   H56 = 1             (LM Head)
-        #
-        # Notes:
-        #   * RoutedExperts module returns ONE expert's params; the
-        #     summary scales by n_routed_experts * num_moe_layers (Excel H43).
-        #   * Activated routed-expert params use H44 (topk * num_moe_layers).
+        # Every layer module includes its complete parameter inventory.
+        # In particular, SharedExperts/RoutedExperts already contain all
+        # experts in one MoE layer, so the summary multiplies by MoE layer
+        # count only.  Pre/Post RMSNorm each have num_layers instances;
+        # the final output RMSNorm is a separate, single instance.
         # ------------------------------------------------------------------
         excel_summary: dict[str, dict[str, float]] = {
             "wordembedding": {"params": 0, "bytes": 0.0, "flops": 0.0,
@@ -358,6 +355,8 @@ class GLMModel:
                              "act_bytes": 0.0, "count": 0},
             "dsa": {"params": 0, "bytes": 0.0, "flops": 0.0,
                      "act_bytes": 0.0, "count": 0},
+            "postattentionlayernorm": {"params": 0, "bytes": 0.0, "flops": 0.0,
+                                       "act_bytes": 0.0, "count": 0},
             "denseffn": {"params": 0, "bytes": 0.0, "flops": 0.0,
                               "act_bytes": 0.0, "count": 0},
             "sharedexperts": {"params": 0, "bytes": 0.0, "flops": 0.0,
@@ -380,15 +379,15 @@ class GLMModel:
         excel_summary["wordembedding"]["act_bytes"] += _emb_stats.num_activations_bytes
         excel_summary["wordembedding"]["count"] += 1
 
-        # input_layernorm (num_layers instances, but Excel layers input_layernorm
-        # into MLA's per-layer cost — H7 = D2 = 78).
-        _iln_stats = self.input_layernorm.analyze(S, B)
-        iln_count = self.num_layers
-        excel_summary["inputlayernorm"]["params"] += _iln_stats.num_params * iln_count
-        excel_summary["inputlayernorm"]["bytes"] += _iln_stats.num_bytes * iln_count
-        excel_summary["inputlayernorm"]["flops"] += _iln_stats.num_flops * iln_count
-        excel_summary["inputlayernorm"]["act_bytes"] += _iln_stats.num_activations_bytes * iln_count
-        excel_summary["inputlayernorm"]["count"] += iln_count
+        # One Pre and one Post RMSNorm in every transformer layer.
+        for key, norm in (("inputlayernorm", self.input_layernorm),
+                          ("postattentionlayernorm", self.post_attention_layernorm)):
+            stats = norm.analyze(S, B)
+            excel_summary[key]["params"] += stats.num_params * self.num_layers
+            excel_summary[key]["bytes"] += stats.num_bytes * self.num_layers
+            excel_summary[key]["flops"] += stats.num_flops * self.num_layers
+            excel_summary[key]["act_bytes"] += stats.num_activations_bytes * self.num_layers
+            excel_summary[key]["count"] += self.num_layers
 
         # output_layernorm (1 instance)
         _oln_stats = self.output_layernorm.analyze(S, B)
@@ -407,16 +406,12 @@ class GLMModel:
         excel_summary["lmhead"]["count"] += 1
 
         # Per-layer modules — scaled by counts per Excel H column.
-        # MLA: 1 per layer (H11 = D2 = 78)
-        # DSA: 1 per layer (H27 = D2 = 78)
-        # Indexer: 1 per shared-indexer layer (H20 = D23 = 21)
-        # DenseFFN: 1 per dense layer (H31 = D3 = 3)
-        # SharedExperts: 1 per moe-layer × n_shared (H37 = D4 * D20)
-        #                 params scaled by n_shared; per-layer FFN one SharedExperts module
-        #                 returns ALL n_shared experts' params in compute_flops.
-        # RoutedExperts: 1 per moe-layer; params scaled by n_routed per moe-layer.
-        #                  H43 = D4 * D19 = moe_layers * n_routed
-        # MoERouter: 1 per moe-layer (H48 = D4 = 75)
+        # MLA: 1 per layer (H15 = D2 = 78)
+        # DSA: 1 per layer (H33 = D2 = 78)
+        # Indexer: 1 per full layer (bundled config: H25 = D23 = 21)
+        # DenseFFN: 1 per dense layer (H39 = D3 = 3)
+        # SharedExperts/RoutedExperts: one complete expert bank per MoE layer.
+        # MoERouter: 1 per moe-layer (H61 = D4 = 75)
         _mla_stats = MLA("tmpl", self.layer_specs[0].attention_config).analyze(S, B)
         _dsa_stats = DSA("tmpd", self.layer_specs[0].attention_config).analyze(S, B)
         mla_count = self.num_layers
@@ -432,7 +427,7 @@ class GLMModel:
         excel_summary["dsa"]["act_bytes"] += _dsa_stats.num_activations_bytes * dsa_count
         excel_summary["dsa"]["count"] += dsa_count
 
-        # Indexer (21 shared instances)
+        # Indexer: count owners only; shared layers reuse their Top-K indices.
         _idx_stats = Indexer("tmpi", self.layer_specs[0].indexer_config).analyze(S, B)
         idx_count = self.num_indexer_layers
         excel_summary["indexer"]["params"] += _idx_stats.num_params * idx_count
@@ -450,18 +445,18 @@ class GLMModel:
         excel_summary["denseffn"]["act_bytes"] += _dffn_stats.num_activations_bytes * dffn_count
         excel_summary["denseffn"]["count"] += dffn_count
 
-        # SharedExperts (per moe-layer × n_shared; one module returns one expert)
+        # SharedExperts: one module already includes all shared experts in a layer.
         _se_stats = SharedExperts("tmpse", self.layer_specs[self.first_k_dense].shared_experts_config).analyze(S, B)
-        shared_count = self.num_moe_layers * self.config.get("n_shared_experts", 1)
+        shared_count = self.num_moe_layers
         excel_summary["sharedexperts"]["params"] += _se_stats.num_params * shared_count
         excel_summary["sharedexperts"]["bytes"] += _se_stats.num_bytes * shared_count
         excel_summary["sharedexperts"]["flops"] += _se_stats.num_flops * self.num_moe_layers
         excel_summary["sharedexperts"]["act_bytes"] += _se_stats.num_activations_bytes * self.num_moe_layers
         excel_summary["sharedexperts"]["count"] += shared_count
 
-        # RoutedExperts (per moe-layer × n_routed; one module returns one expert)
+        # RoutedExperts: one module already includes all routed experts in a layer.
         _re_stats = RoutedExperts("tmpre", self.layer_specs[self.first_k_dense].routed_experts_config).analyze(S, B)
-        routed_count = self.num_moe_layers * self.config.get("n_routed_experts", 1)
+        routed_count = self.num_moe_layers
         excel_summary["routedexperts"]["params"] += _re_stats.num_params * routed_count
         excel_summary["routedexperts"]["bytes"] += _re_stats.num_bytes * routed_count
         excel_summary["routedexperts"]["flops"] += _re_stats.num_flops * self.num_moe_layers
@@ -480,11 +475,8 @@ class GLMModel:
         # KV cache estimate
         kv_cache = self.estimate_kv_cache(S, B)
 
-        # Excel-aligned totals: sum the per-module excel summary, which
-        # applies the correct instance-count multipliers (H column).
-        # The per-layer walk above counts one expert per RoutedExperts /
-        # SharedExperts instance, so its total understates the real model;
-        # the per-module summary is the source of truth.
+        # Grouped totals count the same complete modules as the per-layer
+        # report, plus the embedding, final RMSNorm, and LM head.
         total_params = int(sum(v["params"] for v in excel_summary.values()))
         total_bytes = float(sum(v["bytes"] for v in excel_summary.values()))
         total_flops = float(sum(v["flops"] for v in excel_summary.values()))
@@ -527,44 +519,17 @@ class GLMModel:
         }
 
     def _active_params(self, total_params: int) -> int:
-        """Estimate activated params per token.
+        """Workbook H72: all parameters except unselected routed experts.
 
-        Excel L59 (41.25B) intermittent per-token activation includes:
-          - WordEmbedding        (×1)
-          - input_layernorm      (×1, NOT all 78 — only the active layer)
-          - MLA                  (×1 per token passing through 78 layers)
-          - DSA                  (×1 per layer × 78)
-          - Indexer              (×1 per active shared-indexer layer)
-          - DenseFFN              (×3 dense layers)
-          - SharedExperts         (×1 per MoE-layer, all n_shared always on)
-          - RoutedExperts         (×num_experts_per_tok per MoE-layer)
-          - MoERouter             (×1 per MoE-layer)
-          - LMHead                (×1)
-          - output_layernorm      (×1)
+        This includes every layer's Pre/Post RMSNorm, embedding, LM head,
+        and all shared experts.  Routed experts contribute only Top-K.
         """
-        spec_dense = self.layer_specs[0]
-        spec_moe = self.layer_specs[self.first_k_dense]
-        mla_one = sum(p.num_elements for p in MLA("a", spec_dense.attention_config).compute_params())
-        dsa_one = sum(p.num_elements for p in DSA("d", spec_dense.attention_config).compute_params())
-        idx_one = sum(p.num_elements for p in Indexer("i", spec_moe.indexer_config).compute_params())
-        dffn_one = sum(p.num_elements for p in DenseFFN("f", spec_dense.dense_ffn_config).compute_params())
-        se_one = sum(p.num_elements for p in SharedExperts("s", spec_moe.shared_experts_config).compute_params())
-        re_one = sum(p.num_elements for p in RoutedExperts("r", spec_moe.routed_experts_config).compute_params())
-        mr_one = sum(p.num_elements for p in MoERouter("m", spec_moe.moe_router_config).compute_params())
-
-        active = 0
-        active += self.embedding.params_count()                          # word embedding
-        active += self.input_layernorm.params_count()                     # input_layernorm
-        active += int(mla_one * self.num_layers)                          # MLA ×78
-        active += int(dsa_one * self.num_layers)                          # DSA ×78
-        active += int(idx_one * self.num_indexer_layers)                  # Indexer ×21
-        active += int(dffn_one * self.first_k_dense)                      # DenseFFN ×3
-        active += int(se_one * self.num_moe_layers * self.config.get("n_shared_experts", 1))  # Shared ×75
-        active += int(re_one * self.num_moe_layers * self.config.get("num_experts_per_tok", 1))  # Routed topk ×75
-        active += int(mr_one * self.num_moe_layers)                       # MoERouter ×75
-        active += self.output_layernorm.params_count()                    # output_layernorm
-        active += self.lm_head.params_count()                             # LMHead
-        return active
+        inactive = sum(
+            mod.params_count() - mod.active_params_count()
+            for modules in self.layers for mod in modules
+            if isinstance(mod, RoutedExperts)
+        )
+        return total_params - inactive
 
     # -----------------------------------------------------------------
     # KV cache estimate

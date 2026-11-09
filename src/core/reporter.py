@@ -8,7 +8,7 @@ from .formatter import format_bytes, format_flops, format_number
 REPORT_WIDTH = 91
 MODULE_ORDER = ["wordembedding", "gate", "routedexpert", "sharedexpert", "swa", "csa", "hca", "mhc"]
 GLM_MODULE_ORDER = ["wordembedding", "inputlayernorm", "mla", "indexer", "dsa",
-                    "denseffn", "sharedexperts", "routedexperts", "moerouter",
+                    "postattentionlayernorm", "denseffn", "sharedexperts", "routedexperts", "moerouter",
                     "outputlayernorm", "lmhead"]
 HY4_MODULE_ORDER = ["wordembedding", "ihcinit", "ihc", "sublayernorm", "mla",
                     "indexerproj", "indexersel", "denseffn", "moe", "ihchead",

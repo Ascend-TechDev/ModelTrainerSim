@@ -4,6 +4,9 @@ GLM-5.2 MoE layers (75 layers) include ``n_routed_experts`` total
 experts, of which ``num_experts_per_tok`` are activated per token via
 top-k routing.
 
+Each module represents all routed experts in one MoE layer.  Parameters
+and weight storage include every expert; FLOPs and activations use Top-K.
+
 Per the Excel reference (sheet 'GLM-5.2-743B', rows 42-46):
 
   L42 = D13 * D15 * 2                 (= H * moe_intermediate * 2, gate_up fused)
@@ -51,18 +54,22 @@ class RoutedExperts(BaseModule):
         self.dtype: DType = DType(config.get("dtype", "bf16"))
 
     # -----------------------------------------------------------------
-    # Parameters — Excel rows 42-43
-    #   Returns params for ONE routed expert.  The model top-level
-    #   multiplies by n_routed_experts * num_moe_layers (Excel H43).
+    # Parameters for all routed experts in one MoE layer.
+    # GLM-5.2-743B-4k rows 49-51; the model scales only by MoE layer count.
     # -----------------------------------------------------------------
 
     def compute_params(self) -> list[ModuleParamBreakdown]:
         H = self.hidden_size
         I = self.moe_intermediate_size
+        E = self.n_routed_experts
         return [
-            ModuleParamBreakdown("gate_up_proj", (H, I * 2), H * I * 2, self.dtype),
-            ModuleParamBreakdown("down_proj", (I, H), I * H, self.dtype),
+            ModuleParamBreakdown("gate_up_proj", (E, H, I * 2), E * H * I * 2, self.dtype),
+            ModuleParamBreakdown("down_proj", (E, I, H), E * I * H, self.dtype),
         ]
+
+    def active_params_count(self) -> int:
+        """Parameters of the Top-K routed experts selected per token."""
+        return 3 * self.hidden_size * self.moe_intermediate_size * self.num_experts_per_tok
 
     # -----------------------------------------------------------------
     # FLOPs — derived from projection shapes (Excel does not provide cells).

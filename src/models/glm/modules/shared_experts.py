@@ -47,19 +47,18 @@ class SharedExperts(BaseModule):
         self.dtype: DType = DType(config.get("dtype", "bf16"))
 
     # -----------------------------------------------------------------
-    # Parameters — Excel rows 36-38
-    #   Returns params for ONE shared expert instance.  The model
-    #   top-level multiplies by num_shared_experts * num_moe_layers
-    #   (Excel H37 = D4 * D20).
+    # Parameters for all shared experts in one MoE layer.
+    # The model top-level scales only by the number of MoE layers.
     # -----------------------------------------------------------------
 
     def compute_params(self) -> list[ModuleParamBreakdown]:
         H = self.hidden_size
         I = self.moe_intermediate_size
+        E = self.num_shared_experts
         return [
-            ModuleParamBreakdown("gate_proj", (H, I), H * I, self.dtype),
-            ModuleParamBreakdown("up_proj", (H, I), H * I, self.dtype),
-            ModuleParamBreakdown("down_proj", (I, H), I * H, self.dtype),
+            ModuleParamBreakdown("gate_proj", (E, H, I), E * H * I, self.dtype),
+            ModuleParamBreakdown("up_proj", (E, H, I), E * H * I, self.dtype),
+            ModuleParamBreakdown("down_proj", (E, I, H), E * I * H, self.dtype),
         ]
 
     # -----------------------------------------------------------------

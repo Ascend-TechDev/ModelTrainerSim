@@ -43,13 +43,10 @@ class Embedding(BaseModule):
 
 
 class InputLayerNorm(BaseModule):
-    """RMSNorm applied to the embedding output (before first layer).
-
-    Excel rows 6-7:   M6 = 1.14e-5 GB  (negligible);  L6 = D13 = 6144.
-    Activations column U6 = B*S*H * num_layers.
-    """
+    """Pre-attention RMSNorm in each transformer layer (workbook row 7)."""
 
     module_type = "InputLayerNorm"
+    param_name = "input_layernorm"
 
     def __init__(self, name: str, config: dict[str, Any]):
         super().__init__(name, config)
@@ -58,7 +55,7 @@ class InputLayerNorm(BaseModule):
 
     def compute_params(self) -> list[ModuleParamBreakdown]:
         H = self.hidden_size
-        return [ModuleParamBreakdown("input_layernorm", (H,), H, self.dtype)]
+        return [ModuleParamBreakdown(self.param_name, (H,), H, self.dtype)]
 
     def compute_flops(self, seq_len: int, batch_size: int = 1) -> float:
         return 2 * batch_size * seq_len * self.hidden_size
@@ -66,6 +63,13 @@ class InputLayerNorm(BaseModule):
     def compute_activations(self, seq_len: int, batch_size: int = 1) -> float:
         B, S = batch_size, seq_len
         return B * S * self.hidden_size * get_dtype_size(self.dtype)
+
+
+class PostAttentionLayerNorm(InputLayerNorm):
+    """Post-attention RMSNorm before each layer's FFN (workbook row 8)."""
+
+    module_type = "PostAttentionLayerNorm"
+    param_name = "post_attention_layernorm"
 
 
 class OutputLayerNorm(BaseModule):
