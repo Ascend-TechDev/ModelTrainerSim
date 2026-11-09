@@ -1,0 +1,3803 @@
+{
+  "model_family": "Kimi-10T",
+  "config": {
+    "hidden_size": 7168,
+    "num_layers": 128,
+    "vocab_size": 163840,
+    "max_seq_len": 4096,
+    "dtype": "bf16",
+    "variant": "next-50t"
+  },
+  "source": {
+    "architecture_file": "/home/y00893431/ModelTrainerSim/src/models/kimi/config.json",
+    "sha256": "7ce7a82f7f1beeb92dd90c96794436ea79ad758f85c32eeb9c9c5c15c3c8b8a3"
+  },
+  "model_params": {
+    "total_params": 49996306470688,
+    "embedding_params": 1174405120,
+    "total_weight_bytes": 99992612941376.0,
+    "active_params_per_token": 684152346400
+  },
+  "compute": {
+    "total_flops_per_sample": 5603866699628544.0,
+    "total_flops_at_gbs": 5603866699628544.0,
+    "flops_per_token": 1368131518464.0,
+    "batch_size": 1,
+    "seq_len": 4096,
+    "mbs": 1,
+    "gbs": 1,
+    "scope": "GEMM main terms per the workbook R-column (2*M*N*Q); attention QK/PV on s^2; no softmax/conv-state/elementwise counts."
+  },
+  "memory": {
+    "weight_memory_bytes": 99992612941376.0,
+    "activation_memory_bytes": 1693942218752.0,
+    "activation_estimate_kind": "Sum of named forward tensors per the workbook N-column (x2B; logits x4B); not measured peak.",
+    "kv_cache_bytes": 150994944,
+    "cache_scope": "MLA latent KV per MLA layer (kv_lora + rope dims, bf16); KDA conv states are not modeled in the workbook.",
+    "training_total_bytes": 599965072889216.0,
+    "training_breakdown": {
+      "weights": 99992612941376.0,
+      "gradients": 99992612941376.0,
+      "master_weights": 0.0,
+      "optimizer_states": 399979847006464.0,
+      "total": 599965072889216.0,
+      "optimizer": "per_group",
+      "groups": {
+        "adamw": {
+          "weights": 4697620480.0,
+          "gradients": 4697620480.0,
+          "master_weights": 0.0,
+          "optimizer_states": 28185722880,
+          "params": 2348810240,
+          "optimizer": "adamw",
+          "optimizer_bytes_per_param": 12,
+          "total": 37580963840.0
+        },
+        "muon": {
+          "weights": 99987915320896.0,
+          "gradients": 99987915320896.0,
+          "master_weights": 0.0,
+          "optimizer_states": 399951661283584,
+          "params": 49993957660448,
+          "optimizer": "muon",
+          "optimizer_bytes_per_param": 8,
+          "total": 599927491925376.0
+        }
+      },
+      "per_rank": {
+        "weights": 99992612941376.0,
+        "gradients": 99992612941376.0,
+        "master_weights": 0.0,
+        "optimizer_states": 399979847006464.0,
+        "total": 599965072889216.0,
+        "note": "Weights/gradients: dense modules \u00f7TP, routed experts \u00f7EP (row G68). Optimizer states \u00f7 total cards (row K66). Shared experts, latent mapping and gate are placed with the dense modules (\u00f7TP)."
+      },
+      "note": "Whole-model training states; per_rank carries the sharded static memory for one card under the workbook mesh (rows G63/G68/K66). Activation memory and all-gather traffic are reported separately."
+    },
+    "per_rank_static_bytes": 599965072889216.0,
+    "per_rank": {
+      "weights": 99992612941376.0,
+      "gradients": 99992612941376.0,
+      "master_weights": 0.0,
+      "optimizer_states": 399979847006464.0,
+      "total": 599965072889216.0,
+      "note": "Weights/gradients: dense modules \u00f7TP, routed experts \u00f7EP (row G68). Optimizer states \u00f7 total cards (row K66). Shared experts, latent mapping and gate are placed with the dense modules (\u00f7TP)."
+    }
+  },
+  "per_module_summary": {
+    "WordEmbedding": {
+      "params": 1174405120,
+      "bytes": 2348810240.0,
+      "flops": 0.0,
+      "act_bytes": 58720256.0,
+      "count": 1
+    },
+    "PreNorm": {
+      "params": 7168,
+      "bytes": 14336.0,
+      "flops": 0.0,
+      "act_bytes": 58720256.0,
+      "count": 1
+    },
+    "PostNorm": {
+      "params": 7168,
+      "bytes": 14336.0,
+      "flops": 0.0,
+      "act_bytes": 58720256.0,
+      "count": 1
+    },
+    "FinalNorm": {
+      "params": 7168,
+      "bytes": 14336.0,
+      "flops": 0.0,
+      "act_bytes": 58720256.0,
+      "count": 1
+    },
+    "OutputLayer": {
+      "params": 1174405120,
+      "bytes": 2348810240.0,
+      "flops": 9620726743040.0,
+      "act_bytes": 2684354560.0,
+      "count": 1
+    },
+    "DenseFFN": {
+      "params": 726663168,
+      "bytes": 1453326336.0,
+      "flops": 5952824672256.0,
+      "act_bytes": 889192448.0,
+      "count": 1
+    },
+    "MLA": {
+      "params": 7430275072,
+      "bytes": 14860550144.0,
+      "flops": 100450695118848.0,
+      "act_bytes": 41892708352.0,
+      "count": 32
+    },
+    "MoE": {
+      "params": 49943645364224,
+      "bytes": 99887290728448.0,
+      "flops": 5142630430146560.0,
+      "act_bytes": 1489405411328.0,
+      "count": 127
+    },
+    "KDA": {
+      "params": 42155336480,
+      "bytes": 84310672960.0,
+      "flops": 345212022947840.0,
+      "act_bytes": 158835671040.0,
+      "count": 95
+    }
+  },
+  "per_module_summary_excel": {
+    "wordembedding": {
+      "params": 1174405120,
+      "bytes": 2348810240.0,
+      "flops": 0.0,
+      "act_bytes": 58720256.0,
+      "count": 1
+    },
+    "prenorm": {
+      "params": 7168,
+      "bytes": 14336.0,
+      "flops": 0.0,
+      "act_bytes": 58720256.0,
+      "count": 1
+    },
+    "postnorm": {
+      "params": 7168,
+      "bytes": 14336.0,
+      "flops": 0.0,
+      "act_bytes": 58720256.0,
+      "count": 1
+    },
+    "finalnorm": {
+      "params": 7168,
+      "bytes": 14336.0,
+      "flops": 0.0,
+      "act_bytes": 58720256.0,
+      "count": 1
+    },
+    "mla": {
+      "params": 7430275072,
+      "bytes": 14860550144.0,
+      "flops": 100450695118848.0,
+      "act_bytes": 41892708352.0,
+      "count": 32
+    },
+    "kda": {
+      "params": 42155336480,
+      "bytes": 84310672960.0,
+      "flops": 345212022947840.0,
+      "act_bytes": 158835671040.0,
+      "count": 95
+    },
+    "denseffn": {
+      "params": 726663168,
+      "bytes": 1453326336.0,
+      "flops": 5952824672256.0,
+      "act_bytes": 889192448.0,
+      "count": 1
+    },
+    "moe": {
+      "params": 49943645364224,
+      "bytes": 99887290728448.0,
+      "flops": 5142630430146560.0,
+      "act_bytes": 1489405411328.0,
+      "count": 127
+    },
+    "outputlayer": {
+      "params": 1174405120,
+      "bytes": 2348810240.0,
+      "flops": 9620726743040.0,
+      "act_bytes": 2684354560.0,
+      "count": 1
+    }
+  },
+  "layers": [
+    {
+      "layer_id": 0,
+      "attention_type": "None",
+      "ffn_type": "Dense",
+      "use_indexer": false,
+      "params": 726663168,
+      "bytes": 1453326336.0,
+      "flops": 5952824672256,
+      "act_bytes": 889192448,
+      "modules": [
+        {
+          "type": "DenseFFN",
+          "name": "layer0_DenseFFN",
+          "params": 726663168,
+          "bytes": 1453326336.0,
+          "flops": 5952824672256,
+          "act_bytes": 889192448
+        }
+      ]
+    },
+    {
+      "layer_id": 1,
+      "attention_type": "MLA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393489246208,
+      "bytes": 786978492416.0,
+      "flops": 43632237215744,
+      "act_bytes": 13036748800,
+      "modules": [
+        {
+          "type": "MLA",
+          "name": "layer1_MLA",
+          "params": 232196096,
+          "bytes": 464392192.0,
+          "flops": 3139084222464,
+          "act_bytes": 1309147136
+        },
+        {
+          "type": "MoE",
+          "name": "layer1_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 2,
+      "attention_type": "MLA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393489246208,
+      "bytes": 786978492416.0,
+      "flops": 43632237215744,
+      "act_bytes": 13036748800,
+      "modules": [
+        {
+          "type": "MLA",
+          "name": "layer2_MLA",
+          "params": 232196096,
+          "bytes": 464392192.0,
+          "flops": 3139084222464,
+          "act_bytes": 1309147136
+        },
+        {
+          "type": "MoE",
+          "name": "layer2_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 3,
+      "attention_type": "MLA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393489246208,
+      "bytes": 786978492416.0,
+      "flops": 43632237215744,
+      "act_bytes": 13036748800,
+      "modules": [
+        {
+          "type": "MLA",
+          "name": "layer3_MLA",
+          "params": 232196096,
+          "bytes": 464392192.0,
+          "flops": 3139084222464,
+          "act_bytes": 1309147136
+        },
+        {
+          "type": "MoE",
+          "name": "layer3_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 4,
+      "attention_type": "MLA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393489246208,
+      "bytes": 786978492416.0,
+      "flops": 43632237215744,
+      "act_bytes": 13036748800,
+      "modules": [
+        {
+          "type": "MLA",
+          "name": "layer4_MLA",
+          "params": 232196096,
+          "bytes": 464392192.0,
+          "flops": 3139084222464,
+          "act_bytes": 1309147136
+        },
+        {
+          "type": "MoE",
+          "name": "layer4_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 5,
+      "attention_type": "MLA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393489246208,
+      "bytes": 786978492416.0,
+      "flops": 43632237215744,
+      "act_bytes": 13036748800,
+      "modules": [
+        {
+          "type": "MLA",
+          "name": "layer5_MLA",
+          "params": 232196096,
+          "bytes": 464392192.0,
+          "flops": 3139084222464,
+          "act_bytes": 1309147136
+        },
+        {
+          "type": "MoE",
+          "name": "layer5_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 6,
+      "attention_type": "MLA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393489246208,
+      "bytes": 786978492416.0,
+      "flops": 43632237215744,
+      "act_bytes": 13036748800,
+      "modules": [
+        {
+          "type": "MLA",
+          "name": "layer6_MLA",
+          "params": 232196096,
+          "bytes": 464392192.0,
+          "flops": 3139084222464,
+          "act_bytes": 1309147136
+        },
+        {
+          "type": "MoE",
+          "name": "layer6_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 7,
+      "attention_type": "MLA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393489246208,
+      "bytes": 786978492416.0,
+      "flops": 43632237215744,
+      "act_bytes": 13036748800,
+      "modules": [
+        {
+          "type": "MLA",
+          "name": "layer7_MLA",
+          "params": 232196096,
+          "bytes": 464392192.0,
+          "flops": 3139084222464,
+          "act_bytes": 1309147136
+        },
+        {
+          "type": "MoE",
+          "name": "layer7_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 8,
+      "attention_type": "MLA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393489246208,
+      "bytes": 786978492416.0,
+      "flops": 43632237215744,
+      "act_bytes": 13036748800,
+      "modules": [
+        {
+          "type": "MLA",
+          "name": "layer8_MLA",
+          "params": 232196096,
+          "bytes": 464392192.0,
+          "flops": 3139084222464,
+          "act_bytes": 1309147136
+        },
+        {
+          "type": "MoE",
+          "name": "layer8_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 9,
+      "attention_type": "MLA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393489246208,
+      "bytes": 786978492416.0,
+      "flops": 43632237215744,
+      "act_bytes": 13036748800,
+      "modules": [
+        {
+          "type": "MLA",
+          "name": "layer9_MLA",
+          "params": 232196096,
+          "bytes": 464392192.0,
+          "flops": 3139084222464,
+          "act_bytes": 1309147136
+        },
+        {
+          "type": "MoE",
+          "name": "layer9_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 10,
+      "attention_type": "MLA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393489246208,
+      "bytes": 786978492416.0,
+      "flops": 43632237215744,
+      "act_bytes": 13036748800,
+      "modules": [
+        {
+          "type": "MLA",
+          "name": "layer10_MLA",
+          "params": 232196096,
+          "bytes": 464392192.0,
+          "flops": 3139084222464,
+          "act_bytes": 1309147136
+        },
+        {
+          "type": "MoE",
+          "name": "layer10_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 11,
+      "attention_type": "MLA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393489246208,
+      "bytes": 786978492416.0,
+      "flops": 43632237215744,
+      "act_bytes": 13036748800,
+      "modules": [
+        {
+          "type": "MLA",
+          "name": "layer11_MLA",
+          "params": 232196096,
+          "bytes": 464392192.0,
+          "flops": 3139084222464,
+          "act_bytes": 1309147136
+        },
+        {
+          "type": "MoE",
+          "name": "layer11_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 12,
+      "attention_type": "MLA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393489246208,
+      "bytes": 786978492416.0,
+      "flops": 43632237215744,
+      "act_bytes": 13036748800,
+      "modules": [
+        {
+          "type": "MLA",
+          "name": "layer12_MLA",
+          "params": 232196096,
+          "bytes": 464392192.0,
+          "flops": 3139084222464,
+          "act_bytes": 1309147136
+        },
+        {
+          "type": "MoE",
+          "name": "layer12_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 13,
+      "attention_type": "MLA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393489246208,
+      "bytes": 786978492416.0,
+      "flops": 43632237215744,
+      "act_bytes": 13036748800,
+      "modules": [
+        {
+          "type": "MLA",
+          "name": "layer13_MLA",
+          "params": 232196096,
+          "bytes": 464392192.0,
+          "flops": 3139084222464,
+          "act_bytes": 1309147136
+        },
+        {
+          "type": "MoE",
+          "name": "layer13_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 14,
+      "attention_type": "MLA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393489246208,
+      "bytes": 786978492416.0,
+      "flops": 43632237215744,
+      "act_bytes": 13036748800,
+      "modules": [
+        {
+          "type": "MLA",
+          "name": "layer14_MLA",
+          "params": 232196096,
+          "bytes": 464392192.0,
+          "flops": 3139084222464,
+          "act_bytes": 1309147136
+        },
+        {
+          "type": "MoE",
+          "name": "layer14_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 15,
+      "attention_type": "MLA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393489246208,
+      "bytes": 786978492416.0,
+      "flops": 43632237215744,
+      "act_bytes": 13036748800,
+      "modules": [
+        {
+          "type": "MLA",
+          "name": "layer15_MLA",
+          "params": 232196096,
+          "bytes": 464392192.0,
+          "flops": 3139084222464,
+          "act_bytes": 1309147136
+        },
+        {
+          "type": "MoE",
+          "name": "layer15_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 16,
+      "attention_type": "MLA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393489246208,
+      "bytes": 786978492416.0,
+      "flops": 43632237215744,
+      "act_bytes": 13036748800,
+      "modules": [
+        {
+          "type": "MLA",
+          "name": "layer16_MLA",
+          "params": 232196096,
+          "bytes": 464392192.0,
+          "flops": 3139084222464,
+          "act_bytes": 1309147136
+        },
+        {
+          "type": "MoE",
+          "name": "layer16_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 17,
+      "attention_type": "MLA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393489246208,
+      "bytes": 786978492416.0,
+      "flops": 43632237215744,
+      "act_bytes": 13036748800,
+      "modules": [
+        {
+          "type": "MLA",
+          "name": "layer17_MLA",
+          "params": 232196096,
+          "bytes": 464392192.0,
+          "flops": 3139084222464,
+          "act_bytes": 1309147136
+        },
+        {
+          "type": "MoE",
+          "name": "layer17_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 18,
+      "attention_type": "MLA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393489246208,
+      "bytes": 786978492416.0,
+      "flops": 43632237215744,
+      "act_bytes": 13036748800,
+      "modules": [
+        {
+          "type": "MLA",
+          "name": "layer18_MLA",
+          "params": 232196096,
+          "bytes": 464392192.0,
+          "flops": 3139084222464,
+          "act_bytes": 1309147136
+        },
+        {
+          "type": "MoE",
+          "name": "layer18_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 19,
+      "attention_type": "MLA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393489246208,
+      "bytes": 786978492416.0,
+      "flops": 43632237215744,
+      "act_bytes": 13036748800,
+      "modules": [
+        {
+          "type": "MLA",
+          "name": "layer19_MLA",
+          "params": 232196096,
+          "bytes": 464392192.0,
+          "flops": 3139084222464,
+          "act_bytes": 1309147136
+        },
+        {
+          "type": "MoE",
+          "name": "layer19_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 20,
+      "attention_type": "MLA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393489246208,
+      "bytes": 786978492416.0,
+      "flops": 43632237215744,
+      "act_bytes": 13036748800,
+      "modules": [
+        {
+          "type": "MLA",
+          "name": "layer20_MLA",
+          "params": 232196096,
+          "bytes": 464392192.0,
+          "flops": 3139084222464,
+          "act_bytes": 1309147136
+        },
+        {
+          "type": "MoE",
+          "name": "layer20_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 21,
+      "attention_type": "MLA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393489246208,
+      "bytes": 786978492416.0,
+      "flops": 43632237215744,
+      "act_bytes": 13036748800,
+      "modules": [
+        {
+          "type": "MLA",
+          "name": "layer21_MLA",
+          "params": 232196096,
+          "bytes": 464392192.0,
+          "flops": 3139084222464,
+          "act_bytes": 1309147136
+        },
+        {
+          "type": "MoE",
+          "name": "layer21_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 22,
+      "attention_type": "MLA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393489246208,
+      "bytes": 786978492416.0,
+      "flops": 43632237215744,
+      "act_bytes": 13036748800,
+      "modules": [
+        {
+          "type": "MLA",
+          "name": "layer22_MLA",
+          "params": 232196096,
+          "bytes": 464392192.0,
+          "flops": 3139084222464,
+          "act_bytes": 1309147136
+        },
+        {
+          "type": "MoE",
+          "name": "layer22_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 23,
+      "attention_type": "MLA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393489246208,
+      "bytes": 786978492416.0,
+      "flops": 43632237215744,
+      "act_bytes": 13036748800,
+      "modules": [
+        {
+          "type": "MLA",
+          "name": "layer23_MLA",
+          "params": 232196096,
+          "bytes": 464392192.0,
+          "flops": 3139084222464,
+          "act_bytes": 1309147136
+        },
+        {
+          "type": "MoE",
+          "name": "layer23_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 24,
+      "attention_type": "MLA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393489246208,
+      "bytes": 786978492416.0,
+      "flops": 43632237215744,
+      "act_bytes": 13036748800,
+      "modules": [
+        {
+          "type": "MLA",
+          "name": "layer24_MLA",
+          "params": 232196096,
+          "bytes": 464392192.0,
+          "flops": 3139084222464,
+          "act_bytes": 1309147136
+        },
+        {
+          "type": "MoE",
+          "name": "layer24_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 25,
+      "attention_type": "MLA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393489246208,
+      "bytes": 786978492416.0,
+      "flops": 43632237215744,
+      "act_bytes": 13036748800,
+      "modules": [
+        {
+          "type": "MLA",
+          "name": "layer25_MLA",
+          "params": 232196096,
+          "bytes": 464392192.0,
+          "flops": 3139084222464,
+          "act_bytes": 1309147136
+        },
+        {
+          "type": "MoE",
+          "name": "layer25_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 26,
+      "attention_type": "MLA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393489246208,
+      "bytes": 786978492416.0,
+      "flops": 43632237215744,
+      "act_bytes": 13036748800,
+      "modules": [
+        {
+          "type": "MLA",
+          "name": "layer26_MLA",
+          "params": 232196096,
+          "bytes": 464392192.0,
+          "flops": 3139084222464,
+          "act_bytes": 1309147136
+        },
+        {
+          "type": "MoE",
+          "name": "layer26_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 27,
+      "attention_type": "MLA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393489246208,
+      "bytes": 786978492416.0,
+      "flops": 43632237215744,
+      "act_bytes": 13036748800,
+      "modules": [
+        {
+          "type": "MLA",
+          "name": "layer27_MLA",
+          "params": 232196096,
+          "bytes": 464392192.0,
+          "flops": 3139084222464,
+          "act_bytes": 1309147136
+        },
+        {
+          "type": "MoE",
+          "name": "layer27_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 28,
+      "attention_type": "MLA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393489246208,
+      "bytes": 786978492416.0,
+      "flops": 43632237215744,
+      "act_bytes": 13036748800,
+      "modules": [
+        {
+          "type": "MLA",
+          "name": "layer28_MLA",
+          "params": 232196096,
+          "bytes": 464392192.0,
+          "flops": 3139084222464,
+          "act_bytes": 1309147136
+        },
+        {
+          "type": "MoE",
+          "name": "layer28_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 29,
+      "attention_type": "MLA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393489246208,
+      "bytes": 786978492416.0,
+      "flops": 43632237215744,
+      "act_bytes": 13036748800,
+      "modules": [
+        {
+          "type": "MLA",
+          "name": "layer29_MLA",
+          "params": 232196096,
+          "bytes": 464392192.0,
+          "flops": 3139084222464,
+          "act_bytes": 1309147136
+        },
+        {
+          "type": "MoE",
+          "name": "layer29_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 30,
+      "attention_type": "MLA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393489246208,
+      "bytes": 786978492416.0,
+      "flops": 43632237215744,
+      "act_bytes": 13036748800,
+      "modules": [
+        {
+          "type": "MLA",
+          "name": "layer30_MLA",
+          "params": 232196096,
+          "bytes": 464392192.0,
+          "flops": 3139084222464,
+          "act_bytes": 1309147136
+        },
+        {
+          "type": "MoE",
+          "name": "layer30_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 31,
+      "attention_type": "MLA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393489246208,
+      "bytes": 786978492416.0,
+      "flops": 43632237215744,
+      "act_bytes": 13036748800,
+      "modules": [
+        {
+          "type": "MLA",
+          "name": "layer31_MLA",
+          "params": 232196096,
+          "bytes": 464392192.0,
+          "flops": 3139084222464,
+          "act_bytes": 1309147136
+        },
+        {
+          "type": "MoE",
+          "name": "layer31_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 32,
+      "attention_type": "MLA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393489246208,
+      "bytes": 786978492416.0,
+      "flops": 43632237215744,
+      "act_bytes": 13036748800,
+      "modules": [
+        {
+          "type": "MLA",
+          "name": "layer32_MLA",
+          "params": 232196096,
+          "bytes": 464392192.0,
+          "flops": 3139084222464,
+          "act_bytes": 1309147136
+        },
+        {
+          "type": "MoE",
+          "name": "layer32_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 33,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer33_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer33_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 34,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer34_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer34_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 35,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer35_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer35_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 36,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer36_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer36_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 37,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer37_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer37_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 38,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer38_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer38_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 39,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer39_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer39_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 40,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer40_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer40_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 41,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer41_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer41_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 42,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer42_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer42_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 43,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer43_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer43_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 44,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer44_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer44_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 45,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer45_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer45_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 46,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer46_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer46_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 47,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer47_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer47_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 48,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer48_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer48_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 49,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer49_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer49_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 50,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer50_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer50_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 51,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer51_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer51_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 52,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer52_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer52_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 53,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer53_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer53_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 54,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer54_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer54_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 55,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer55_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer55_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 56,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer56_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer56_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 57,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer57_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer57_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 58,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer58_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer58_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 59,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer59_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer59_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 60,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer60_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer60_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 61,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer61_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer61_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 62,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer62_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer62_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 63,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer63_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer63_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 64,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer64_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer64_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 65,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer65_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer65_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 66,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer66_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer66_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 67,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer67_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer67_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 68,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer68_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer68_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 69,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer69_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer69_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 70,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer70_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer70_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 71,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer71_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer71_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 72,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer72_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer72_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 73,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer73_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer73_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 74,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer74_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer74_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 75,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer75_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer75_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 76,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer76_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer76_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 77,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer77_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer77_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 78,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer78_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer78_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 79,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer79_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer79_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 80,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer80_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer80_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 81,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer81_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer81_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 82,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer82_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer82_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 83,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer83_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer83_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 84,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer84_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer84_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 85,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer85_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer85_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 86,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer86_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer86_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 87,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer87_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer87_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 88,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer88_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer88_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 89,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer89_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer89_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 90,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer90_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer90_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 91,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer91_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer91_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 92,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer92_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer92_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 93,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer93_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer93_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 94,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer94_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer94_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 95,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer95_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer95_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 96,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer96_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer96_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 97,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer97_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer97_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 98,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer98_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer98_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 99,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer99_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer99_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 100,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer100_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer100_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 101,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer101_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer101_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 102,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer102_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer102_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 103,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer103_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer103_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 104,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer104_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer104_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 105,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer105_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer105_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 106,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer106_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer106_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 107,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer107_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer107_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 108,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer108_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer108_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 109,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer109_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer109_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 110,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer110_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer110_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 111,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer111_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer111_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 112,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer112_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer112_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 113,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer113_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer113_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 114,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer114_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer114_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 115,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer115_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer115_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 116,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer116_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer116_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 117,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer117_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer117_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 118,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer118_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer118_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 119,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer119_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer119_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 120,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer120_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer120_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 121,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer121_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer121_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 122,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer122_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer122_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 123,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer123_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer123_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 124,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer124_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer124_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 125,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer125_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer125_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 126,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer126_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer126_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    },
+    {
+      "layer_id": 127,
+      "attention_type": "KDA",
+      "ffn_type": "MoE",
+      "use_indexer": false,
+      "params": 393700790496,
+      "bytes": 787401580992.0,
+      "flops": 44126963761152,
+      "act_bytes": 13399556096,
+      "modules": [
+        {
+          "type": "KDA",
+          "name": "layer127_KDA",
+          "params": 443740384,
+          "bytes": 887480768.0,
+          "flops": 3633810767872,
+          "act_bytes": 1671954432
+        },
+        {
+          "type": "MoE",
+          "name": "layer127_MoE",
+          "params": 393257050112,
+          "bytes": 786514100224.0,
+          "flops": 40493152993280,
+          "act_bytes": 11727601664
+        }
+      ]
+    }
+  ],
+  "notes": [
+    "10T Kimi is a planning extension derived from the workbook '10T Kimi \u663e\u5b58\u5efa\u6a21.xlsx' (sheets 10T-\u6df1\u5ea6-v2 / 10T-\u5bbd\u5ea6-v2); no official HF config is pinned.",
+    "Param totals reproduce the workbook I-column formula chain; the cached J55 on \u6df1\u5ea6-v2 predates the v2 MLA g_proj \u8865\u6863 and is stale.",
+    "Optimizer states: AdamW 12 B/param (embedding + LM head), Muon 8 B/param (everything else); gradients 2 B; master weights 0.",
+    "Per-rank static memory: dense modules /TP, routed experts /EP, optimizer states /total cards (rows G63/G68/K66).",
+    "Dense layer (layer 0) carries no attention in \u6df1\u5ea6-v2 (mla+kda == moe_layers) and an MLA in \u5bbd\u5ea6-v2 (mla+kda == num_hidden_layers), mirroring the workbook counts.",
+    "All displayed GiB use 2^30 bytes. JSON carries raw bytes."
+  ]
+}
