@@ -95,7 +95,9 @@ ModelTrainerSimluator/
 │   ├── hy4_fsdp_config.json         # Hy4 纯 FSDP 策略场景
 │   ├── hy4_efsdp_config.json        # Hy4 EFSDP 策略场景
 │   ├── kimi_10t_deep_v2_config.json # Kimi 10T 深度-v2 场景
-│   └── kimi_10t_wide_v2_config.json # Kimi 10T 宽度-v2 场景
+│   ├── kimi_10t_wide_v2_config.json # Kimi 10T 宽度-v2 场景
+│   ├── kimi_50t_config.json         # Kimi Next-50T 规划变体
+│   └── kimi_100t_config.json        # Kimi Next-100T 规划变体
 ├── examples/
 │   ├── quick_start.py               # 示例脚本
 │   └── hy4_strategies.py            # Hy4 EP/FSDP/EFSDP 对比脚本
@@ -129,9 +131,11 @@ python -m src.main --list-models
 # 分析 Hunyuan Hy4（iHC 四残差流 + Gated MLA + MoE）
 python -m src.main --config configs/hy4_10t_config.json
 
-# 分析 Kimi（MLA + KDA 混合注意力 + Latent MoE，深度/宽度两个变体）
+# 分析 Kimi（MLA + KDA 混合注意力 + Latent MoE，10T 深度/宽度 + 50T/100T 规划变体）
 python -m src.main --config configs/kimi_10t_deep_v2_config.json
 python -m src.main --config configs/kimi_10t_wide_v2_config.json
+python -m src.main --config configs/kimi_50t_config.json
+python -m src.main --config configs/kimi_100t_config.json
 ```
 
 ### Python API 使用

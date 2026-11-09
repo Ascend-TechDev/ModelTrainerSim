@@ -44,6 +44,18 @@ DEEP_MOE_PARAMS = (2048 * 3 * 3584 * 3072 + 6 * 7168 * 3072
 WIDE_MOE_PARAMS = (2048 * 3 * 5120 * 4096 + 6 * 7168 * 4096
                    + 2048 * 7168 + 2 * 7168 * 5120)   # I32 (wide)
 
+# Next-50T / Next-100T (planning table 模型参数.png; latent solved from
+# the 50T / 105T total-param targets — see the config descriptions).
+# Norms: pre_norm + post_norm + final norm = 3*h (I3/I4/I34).
+FIFTY_MOE_PARAMS = (4096 * 3 * 5204 * 6144 + 2 * 3 * 7168 * 6144
+                    + 4096 * 7168 + 2 * 7168 * 5204)
+FIFTY_TOTAL = (2 * 163840 * 7168 + 3 * 7168 + 32 * MLA_PARAMS + 95 * KDA_PARAMS
+               + DENSE_PARAMS + 127 * FIFTY_MOE_PARAMS)
+HUNDRED_MOE_PARAMS = (6144 * 3 * 5143 * 8192 + 4 * 3 * 7168 * 8192
+                      + 6144 * 7168 + 2 * 7168 * 5143)
+HUNDRED_TOTAL = (2 * 163840 * 7168 + 3 * 7168 + 34 * MLA_PARAMS + 101 * KDA_PARAMS
+                 + DENSE_PARAMS + 135 * HUNDRED_MOE_PARAMS)
+
 
 class TestKimi(unittest.TestCase):
     @classmethod
@@ -52,6 +64,10 @@ class TestKimi(unittest.TestCase):
         cls.report = ModelRegistry.build("Kimi-10T", cls.config).analyze(16384, 1)
         cls.wide_config = ConfigParser(ROOT / "configs/kimi_10t_wide_v2_config.json").load()
         cls.wide_report = ModelRegistry.build("Kimi-10T", cls.wide_config).analyze(4096, 1)
+        cls.fifty_config = ConfigParser(ROOT / "configs/kimi_50t_config.json").load()
+        cls.fifty_report = ModelRegistry.build("Kimi-10T", cls.fifty_config).analyze(4096, 1)
+        cls.hundred_config = ConfigParser(ROOT / "configs/kimi_100t_config.json").load()
+        cls.hundred_report = ModelRegistry.build("Kimi-10T", cls.hundred_config).analyze(4096, 1)
 
     def analyze(self, cfg=None, S=16384, B=1):
         return ModelRegistry.build("Kimi-10T", cfg or self.config).analyze(S, B)
@@ -210,6 +226,48 @@ class TestKimi(unittest.TestCase):
         # MLA latent KV: kv_lora + rope per position, bf16, on MLA layers only.
         S = 16384
         self.assertEqual(self.report["memory"]["kv_cache_bytes"], 34 * S * (512 + 64) * 2)
+
+    # -- Next-50T / Next-100T (planning table 模型参数.png) -----------------------------
+
+    def test_fifty_total_and_topology(self):
+        r = self.fifty_report
+        self.assertEqual(r["model_params"]["total_params"], FIFTY_TOTAL)
+        # 命中规划表 50T 目标（±0.1%）。
+        self.assertLess(abs(FIFTY_TOTAL - 50e12) / 50e12, 0.001)
+        rows = r["layers"]
+        self.assertEqual(len(rows), 128)
+        self.assertEqual(sum(1 for x in rows if x["attention_type"] == "MLA"), 32)
+        self.assertEqual(sum(1 for x in rows if x["attention_type"] == "KDA"), 95)
+        self.assertEqual(sum(1 for x in rows if x["ffn_type"] == "MoE"), 127)
+        self.assertEqual(rows[0]["ffn_type"], "Dense")
+        excel = r["per_module_summary_excel"]
+        self.assertEqual(excel["moe"]["params"] / excel["moe"]["count"], FIFTY_MOE_PARAMS)
+        self.assertEqual(excel["moe"]["count"], 127)
+
+    def test_hundred_total_and_topology(self):
+        r = self.hundred_report
+        self.assertEqual(r["model_params"]["total_params"], HUNDRED_TOTAL)
+        self.assertLess(abs(HUNDRED_TOTAL - 105e12) / 105e12, 0.001)
+        rows = r["layers"]
+        self.assertEqual(len(rows), 136)
+        self.assertEqual(sum(1 for x in rows if x["attention_type"] == "MLA"), 34)
+        self.assertEqual(sum(1 for x in rows if x["attention_type"] == "KDA"), 101)
+        self.assertEqual(sum(1 for x in rows if x["ffn_type"] == "MoE"), 135)
+        excel = r["per_module_summary_excel"]
+        self.assertEqual(excel["moe"]["params"] / excel["moe"]["count"], HUNDRED_MOE_PARAMS)
+        self.assertEqual(excel["moe"]["count"], 135)
+
+    def test_fifty_hundred_active_params(self):
+        # 激活参数按 workbook 口径（规划表的 600B / 1.0T 为四舍五入值，
+        # 其计算口径未公开；已知变体同样比表值高 1.5~3.7%）。
+        h, v = 7168, 163840
+        for r, (latent, moe_h, E, topk, shared, moe_layers, n_mla, n_kda) in [
+                (self.fifty_report, (5204, 6144, 4096, 48, 2, 127, 32, 95)),
+                (self.hundred_report, (5143, 8192, 6144, 56, 4, 135, 34, 101))]:
+            active = (v * h * 2 + 3 * h + n_mla * MLA_PARAMS + n_kda * KDA_PARAMS
+                      + DENSE_PARAMS + moe_layers * (E * h + 2 * h * latent
+                      + shared * 3 * h * moe_h + topk * 3 * latent * moe_h))
+            self.assertEqual(r["model_params"]["active_params_per_token"], active)
 
     # -- report & validation ---------------------------------------------------------
 

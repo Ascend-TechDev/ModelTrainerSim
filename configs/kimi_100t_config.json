@@ -1,0 +1,20 @@
+{
+  "model": "Kimi-10T",
+  "architecture_file": "../src/models/kimi/config.json",
+  "variant": "next-100t",
+  "description": "Kimi Next-100T: 136 layers (1 Dense + 34 MLA + 101 KDA + 135 Latent-MoE), E=6144, Top-56, shared 4, moe_h 8192. latent_moe_size=5143 solved so the param total hits the 105T target from the planning table; activation ~1.12T under the workbook convention (the table's rounded 1.0T uses an unpublished convention).",
+  "architecture": {
+    "num_hidden_layers": 136,
+    "moe_layers": 135,
+    "mla_layers": 34,
+    "kda_layers": 101,
+    "top_k": 56,
+    "latent_moe_size": 5143,
+    "moe_intermediate_size": 8192,
+    "n_routed_experts": 6144,
+    "n_shared_experts": 4
+  },
+  "max_seq_len": 4096,
+  "dtype": "bf16",
+  "batch_size": 1
+}
