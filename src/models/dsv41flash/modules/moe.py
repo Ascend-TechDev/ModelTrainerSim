@@ -26,8 +26,6 @@ class MoE(FlashModule):
             if dspark else arch["n_activated_experts"], "n_activated_experts",
         )
         self.num_shared_experts = _positive(arch.get("n_shared_experts", 1), "n_shared_experts")
-        if self.num_shared_experts != 1:
-            raise ValueError("Reference V4.1-Flash MoE requires exactly one shared expert")
         if self.num_activated_experts > self.num_experts:
             raise ValueError("n_activated_experts cannot exceed n_routed_experts")
         self.vision_enabled = bool(arch.get("vision_n_layers", 0) > 0)
@@ -48,9 +46,11 @@ class MoE(FlashModule):
         if self.vision_enabled:
             parameters.append(self.parameter(f"{prefix}.gate.bias_vl", (E,)))
         # Leading E describes the inventory of E independently owned experts.
+        # Leading shared count describes the always-on expert copies (Flash: 1).
+        shared = self.num_shared_experts
         for weight, shape in (("w1", (I, H)), ("w2", (H, I)), ("w3", (I, H))):
             parameters.append(self.parameter(f"{prefix}.experts.*.{weight}.weight", (E, *shape), "expert"))
-            parameters.append(self.parameter(f"{prefix}.shared_experts.{weight}.weight", shape))
+            parameters.append(self.parameter(f"{prefix}.shared_experts.{weight}.weight", (shared, *shape)))
         return parameters
 
     # -----------------------------------------------------------------

@@ -1,0 +1,3714 @@
+{
+  "model_family": "DSV4Pro",
+  "config": {
+    "hidden_size": 7168,
+    "num_layers": 61,
+    "vocab_size": 129280,
+    "max_seq_len": 131072,
+    "dtype": "bf16"
+  },
+  "model_params": {
+    "total_params": 1573579339072,
+    "embedding_params": 1853358080,
+    "total_weight_bytes": 1596163300736.0,
+    "active_params_per_token": 49386324928
+  },
+  "compute": {
+    "total_flops_per_sample": 7.81542673654743e+16,
+    "flops_per_token": 596269740032.0,
+    "batch_size": 1,
+    "seq_len": 131072
+  },
+  "memory": {
+    "weight_memory_bytes": 1596163300736.0,
+    "activation_memory_bytes": 3365249077248.0,
+    "kv_cache_bytes": 16106127360.0,
+    "training_total_bytes": 12769306405888.0,
+    "training_breakdown": {
+      "weights": 1596163300736.0,
+      "gradients": 1596163300736.0,
+      "master_weights": 3192326601472.0,
+      "optimizer_states": 6384653202944.0,
+      "total": 12769306405888.0,
+      "optimizer": "adamw",
+      "note": "Excludes activation and KV cache.  Add memory['activation_memory_bytes'] and memory['kv_cache_bytes'] for full estimate."
+    }
+  },
+  "per_module_summary": {
+    "mHC": {
+      "params": 87508160,
+      "bytes": 175016320.0,
+      "flops": 5502021126528.0,
+      "act_bytes": 0.0,
+      "count": 122
+    },
+    "CSA": {
+      "params": 9752328192,
+      "bytes": 19504656384.0,
+      "flops": 2.908345640733901e+16,
+      "act_bytes": 1314797244416.0,
+      "count": 31
+    },
+    "Indexer": {
+      "params": 707327744,
+      "bytes": 1414655488.0,
+      "flops": 204525805764608.0,
+      "act_bytes": 41607495680.0,
+      "count": 31
+    },
+    "MoE": {
+      "params": 1551641981312,
+      "bytes": 1552288585216.0,
+      "flops": 4.436831891147981e+16,
+      "act_bytes": 745042608128.0,
+      "count": 61
+    },
+    "HCA": {
+      "params": 9233258496,
+      "bytes": 18466516992.0,
+      "flops": 2678931895353344.0,
+      "act_bytes": 1222194233344.0,
+      "count": 29
+    },
+    "SWA": {
+      "params": 303577088,
+      "bytes": 607154176.0,
+      "flops": 1204532704968704.0,
+      "act_bytes": 41607495680.0,
+      "count": 1
+    }
+  },
+  "per_module_summary_excel": {
+    "wordembedding": {
+      "params": 926679040,
+      "bytes": 1853358080.0,
+      "flops": 0.0,
+      "act_bytes": 0.0,
+      "count": 1
+    },
+    "gate": {
+      "params": 216117632,
+      "bytes": 862721536.0,
+      "flops": 687731638272.0,
+      "act_bytes": 95944704.0,
+      "count": 61
+    },
+    "routedexpert": {
+      "params": 1547396186112,
+      "bytes": 1547396186112.0,
+      "flops": 4.436763117984154e+16,
+      "act_bytes": 745042608128.0,
+      "count": 61
+    },
+    "sharedexpert": {
+      "params": 4029677568,
+      "bytes": 4029677568.0,
+      "flops": 0.0,
+      "act_bytes": 0.0,
+      "count": 61
+    },
+    "swa": {
+      "params": 303577088,
+      "bytes": 607154176.0,
+      "flops": 1204532704968704.0,
+      "act_bytes": 41607495680.0,
+      "count": 1
+    },
+    "csa": {
+      "params": 10459655936,
+      "bytes": 20919311872.0,
+      "flops": 2.908345640733901e+16,
+      "act_bytes": 1356404740096.0,
+      "count": 31
+    },
+    "hca": {
+      "params": 9233258496,
+      "bytes": 18466516992.0,
+      "flops": 2678931895353344.0,
+      "act_bytes": 1222194233344.0,
+      "count": 29
+    },
+    "mhc": {
+      "params": 43754080,
+      "bytes": 87508160.0,
+      "flops": 2751010563264.0,
+      "act_bytes": 0.0,
+      "count": 61.0
+    }
+  },
+  "layers": [
+    {
+      "layer_id": 0,
+      "attention_type": "CSA",
+      "use_indexer": true,
+      "ffn_type": "MoE",
+      "params": 25775596608,
+      "bytes": 26125039488.0,
+      "flops": 1672213307197312.0,
+      "act_bytes": 55968804864.0,
+      "modules": [
+        {
+          "type": "mHC",
+          "name": "layer0_mHC_pre",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        },
+        {
+          "type": "CSA",
+          "name": "layer0_CSA",
+          "params": 314591232,
+          "bytes": 629182464.0,
+          "flops": 938176013139968.0,
+          "act_bytes": 42412814336.0,
+          "extra": {}
+        },
+        {
+          "type": "Indexer",
+          "name": "layer0_Indexer",
+          "params": 22817024,
+          "bytes": 45634048.0,
+          "flops": 6597606637568.0,
+          "act_bytes": 1342177280.0,
+          "extra": {}
+        },
+        {
+          "type": "MoE",
+          "name": "layer0_MoE",
+          "params": 25436753792,
+          "bytes": 25447353856.0,
+          "flops": 727349490352128.0,
+          "act_bytes": 12213813248.0,
+          "extra": {
+            "total_expert_params": 25367150592,
+            "per_expert_params": 66060288,
+            "activated_expert_params": 396361728,
+            "shared_expert_params": 66060288,
+            "activation_ratio": 0.01818181818181818
+          }
+        },
+        {
+          "type": "mHC",
+          "name": "layer0_mHC_post",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        }
+      ]
+    },
+    {
+      "layer_id": 1,
+      "attention_type": "HCA",
+      "use_indexer": false,
+      "ffn_type": "MoE",
+      "params": 25756576576,
+      "bytes": 26086999424.0,
+      "flops": 819816649328512.0,
+      "act_bytes": 54358441984.0,
+      "modules": [
+        {
+          "type": "mHC",
+          "name": "layer1_mHC_pre",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        },
+        {
+          "type": "HCA",
+          "name": "layer1_HCA",
+          "params": 318388224,
+          "bytes": 636776448.0,
+          "flops": 92376961908736.0,
+          "act_bytes": 42144628736.0,
+          "extra": {}
+        },
+        {
+          "type": "MoE",
+          "name": "layer1_MoE",
+          "params": 25436753792,
+          "bytes": 25447353856.0,
+          "flops": 727349490352128.0,
+          "act_bytes": 12213813248.0,
+          "extra": {
+            "total_expert_params": 25367150592,
+            "per_expert_params": 66060288,
+            "activated_expert_params": 396361728,
+            "shared_expert_params": 66060288,
+            "activation_ratio": 0.01818181818181818
+          }
+        },
+        {
+          "type": "mHC",
+          "name": "layer1_mHC_post",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        }
+      ]
+    },
+    {
+      "layer_id": 2,
+      "attention_type": "CSA",
+      "use_indexer": true,
+      "ffn_type": "MoE",
+      "params": 25775596608,
+      "bytes": 26125039488.0,
+      "flops": 1672213307197312.0,
+      "act_bytes": 55968804864.0,
+      "modules": [
+        {
+          "type": "mHC",
+          "name": "layer2_mHC_pre",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        },
+        {
+          "type": "CSA",
+          "name": "layer2_CSA",
+          "params": 314591232,
+          "bytes": 629182464.0,
+          "flops": 938176013139968.0,
+          "act_bytes": 42412814336.0,
+          "extra": {}
+        },
+        {
+          "type": "Indexer",
+          "name": "layer2_Indexer",
+          "params": 22817024,
+          "bytes": 45634048.0,
+          "flops": 6597606637568.0,
+          "act_bytes": 1342177280.0,
+          "extra": {}
+        },
+        {
+          "type": "MoE",
+          "name": "layer2_MoE",
+          "params": 25436753792,
+          "bytes": 25447353856.0,
+          "flops": 727349490352128.0,
+          "act_bytes": 12213813248.0,
+          "extra": {
+            "total_expert_params": 25367150592,
+            "per_expert_params": 66060288,
+            "activated_expert_params": 396361728,
+            "shared_expert_params": 66060288,
+            "activation_ratio": 0.01818181818181818
+          }
+        },
+        {
+          "type": "mHC",
+          "name": "layer2_mHC_post",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        }
+      ]
+    },
+    {
+      "layer_id": 3,
+      "attention_type": "HCA",
+      "use_indexer": false,
+      "ffn_type": "MoE",
+      "params": 25756576576,
+      "bytes": 26086999424.0,
+      "flops": 819816649328512.0,
+      "act_bytes": 54358441984.0,
+      "modules": [
+        {
+          "type": "mHC",
+          "name": "layer3_mHC_pre",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        },
+        {
+          "type": "HCA",
+          "name": "layer3_HCA",
+          "params": 318388224,
+          "bytes": 636776448.0,
+          "flops": 92376961908736.0,
+          "act_bytes": 42144628736.0,
+          "extra": {}
+        },
+        {
+          "type": "MoE",
+          "name": "layer3_MoE",
+          "params": 25436753792,
+          "bytes": 25447353856.0,
+          "flops": 727349490352128.0,
+          "act_bytes": 12213813248.0,
+          "extra": {
+            "total_expert_params": 25367150592,
+            "per_expert_params": 66060288,
+            "activated_expert_params": 396361728,
+            "shared_expert_params": 66060288,
+            "activation_ratio": 0.01818181818181818
+          }
+        },
+        {
+          "type": "mHC",
+          "name": "layer3_mHC_post",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        }
+      ]
+    },
+    {
+      "layer_id": 4,
+      "attention_type": "CSA",
+      "use_indexer": true,
+      "ffn_type": "MoE",
+      "params": 25775596608,
+      "bytes": 26125039488.0,
+      "flops": 1672213307197312.0,
+      "act_bytes": 55968804864.0,
+      "modules": [
+        {
+          "type": "mHC",
+          "name": "layer4_mHC_pre",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        },
+        {
+          "type": "CSA",
+          "name": "layer4_CSA",
+          "params": 314591232,
+          "bytes": 629182464.0,
+          "flops": 938176013139968.0,
+          "act_bytes": 42412814336.0,
+          "extra": {}
+        },
+        {
+          "type": "Indexer",
+          "name": "layer4_Indexer",
+          "params": 22817024,
+          "bytes": 45634048.0,
+          "flops": 6597606637568.0,
+          "act_bytes": 1342177280.0,
+          "extra": {}
+        },
+        {
+          "type": "MoE",
+          "name": "layer4_MoE",
+          "params": 25436753792,
+          "bytes": 25447353856.0,
+          "flops": 727349490352128.0,
+          "act_bytes": 12213813248.0,
+          "extra": {
+            "total_expert_params": 25367150592,
+            "per_expert_params": 66060288,
+            "activated_expert_params": 396361728,
+            "shared_expert_params": 66060288,
+            "activation_ratio": 0.01818181818181818
+          }
+        },
+        {
+          "type": "mHC",
+          "name": "layer4_mHC_post",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        }
+      ]
+    },
+    {
+      "layer_id": 5,
+      "attention_type": "HCA",
+      "use_indexer": false,
+      "ffn_type": "MoE",
+      "params": 25756576576,
+      "bytes": 26086999424.0,
+      "flops": 819816649328512.0,
+      "act_bytes": 54358441984.0,
+      "modules": [
+        {
+          "type": "mHC",
+          "name": "layer5_mHC_pre",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        },
+        {
+          "type": "HCA",
+          "name": "layer5_HCA",
+          "params": 318388224,
+          "bytes": 636776448.0,
+          "flops": 92376961908736.0,
+          "act_bytes": 42144628736.0,
+          "extra": {}
+        },
+        {
+          "type": "MoE",
+          "name": "layer5_MoE",
+          "params": 25436753792,
+          "bytes": 25447353856.0,
+          "flops": 727349490352128.0,
+          "act_bytes": 12213813248.0,
+          "extra": {
+            "total_expert_params": 25367150592,
+            "per_expert_params": 66060288,
+            "activated_expert_params": 396361728,
+            "shared_expert_params": 66060288,
+            "activation_ratio": 0.01818181818181818
+          }
+        },
+        {
+          "type": "mHC",
+          "name": "layer5_mHC_post",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        }
+      ]
+    },
+    {
+      "layer_id": 6,
+      "attention_type": "CSA",
+      "use_indexer": true,
+      "ffn_type": "MoE",
+      "params": 25775596608,
+      "bytes": 26125039488.0,
+      "flops": 1672213307197312.0,
+      "act_bytes": 55968804864.0,
+      "modules": [
+        {
+          "type": "mHC",
+          "name": "layer6_mHC_pre",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        },
+        {
+          "type": "CSA",
+          "name": "layer6_CSA",
+          "params": 314591232,
+          "bytes": 629182464.0,
+          "flops": 938176013139968.0,
+          "act_bytes": 42412814336.0,
+          "extra": {}
+        },
+        {
+          "type": "Indexer",
+          "name": "layer6_Indexer",
+          "params": 22817024,
+          "bytes": 45634048.0,
+          "flops": 6597606637568.0,
+          "act_bytes": 1342177280.0,
+          "extra": {}
+        },
+        {
+          "type": "MoE",
+          "name": "layer6_MoE",
+          "params": 25436753792,
+          "bytes": 25447353856.0,
+          "flops": 727349490352128.0,
+          "act_bytes": 12213813248.0,
+          "extra": {
+            "total_expert_params": 25367150592,
+            "per_expert_params": 66060288,
+            "activated_expert_params": 396361728,
+            "shared_expert_params": 66060288,
+            "activation_ratio": 0.01818181818181818
+          }
+        },
+        {
+          "type": "mHC",
+          "name": "layer6_mHC_post",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        }
+      ]
+    },
+    {
+      "layer_id": 7,
+      "attention_type": "HCA",
+      "use_indexer": false,
+      "ffn_type": "MoE",
+      "params": 25756576576,
+      "bytes": 26086999424.0,
+      "flops": 819816649328512.0,
+      "act_bytes": 54358441984.0,
+      "modules": [
+        {
+          "type": "mHC",
+          "name": "layer7_mHC_pre",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        },
+        {
+          "type": "HCA",
+          "name": "layer7_HCA",
+          "params": 318388224,
+          "bytes": 636776448.0,
+          "flops": 92376961908736.0,
+          "act_bytes": 42144628736.0,
+          "extra": {}
+        },
+        {
+          "type": "MoE",
+          "name": "layer7_MoE",
+          "params": 25436753792,
+          "bytes": 25447353856.0,
+          "flops": 727349490352128.0,
+          "act_bytes": 12213813248.0,
+          "extra": {
+            "total_expert_params": 25367150592,
+            "per_expert_params": 66060288,
+            "activated_expert_params": 396361728,
+            "shared_expert_params": 66060288,
+            "activation_ratio": 0.01818181818181818
+          }
+        },
+        {
+          "type": "mHC",
+          "name": "layer7_mHC_post",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        }
+      ]
+    },
+    {
+      "layer_id": 8,
+      "attention_type": "CSA",
+      "use_indexer": true,
+      "ffn_type": "MoE",
+      "params": 25775596608,
+      "bytes": 26125039488.0,
+      "flops": 1672213307197312.0,
+      "act_bytes": 55968804864.0,
+      "modules": [
+        {
+          "type": "mHC",
+          "name": "layer8_mHC_pre",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        },
+        {
+          "type": "CSA",
+          "name": "layer8_CSA",
+          "params": 314591232,
+          "bytes": 629182464.0,
+          "flops": 938176013139968.0,
+          "act_bytes": 42412814336.0,
+          "extra": {}
+        },
+        {
+          "type": "Indexer",
+          "name": "layer8_Indexer",
+          "params": 22817024,
+          "bytes": 45634048.0,
+          "flops": 6597606637568.0,
+          "act_bytes": 1342177280.0,
+          "extra": {}
+        },
+        {
+          "type": "MoE",
+          "name": "layer8_MoE",
+          "params": 25436753792,
+          "bytes": 25447353856.0,
+          "flops": 727349490352128.0,
+          "act_bytes": 12213813248.0,
+          "extra": {
+            "total_expert_params": 25367150592,
+            "per_expert_params": 66060288,
+            "activated_expert_params": 396361728,
+            "shared_expert_params": 66060288,
+            "activation_ratio": 0.01818181818181818
+          }
+        },
+        {
+          "type": "mHC",
+          "name": "layer8_mHC_post",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        }
+      ]
+    },
+    {
+      "layer_id": 9,
+      "attention_type": "HCA",
+      "use_indexer": false,
+      "ffn_type": "MoE",
+      "params": 25756576576,
+      "bytes": 26086999424.0,
+      "flops": 819816649328512.0,
+      "act_bytes": 54358441984.0,
+      "modules": [
+        {
+          "type": "mHC",
+          "name": "layer9_mHC_pre",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        },
+        {
+          "type": "HCA",
+          "name": "layer9_HCA",
+          "params": 318388224,
+          "bytes": 636776448.0,
+          "flops": 92376961908736.0,
+          "act_bytes": 42144628736.0,
+          "extra": {}
+        },
+        {
+          "type": "MoE",
+          "name": "layer9_MoE",
+          "params": 25436753792,
+          "bytes": 25447353856.0,
+          "flops": 727349490352128.0,
+          "act_bytes": 12213813248.0,
+          "extra": {
+            "total_expert_params": 25367150592,
+            "per_expert_params": 66060288,
+            "activated_expert_params": 396361728,
+            "shared_expert_params": 66060288,
+            "activation_ratio": 0.01818181818181818
+          }
+        },
+        {
+          "type": "mHC",
+          "name": "layer9_mHC_post",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        }
+      ]
+    },
+    {
+      "layer_id": 10,
+      "attention_type": "CSA",
+      "use_indexer": true,
+      "ffn_type": "MoE",
+      "params": 25775596608,
+      "bytes": 26125039488.0,
+      "flops": 1672213307197312.0,
+      "act_bytes": 55968804864.0,
+      "modules": [
+        {
+          "type": "mHC",
+          "name": "layer10_mHC_pre",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        },
+        {
+          "type": "CSA",
+          "name": "layer10_CSA",
+          "params": 314591232,
+          "bytes": 629182464.0,
+          "flops": 938176013139968.0,
+          "act_bytes": 42412814336.0,
+          "extra": {}
+        },
+        {
+          "type": "Indexer",
+          "name": "layer10_Indexer",
+          "params": 22817024,
+          "bytes": 45634048.0,
+          "flops": 6597606637568.0,
+          "act_bytes": 1342177280.0,
+          "extra": {}
+        },
+        {
+          "type": "MoE",
+          "name": "layer10_MoE",
+          "params": 25436753792,
+          "bytes": 25447353856.0,
+          "flops": 727349490352128.0,
+          "act_bytes": 12213813248.0,
+          "extra": {
+            "total_expert_params": 25367150592,
+            "per_expert_params": 66060288,
+            "activated_expert_params": 396361728,
+            "shared_expert_params": 66060288,
+            "activation_ratio": 0.01818181818181818
+          }
+        },
+        {
+          "type": "mHC",
+          "name": "layer10_mHC_post",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        }
+      ]
+    },
+    {
+      "layer_id": 11,
+      "attention_type": "HCA",
+      "use_indexer": false,
+      "ffn_type": "MoE",
+      "params": 25756576576,
+      "bytes": 26086999424.0,
+      "flops": 819816649328512.0,
+      "act_bytes": 54358441984.0,
+      "modules": [
+        {
+          "type": "mHC",
+          "name": "layer11_mHC_pre",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        },
+        {
+          "type": "HCA",
+          "name": "layer11_HCA",
+          "params": 318388224,
+          "bytes": 636776448.0,
+          "flops": 92376961908736.0,
+          "act_bytes": 42144628736.0,
+          "extra": {}
+        },
+        {
+          "type": "MoE",
+          "name": "layer11_MoE",
+          "params": 25436753792,
+          "bytes": 25447353856.0,
+          "flops": 727349490352128.0,
+          "act_bytes": 12213813248.0,
+          "extra": {
+            "total_expert_params": 25367150592,
+            "per_expert_params": 66060288,
+            "activated_expert_params": 396361728,
+            "shared_expert_params": 66060288,
+            "activation_ratio": 0.01818181818181818
+          }
+        },
+        {
+          "type": "mHC",
+          "name": "layer11_mHC_post",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        }
+      ]
+    },
+    {
+      "layer_id": 12,
+      "attention_type": "CSA",
+      "use_indexer": true,
+      "ffn_type": "MoE",
+      "params": 25775596608,
+      "bytes": 26125039488.0,
+      "flops": 1672213307197312.0,
+      "act_bytes": 55968804864.0,
+      "modules": [
+        {
+          "type": "mHC",
+          "name": "layer12_mHC_pre",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        },
+        {
+          "type": "CSA",
+          "name": "layer12_CSA",
+          "params": 314591232,
+          "bytes": 629182464.0,
+          "flops": 938176013139968.0,
+          "act_bytes": 42412814336.0,
+          "extra": {}
+        },
+        {
+          "type": "Indexer",
+          "name": "layer12_Indexer",
+          "params": 22817024,
+          "bytes": 45634048.0,
+          "flops": 6597606637568.0,
+          "act_bytes": 1342177280.0,
+          "extra": {}
+        },
+        {
+          "type": "MoE",
+          "name": "layer12_MoE",
+          "params": 25436753792,
+          "bytes": 25447353856.0,
+          "flops": 727349490352128.0,
+          "act_bytes": 12213813248.0,
+          "extra": {
+            "total_expert_params": 25367150592,
+            "per_expert_params": 66060288,
+            "activated_expert_params": 396361728,
+            "shared_expert_params": 66060288,
+            "activation_ratio": 0.01818181818181818
+          }
+        },
+        {
+          "type": "mHC",
+          "name": "layer12_mHC_post",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        }
+      ]
+    },
+    {
+      "layer_id": 13,
+      "attention_type": "HCA",
+      "use_indexer": false,
+      "ffn_type": "MoE",
+      "params": 25756576576,
+      "bytes": 26086999424.0,
+      "flops": 819816649328512.0,
+      "act_bytes": 54358441984.0,
+      "modules": [
+        {
+          "type": "mHC",
+          "name": "layer13_mHC_pre",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        },
+        {
+          "type": "HCA",
+          "name": "layer13_HCA",
+          "params": 318388224,
+          "bytes": 636776448.0,
+          "flops": 92376961908736.0,
+          "act_bytes": 42144628736.0,
+          "extra": {}
+        },
+        {
+          "type": "MoE",
+          "name": "layer13_MoE",
+          "params": 25436753792,
+          "bytes": 25447353856.0,
+          "flops": 727349490352128.0,
+          "act_bytes": 12213813248.0,
+          "extra": {
+            "total_expert_params": 25367150592,
+            "per_expert_params": 66060288,
+            "activated_expert_params": 396361728,
+            "shared_expert_params": 66060288,
+            "activation_ratio": 0.01818181818181818
+          }
+        },
+        {
+          "type": "mHC",
+          "name": "layer13_mHC_post",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        }
+      ]
+    },
+    {
+      "layer_id": 14,
+      "attention_type": "CSA",
+      "use_indexer": true,
+      "ffn_type": "MoE",
+      "params": 25775596608,
+      "bytes": 26125039488.0,
+      "flops": 1672213307197312.0,
+      "act_bytes": 55968804864.0,
+      "modules": [
+        {
+          "type": "mHC",
+          "name": "layer14_mHC_pre",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        },
+        {
+          "type": "CSA",
+          "name": "layer14_CSA",
+          "params": 314591232,
+          "bytes": 629182464.0,
+          "flops": 938176013139968.0,
+          "act_bytes": 42412814336.0,
+          "extra": {}
+        },
+        {
+          "type": "Indexer",
+          "name": "layer14_Indexer",
+          "params": 22817024,
+          "bytes": 45634048.0,
+          "flops": 6597606637568.0,
+          "act_bytes": 1342177280.0,
+          "extra": {}
+        },
+        {
+          "type": "MoE",
+          "name": "layer14_MoE",
+          "params": 25436753792,
+          "bytes": 25447353856.0,
+          "flops": 727349490352128.0,
+          "act_bytes": 12213813248.0,
+          "extra": {
+            "total_expert_params": 25367150592,
+            "per_expert_params": 66060288,
+            "activated_expert_params": 396361728,
+            "shared_expert_params": 66060288,
+            "activation_ratio": 0.01818181818181818
+          }
+        },
+        {
+          "type": "mHC",
+          "name": "layer14_mHC_post",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        }
+      ]
+    },
+    {
+      "layer_id": 15,
+      "attention_type": "HCA",
+      "use_indexer": false,
+      "ffn_type": "MoE",
+      "params": 25756576576,
+      "bytes": 26086999424.0,
+      "flops": 819816649328512.0,
+      "act_bytes": 54358441984.0,
+      "modules": [
+        {
+          "type": "mHC",
+          "name": "layer15_mHC_pre",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        },
+        {
+          "type": "HCA",
+          "name": "layer15_HCA",
+          "params": 318388224,
+          "bytes": 636776448.0,
+          "flops": 92376961908736.0,
+          "act_bytes": 42144628736.0,
+          "extra": {}
+        },
+        {
+          "type": "MoE",
+          "name": "layer15_MoE",
+          "params": 25436753792,
+          "bytes": 25447353856.0,
+          "flops": 727349490352128.0,
+          "act_bytes": 12213813248.0,
+          "extra": {
+            "total_expert_params": 25367150592,
+            "per_expert_params": 66060288,
+            "activated_expert_params": 396361728,
+            "shared_expert_params": 66060288,
+            "activation_ratio": 0.01818181818181818
+          }
+        },
+        {
+          "type": "mHC",
+          "name": "layer15_mHC_post",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        }
+      ]
+    },
+    {
+      "layer_id": 16,
+      "attention_type": "CSA",
+      "use_indexer": true,
+      "ffn_type": "MoE",
+      "params": 25775596608,
+      "bytes": 26125039488.0,
+      "flops": 1672213307197312.0,
+      "act_bytes": 55968804864.0,
+      "modules": [
+        {
+          "type": "mHC",
+          "name": "layer16_mHC_pre",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        },
+        {
+          "type": "CSA",
+          "name": "layer16_CSA",
+          "params": 314591232,
+          "bytes": 629182464.0,
+          "flops": 938176013139968.0,
+          "act_bytes": 42412814336.0,
+          "extra": {}
+        },
+        {
+          "type": "Indexer",
+          "name": "layer16_Indexer",
+          "params": 22817024,
+          "bytes": 45634048.0,
+          "flops": 6597606637568.0,
+          "act_bytes": 1342177280.0,
+          "extra": {}
+        },
+        {
+          "type": "MoE",
+          "name": "layer16_MoE",
+          "params": 25436753792,
+          "bytes": 25447353856.0,
+          "flops": 727349490352128.0,
+          "act_bytes": 12213813248.0,
+          "extra": {
+            "total_expert_params": 25367150592,
+            "per_expert_params": 66060288,
+            "activated_expert_params": 396361728,
+            "shared_expert_params": 66060288,
+            "activation_ratio": 0.01818181818181818
+          }
+        },
+        {
+          "type": "mHC",
+          "name": "layer16_mHC_post",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        }
+      ]
+    },
+    {
+      "layer_id": 17,
+      "attention_type": "HCA",
+      "use_indexer": false,
+      "ffn_type": "MoE",
+      "params": 25756576576,
+      "bytes": 26086999424.0,
+      "flops": 819816649328512.0,
+      "act_bytes": 54358441984.0,
+      "modules": [
+        {
+          "type": "mHC",
+          "name": "layer17_mHC_pre",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        },
+        {
+          "type": "HCA",
+          "name": "layer17_HCA",
+          "params": 318388224,
+          "bytes": 636776448.0,
+          "flops": 92376961908736.0,
+          "act_bytes": 42144628736.0,
+          "extra": {}
+        },
+        {
+          "type": "MoE",
+          "name": "layer17_MoE",
+          "params": 25436753792,
+          "bytes": 25447353856.0,
+          "flops": 727349490352128.0,
+          "act_bytes": 12213813248.0,
+          "extra": {
+            "total_expert_params": 25367150592,
+            "per_expert_params": 66060288,
+            "activated_expert_params": 396361728,
+            "shared_expert_params": 66060288,
+            "activation_ratio": 0.01818181818181818
+          }
+        },
+        {
+          "type": "mHC",
+          "name": "layer17_mHC_post",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        }
+      ]
+    },
+    {
+      "layer_id": 18,
+      "attention_type": "CSA",
+      "use_indexer": true,
+      "ffn_type": "MoE",
+      "params": 25775596608,
+      "bytes": 26125039488.0,
+      "flops": 1672213307197312.0,
+      "act_bytes": 55968804864.0,
+      "modules": [
+        {
+          "type": "mHC",
+          "name": "layer18_mHC_pre",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        },
+        {
+          "type": "CSA",
+          "name": "layer18_CSA",
+          "params": 314591232,
+          "bytes": 629182464.0,
+          "flops": 938176013139968.0,
+          "act_bytes": 42412814336.0,
+          "extra": {}
+        },
+        {
+          "type": "Indexer",
+          "name": "layer18_Indexer",
+          "params": 22817024,
+          "bytes": 45634048.0,
+          "flops": 6597606637568.0,
+          "act_bytes": 1342177280.0,
+          "extra": {}
+        },
+        {
+          "type": "MoE",
+          "name": "layer18_MoE",
+          "params": 25436753792,
+          "bytes": 25447353856.0,
+          "flops": 727349490352128.0,
+          "act_bytes": 12213813248.0,
+          "extra": {
+            "total_expert_params": 25367150592,
+            "per_expert_params": 66060288,
+            "activated_expert_params": 396361728,
+            "shared_expert_params": 66060288,
+            "activation_ratio": 0.01818181818181818
+          }
+        },
+        {
+          "type": "mHC",
+          "name": "layer18_mHC_post",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        }
+      ]
+    },
+    {
+      "layer_id": 19,
+      "attention_type": "HCA",
+      "use_indexer": false,
+      "ffn_type": "MoE",
+      "params": 25756576576,
+      "bytes": 26086999424.0,
+      "flops": 819816649328512.0,
+      "act_bytes": 54358441984.0,
+      "modules": [
+        {
+          "type": "mHC",
+          "name": "layer19_mHC_pre",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        },
+        {
+          "type": "HCA",
+          "name": "layer19_HCA",
+          "params": 318388224,
+          "bytes": 636776448.0,
+          "flops": 92376961908736.0,
+          "act_bytes": 42144628736.0,
+          "extra": {}
+        },
+        {
+          "type": "MoE",
+          "name": "layer19_MoE",
+          "params": 25436753792,
+          "bytes": 25447353856.0,
+          "flops": 727349490352128.0,
+          "act_bytes": 12213813248.0,
+          "extra": {
+            "total_expert_params": 25367150592,
+            "per_expert_params": 66060288,
+            "activated_expert_params": 396361728,
+            "shared_expert_params": 66060288,
+            "activation_ratio": 0.01818181818181818
+          }
+        },
+        {
+          "type": "mHC",
+          "name": "layer19_mHC_post",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        }
+      ]
+    },
+    {
+      "layer_id": 20,
+      "attention_type": "CSA",
+      "use_indexer": true,
+      "ffn_type": "MoE",
+      "params": 25775596608,
+      "bytes": 26125039488.0,
+      "flops": 1672213307197312.0,
+      "act_bytes": 55968804864.0,
+      "modules": [
+        {
+          "type": "mHC",
+          "name": "layer20_mHC_pre",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        },
+        {
+          "type": "CSA",
+          "name": "layer20_CSA",
+          "params": 314591232,
+          "bytes": 629182464.0,
+          "flops": 938176013139968.0,
+          "act_bytes": 42412814336.0,
+          "extra": {}
+        },
+        {
+          "type": "Indexer",
+          "name": "layer20_Indexer",
+          "params": 22817024,
+          "bytes": 45634048.0,
+          "flops": 6597606637568.0,
+          "act_bytes": 1342177280.0,
+          "extra": {}
+        },
+        {
+          "type": "MoE",
+          "name": "layer20_MoE",
+          "params": 25436753792,
+          "bytes": 25447353856.0,
+          "flops": 727349490352128.0,
+          "act_bytes": 12213813248.0,
+          "extra": {
+            "total_expert_params": 25367150592,
+            "per_expert_params": 66060288,
+            "activated_expert_params": 396361728,
+            "shared_expert_params": 66060288,
+            "activation_ratio": 0.01818181818181818
+          }
+        },
+        {
+          "type": "mHC",
+          "name": "layer20_mHC_post",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        }
+      ]
+    },
+    {
+      "layer_id": 21,
+      "attention_type": "HCA",
+      "use_indexer": false,
+      "ffn_type": "MoE",
+      "params": 25756576576,
+      "bytes": 26086999424.0,
+      "flops": 819816649328512.0,
+      "act_bytes": 54358441984.0,
+      "modules": [
+        {
+          "type": "mHC",
+          "name": "layer21_mHC_pre",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        },
+        {
+          "type": "HCA",
+          "name": "layer21_HCA",
+          "params": 318388224,
+          "bytes": 636776448.0,
+          "flops": 92376961908736.0,
+          "act_bytes": 42144628736.0,
+          "extra": {}
+        },
+        {
+          "type": "MoE",
+          "name": "layer21_MoE",
+          "params": 25436753792,
+          "bytes": 25447353856.0,
+          "flops": 727349490352128.0,
+          "act_bytes": 12213813248.0,
+          "extra": {
+            "total_expert_params": 25367150592,
+            "per_expert_params": 66060288,
+            "activated_expert_params": 396361728,
+            "shared_expert_params": 66060288,
+            "activation_ratio": 0.01818181818181818
+          }
+        },
+        {
+          "type": "mHC",
+          "name": "layer21_mHC_post",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        }
+      ]
+    },
+    {
+      "layer_id": 22,
+      "attention_type": "CSA",
+      "use_indexer": true,
+      "ffn_type": "MoE",
+      "params": 25775596608,
+      "bytes": 26125039488.0,
+      "flops": 1672213307197312.0,
+      "act_bytes": 55968804864.0,
+      "modules": [
+        {
+          "type": "mHC",
+          "name": "layer22_mHC_pre",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        },
+        {
+          "type": "CSA",
+          "name": "layer22_CSA",
+          "params": 314591232,
+          "bytes": 629182464.0,
+          "flops": 938176013139968.0,
+          "act_bytes": 42412814336.0,
+          "extra": {}
+        },
+        {
+          "type": "Indexer",
+          "name": "layer22_Indexer",
+          "params": 22817024,
+          "bytes": 45634048.0,
+          "flops": 6597606637568.0,
+          "act_bytes": 1342177280.0,
+          "extra": {}
+        },
+        {
+          "type": "MoE",
+          "name": "layer22_MoE",
+          "params": 25436753792,
+          "bytes": 25447353856.0,
+          "flops": 727349490352128.0,
+          "act_bytes": 12213813248.0,
+          "extra": {
+            "total_expert_params": 25367150592,
+            "per_expert_params": 66060288,
+            "activated_expert_params": 396361728,
+            "shared_expert_params": 66060288,
+            "activation_ratio": 0.01818181818181818
+          }
+        },
+        {
+          "type": "mHC",
+          "name": "layer22_mHC_post",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        }
+      ]
+    },
+    {
+      "layer_id": 23,
+      "attention_type": "HCA",
+      "use_indexer": false,
+      "ffn_type": "MoE",
+      "params": 25756576576,
+      "bytes": 26086999424.0,
+      "flops": 819816649328512.0,
+      "act_bytes": 54358441984.0,
+      "modules": [
+        {
+          "type": "mHC",
+          "name": "layer23_mHC_pre",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        },
+        {
+          "type": "HCA",
+          "name": "layer23_HCA",
+          "params": 318388224,
+          "bytes": 636776448.0,
+          "flops": 92376961908736.0,
+          "act_bytes": 42144628736.0,
+          "extra": {}
+        },
+        {
+          "type": "MoE",
+          "name": "layer23_MoE",
+          "params": 25436753792,
+          "bytes": 25447353856.0,
+          "flops": 727349490352128.0,
+          "act_bytes": 12213813248.0,
+          "extra": {
+            "total_expert_params": 25367150592,
+            "per_expert_params": 66060288,
+            "activated_expert_params": 396361728,
+            "shared_expert_params": 66060288,
+            "activation_ratio": 0.01818181818181818
+          }
+        },
+        {
+          "type": "mHC",
+          "name": "layer23_mHC_post",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        }
+      ]
+    },
+    {
+      "layer_id": 24,
+      "attention_type": "CSA",
+      "use_indexer": true,
+      "ffn_type": "MoE",
+      "params": 25775596608,
+      "bytes": 26125039488.0,
+      "flops": 1672213307197312.0,
+      "act_bytes": 55968804864.0,
+      "modules": [
+        {
+          "type": "mHC",
+          "name": "layer24_mHC_pre",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        },
+        {
+          "type": "CSA",
+          "name": "layer24_CSA",
+          "params": 314591232,
+          "bytes": 629182464.0,
+          "flops": 938176013139968.0,
+          "act_bytes": 42412814336.0,
+          "extra": {}
+        },
+        {
+          "type": "Indexer",
+          "name": "layer24_Indexer",
+          "params": 22817024,
+          "bytes": 45634048.0,
+          "flops": 6597606637568.0,
+          "act_bytes": 1342177280.0,
+          "extra": {}
+        },
+        {
+          "type": "MoE",
+          "name": "layer24_MoE",
+          "params": 25436753792,
+          "bytes": 25447353856.0,
+          "flops": 727349490352128.0,
+          "act_bytes": 12213813248.0,
+          "extra": {
+            "total_expert_params": 25367150592,
+            "per_expert_params": 66060288,
+            "activated_expert_params": 396361728,
+            "shared_expert_params": 66060288,
+            "activation_ratio": 0.01818181818181818
+          }
+        },
+        {
+          "type": "mHC",
+          "name": "layer24_mHC_post",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        }
+      ]
+    },
+    {
+      "layer_id": 25,
+      "attention_type": "HCA",
+      "use_indexer": false,
+      "ffn_type": "MoE",
+      "params": 25756576576,
+      "bytes": 26086999424.0,
+      "flops": 819816649328512.0,
+      "act_bytes": 54358441984.0,
+      "modules": [
+        {
+          "type": "mHC",
+          "name": "layer25_mHC_pre",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        },
+        {
+          "type": "HCA",
+          "name": "layer25_HCA",
+          "params": 318388224,
+          "bytes": 636776448.0,
+          "flops": 92376961908736.0,
+          "act_bytes": 42144628736.0,
+          "extra": {}
+        },
+        {
+          "type": "MoE",
+          "name": "layer25_MoE",
+          "params": 25436753792,
+          "bytes": 25447353856.0,
+          "flops": 727349490352128.0,
+          "act_bytes": 12213813248.0,
+          "extra": {
+            "total_expert_params": 25367150592,
+            "per_expert_params": 66060288,
+            "activated_expert_params": 396361728,
+            "shared_expert_params": 66060288,
+            "activation_ratio": 0.01818181818181818
+          }
+        },
+        {
+          "type": "mHC",
+          "name": "layer25_mHC_post",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        }
+      ]
+    },
+    {
+      "layer_id": 26,
+      "attention_type": "CSA",
+      "use_indexer": true,
+      "ffn_type": "MoE",
+      "params": 25775596608,
+      "bytes": 26125039488.0,
+      "flops": 1672213307197312.0,
+      "act_bytes": 55968804864.0,
+      "modules": [
+        {
+          "type": "mHC",
+          "name": "layer26_mHC_pre",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        },
+        {
+          "type": "CSA",
+          "name": "layer26_CSA",
+          "params": 314591232,
+          "bytes": 629182464.0,
+          "flops": 938176013139968.0,
+          "act_bytes": 42412814336.0,
+          "extra": {}
+        },
+        {
+          "type": "Indexer",
+          "name": "layer26_Indexer",
+          "params": 22817024,
+          "bytes": 45634048.0,
+          "flops": 6597606637568.0,
+          "act_bytes": 1342177280.0,
+          "extra": {}
+        },
+        {
+          "type": "MoE",
+          "name": "layer26_MoE",
+          "params": 25436753792,
+          "bytes": 25447353856.0,
+          "flops": 727349490352128.0,
+          "act_bytes": 12213813248.0,
+          "extra": {
+            "total_expert_params": 25367150592,
+            "per_expert_params": 66060288,
+            "activated_expert_params": 396361728,
+            "shared_expert_params": 66060288,
+            "activation_ratio": 0.01818181818181818
+          }
+        },
+        {
+          "type": "mHC",
+          "name": "layer26_mHC_post",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        }
+      ]
+    },
+    {
+      "layer_id": 27,
+      "attention_type": "HCA",
+      "use_indexer": false,
+      "ffn_type": "MoE",
+      "params": 25756576576,
+      "bytes": 26086999424.0,
+      "flops": 819816649328512.0,
+      "act_bytes": 54358441984.0,
+      "modules": [
+        {
+          "type": "mHC",
+          "name": "layer27_mHC_pre",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        },
+        {
+          "type": "HCA",
+          "name": "layer27_HCA",
+          "params": 318388224,
+          "bytes": 636776448.0,
+          "flops": 92376961908736.0,
+          "act_bytes": 42144628736.0,
+          "extra": {}
+        },
+        {
+          "type": "MoE",
+          "name": "layer27_MoE",
+          "params": 25436753792,
+          "bytes": 25447353856.0,
+          "flops": 727349490352128.0,
+          "act_bytes": 12213813248.0,
+          "extra": {
+            "total_expert_params": 25367150592,
+            "per_expert_params": 66060288,
+            "activated_expert_params": 396361728,
+            "shared_expert_params": 66060288,
+            "activation_ratio": 0.01818181818181818
+          }
+        },
+        {
+          "type": "mHC",
+          "name": "layer27_mHC_post",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        }
+      ]
+    },
+    {
+      "layer_id": 28,
+      "attention_type": "CSA",
+      "use_indexer": true,
+      "ffn_type": "MoE",
+      "params": 25775596608,
+      "bytes": 26125039488.0,
+      "flops": 1672213307197312.0,
+      "act_bytes": 55968804864.0,
+      "modules": [
+        {
+          "type": "mHC",
+          "name": "layer28_mHC_pre",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        },
+        {
+          "type": "CSA",
+          "name": "layer28_CSA",
+          "params": 314591232,
+          "bytes": 629182464.0,
+          "flops": 938176013139968.0,
+          "act_bytes": 42412814336.0,
+          "extra": {}
+        },
+        {
+          "type": "Indexer",
+          "name": "layer28_Indexer",
+          "params": 22817024,
+          "bytes": 45634048.0,
+          "flops": 6597606637568.0,
+          "act_bytes": 1342177280.0,
+          "extra": {}
+        },
+        {
+          "type": "MoE",
+          "name": "layer28_MoE",
+          "params": 25436753792,
+          "bytes": 25447353856.0,
+          "flops": 727349490352128.0,
+          "act_bytes": 12213813248.0,
+          "extra": {
+            "total_expert_params": 25367150592,
+            "per_expert_params": 66060288,
+            "activated_expert_params": 396361728,
+            "shared_expert_params": 66060288,
+            "activation_ratio": 0.01818181818181818
+          }
+        },
+        {
+          "type": "mHC",
+          "name": "layer28_mHC_post",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        }
+      ]
+    },
+    {
+      "layer_id": 29,
+      "attention_type": "HCA",
+      "use_indexer": false,
+      "ffn_type": "MoE",
+      "params": 25756576576,
+      "bytes": 26086999424.0,
+      "flops": 819816649328512.0,
+      "act_bytes": 54358441984.0,
+      "modules": [
+        {
+          "type": "mHC",
+          "name": "layer29_mHC_pre",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        },
+        {
+          "type": "HCA",
+          "name": "layer29_HCA",
+          "params": 318388224,
+          "bytes": 636776448.0,
+          "flops": 92376961908736.0,
+          "act_bytes": 42144628736.0,
+          "extra": {}
+        },
+        {
+          "type": "MoE",
+          "name": "layer29_MoE",
+          "params": 25436753792,
+          "bytes": 25447353856.0,
+          "flops": 727349490352128.0,
+          "act_bytes": 12213813248.0,
+          "extra": {
+            "total_expert_params": 25367150592,
+            "per_expert_params": 66060288,
+            "activated_expert_params": 396361728,
+            "shared_expert_params": 66060288,
+            "activation_ratio": 0.01818181818181818
+          }
+        },
+        {
+          "type": "mHC",
+          "name": "layer29_mHC_post",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        }
+      ]
+    },
+    {
+      "layer_id": 30,
+      "attention_type": "CSA",
+      "use_indexer": true,
+      "ffn_type": "MoE",
+      "params": 25775596608,
+      "bytes": 26125039488.0,
+      "flops": 1672213307197312.0,
+      "act_bytes": 55968804864.0,
+      "modules": [
+        {
+          "type": "mHC",
+          "name": "layer30_mHC_pre",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        },
+        {
+          "type": "CSA",
+          "name": "layer30_CSA",
+          "params": 314591232,
+          "bytes": 629182464.0,
+          "flops": 938176013139968.0,
+          "act_bytes": 42412814336.0,
+          "extra": {}
+        },
+        {
+          "type": "Indexer",
+          "name": "layer30_Indexer",
+          "params": 22817024,
+          "bytes": 45634048.0,
+          "flops": 6597606637568.0,
+          "act_bytes": 1342177280.0,
+          "extra": {}
+        },
+        {
+          "type": "MoE",
+          "name": "layer30_MoE",
+          "params": 25436753792,
+          "bytes": 25447353856.0,
+          "flops": 727349490352128.0,
+          "act_bytes": 12213813248.0,
+          "extra": {
+            "total_expert_params": 25367150592,
+            "per_expert_params": 66060288,
+            "activated_expert_params": 396361728,
+            "shared_expert_params": 66060288,
+            "activation_ratio": 0.01818181818181818
+          }
+        },
+        {
+          "type": "mHC",
+          "name": "layer30_mHC_post",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        }
+      ]
+    },
+    {
+      "layer_id": 31,
+      "attention_type": "HCA",
+      "use_indexer": false,
+      "ffn_type": "MoE",
+      "params": 25756576576,
+      "bytes": 26086999424.0,
+      "flops": 819816649328512.0,
+      "act_bytes": 54358441984.0,
+      "modules": [
+        {
+          "type": "mHC",
+          "name": "layer31_mHC_pre",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        },
+        {
+          "type": "HCA",
+          "name": "layer31_HCA",
+          "params": 318388224,
+          "bytes": 636776448.0,
+          "flops": 92376961908736.0,
+          "act_bytes": 42144628736.0,
+          "extra": {}
+        },
+        {
+          "type": "MoE",
+          "name": "layer31_MoE",
+          "params": 25436753792,
+          "bytes": 25447353856.0,
+          "flops": 727349490352128.0,
+          "act_bytes": 12213813248.0,
+          "extra": {
+            "total_expert_params": 25367150592,
+            "per_expert_params": 66060288,
+            "activated_expert_params": 396361728,
+            "shared_expert_params": 66060288,
+            "activation_ratio": 0.01818181818181818
+          }
+        },
+        {
+          "type": "mHC",
+          "name": "layer31_mHC_post",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        }
+      ]
+    },
+    {
+      "layer_id": 32,
+      "attention_type": "CSA",
+      "use_indexer": true,
+      "ffn_type": "MoE",
+      "params": 25775596608,
+      "bytes": 26125039488.0,
+      "flops": 1672213307197312.0,
+      "act_bytes": 55968804864.0,
+      "modules": [
+        {
+          "type": "mHC",
+          "name": "layer32_mHC_pre",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        },
+        {
+          "type": "CSA",
+          "name": "layer32_CSA",
+          "params": 314591232,
+          "bytes": 629182464.0,
+          "flops": 938176013139968.0,
+          "act_bytes": 42412814336.0,
+          "extra": {}
+        },
+        {
+          "type": "Indexer",
+          "name": "layer32_Indexer",
+          "params": 22817024,
+          "bytes": 45634048.0,
+          "flops": 6597606637568.0,
+          "act_bytes": 1342177280.0,
+          "extra": {}
+        },
+        {
+          "type": "MoE",
+          "name": "layer32_MoE",
+          "params": 25436753792,
+          "bytes": 25447353856.0,
+          "flops": 727349490352128.0,
+          "act_bytes": 12213813248.0,
+          "extra": {
+            "total_expert_params": 25367150592,
+            "per_expert_params": 66060288,
+            "activated_expert_params": 396361728,
+            "shared_expert_params": 66060288,
+            "activation_ratio": 0.01818181818181818
+          }
+        },
+        {
+          "type": "mHC",
+          "name": "layer32_mHC_post",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        }
+      ]
+    },
+    {
+      "layer_id": 33,
+      "attention_type": "HCA",
+      "use_indexer": false,
+      "ffn_type": "MoE",
+      "params": 25756576576,
+      "bytes": 26086999424.0,
+      "flops": 819816649328512.0,
+      "act_bytes": 54358441984.0,
+      "modules": [
+        {
+          "type": "mHC",
+          "name": "layer33_mHC_pre",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        },
+        {
+          "type": "HCA",
+          "name": "layer33_HCA",
+          "params": 318388224,
+          "bytes": 636776448.0,
+          "flops": 92376961908736.0,
+          "act_bytes": 42144628736.0,
+          "extra": {}
+        },
+        {
+          "type": "MoE",
+          "name": "layer33_MoE",
+          "params": 25436753792,
+          "bytes": 25447353856.0,
+          "flops": 727349490352128.0,
+          "act_bytes": 12213813248.0,
+          "extra": {
+            "total_expert_params": 25367150592,
+            "per_expert_params": 66060288,
+            "activated_expert_params": 396361728,
+            "shared_expert_params": 66060288,
+            "activation_ratio": 0.01818181818181818
+          }
+        },
+        {
+          "type": "mHC",
+          "name": "layer33_mHC_post",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        }
+      ]
+    },
+    {
+      "layer_id": 34,
+      "attention_type": "CSA",
+      "use_indexer": true,
+      "ffn_type": "MoE",
+      "params": 25775596608,
+      "bytes": 26125039488.0,
+      "flops": 1672213307197312.0,
+      "act_bytes": 55968804864.0,
+      "modules": [
+        {
+          "type": "mHC",
+          "name": "layer34_mHC_pre",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        },
+        {
+          "type": "CSA",
+          "name": "layer34_CSA",
+          "params": 314591232,
+          "bytes": 629182464.0,
+          "flops": 938176013139968.0,
+          "act_bytes": 42412814336.0,
+          "extra": {}
+        },
+        {
+          "type": "Indexer",
+          "name": "layer34_Indexer",
+          "params": 22817024,
+          "bytes": 45634048.0,
+          "flops": 6597606637568.0,
+          "act_bytes": 1342177280.0,
+          "extra": {}
+        },
+        {
+          "type": "MoE",
+          "name": "layer34_MoE",
+          "params": 25436753792,
+          "bytes": 25447353856.0,
+          "flops": 727349490352128.0,
+          "act_bytes": 12213813248.0,
+          "extra": {
+            "total_expert_params": 25367150592,
+            "per_expert_params": 66060288,
+            "activated_expert_params": 396361728,
+            "shared_expert_params": 66060288,
+            "activation_ratio": 0.01818181818181818
+          }
+        },
+        {
+          "type": "mHC",
+          "name": "layer34_mHC_post",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        }
+      ]
+    },
+    {
+      "layer_id": 35,
+      "attention_type": "HCA",
+      "use_indexer": false,
+      "ffn_type": "MoE",
+      "params": 25756576576,
+      "bytes": 26086999424.0,
+      "flops": 819816649328512.0,
+      "act_bytes": 54358441984.0,
+      "modules": [
+        {
+          "type": "mHC",
+          "name": "layer35_mHC_pre",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        },
+        {
+          "type": "HCA",
+          "name": "layer35_HCA",
+          "params": 318388224,
+          "bytes": 636776448.0,
+          "flops": 92376961908736.0,
+          "act_bytes": 42144628736.0,
+          "extra": {}
+        },
+        {
+          "type": "MoE",
+          "name": "layer35_MoE",
+          "params": 25436753792,
+          "bytes": 25447353856.0,
+          "flops": 727349490352128.0,
+          "act_bytes": 12213813248.0,
+          "extra": {
+            "total_expert_params": 25367150592,
+            "per_expert_params": 66060288,
+            "activated_expert_params": 396361728,
+            "shared_expert_params": 66060288,
+            "activation_ratio": 0.01818181818181818
+          }
+        },
+        {
+          "type": "mHC",
+          "name": "layer35_mHC_post",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        }
+      ]
+    },
+    {
+      "layer_id": 36,
+      "attention_type": "CSA",
+      "use_indexer": true,
+      "ffn_type": "MoE",
+      "params": 25775596608,
+      "bytes": 26125039488.0,
+      "flops": 1672213307197312.0,
+      "act_bytes": 55968804864.0,
+      "modules": [
+        {
+          "type": "mHC",
+          "name": "layer36_mHC_pre",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        },
+        {
+          "type": "CSA",
+          "name": "layer36_CSA",
+          "params": 314591232,
+          "bytes": 629182464.0,
+          "flops": 938176013139968.0,
+          "act_bytes": 42412814336.0,
+          "extra": {}
+        },
+        {
+          "type": "Indexer",
+          "name": "layer36_Indexer",
+          "params": 22817024,
+          "bytes": 45634048.0,
+          "flops": 6597606637568.0,
+          "act_bytes": 1342177280.0,
+          "extra": {}
+        },
+        {
+          "type": "MoE",
+          "name": "layer36_MoE",
+          "params": 25436753792,
+          "bytes": 25447353856.0,
+          "flops": 727349490352128.0,
+          "act_bytes": 12213813248.0,
+          "extra": {
+            "total_expert_params": 25367150592,
+            "per_expert_params": 66060288,
+            "activated_expert_params": 396361728,
+            "shared_expert_params": 66060288,
+            "activation_ratio": 0.01818181818181818
+          }
+        },
+        {
+          "type": "mHC",
+          "name": "layer36_mHC_post",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        }
+      ]
+    },
+    {
+      "layer_id": 37,
+      "attention_type": "HCA",
+      "use_indexer": false,
+      "ffn_type": "MoE",
+      "params": 25756576576,
+      "bytes": 26086999424.0,
+      "flops": 819816649328512.0,
+      "act_bytes": 54358441984.0,
+      "modules": [
+        {
+          "type": "mHC",
+          "name": "layer37_mHC_pre",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        },
+        {
+          "type": "HCA",
+          "name": "layer37_HCA",
+          "params": 318388224,
+          "bytes": 636776448.0,
+          "flops": 92376961908736.0,
+          "act_bytes": 42144628736.0,
+          "extra": {}
+        },
+        {
+          "type": "MoE",
+          "name": "layer37_MoE",
+          "params": 25436753792,
+          "bytes": 25447353856.0,
+          "flops": 727349490352128.0,
+          "act_bytes": 12213813248.0,
+          "extra": {
+            "total_expert_params": 25367150592,
+            "per_expert_params": 66060288,
+            "activated_expert_params": 396361728,
+            "shared_expert_params": 66060288,
+            "activation_ratio": 0.01818181818181818
+          }
+        },
+        {
+          "type": "mHC",
+          "name": "layer37_mHC_post",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        }
+      ]
+    },
+    {
+      "layer_id": 38,
+      "attention_type": "CSA",
+      "use_indexer": true,
+      "ffn_type": "MoE",
+      "params": 25775596608,
+      "bytes": 26125039488.0,
+      "flops": 1672213307197312.0,
+      "act_bytes": 55968804864.0,
+      "modules": [
+        {
+          "type": "mHC",
+          "name": "layer38_mHC_pre",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        },
+        {
+          "type": "CSA",
+          "name": "layer38_CSA",
+          "params": 314591232,
+          "bytes": 629182464.0,
+          "flops": 938176013139968.0,
+          "act_bytes": 42412814336.0,
+          "extra": {}
+        },
+        {
+          "type": "Indexer",
+          "name": "layer38_Indexer",
+          "params": 22817024,
+          "bytes": 45634048.0,
+          "flops": 6597606637568.0,
+          "act_bytes": 1342177280.0,
+          "extra": {}
+        },
+        {
+          "type": "MoE",
+          "name": "layer38_MoE",
+          "params": 25436753792,
+          "bytes": 25447353856.0,
+          "flops": 727349490352128.0,
+          "act_bytes": 12213813248.0,
+          "extra": {
+            "total_expert_params": 25367150592,
+            "per_expert_params": 66060288,
+            "activated_expert_params": 396361728,
+            "shared_expert_params": 66060288,
+            "activation_ratio": 0.01818181818181818
+          }
+        },
+        {
+          "type": "mHC",
+          "name": "layer38_mHC_post",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        }
+      ]
+    },
+    {
+      "layer_id": 39,
+      "attention_type": "HCA",
+      "use_indexer": false,
+      "ffn_type": "MoE",
+      "params": 25756576576,
+      "bytes": 26086999424.0,
+      "flops": 819816649328512.0,
+      "act_bytes": 54358441984.0,
+      "modules": [
+        {
+          "type": "mHC",
+          "name": "layer39_mHC_pre",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        },
+        {
+          "type": "HCA",
+          "name": "layer39_HCA",
+          "params": 318388224,
+          "bytes": 636776448.0,
+          "flops": 92376961908736.0,
+          "act_bytes": 42144628736.0,
+          "extra": {}
+        },
+        {
+          "type": "MoE",
+          "name": "layer39_MoE",
+          "params": 25436753792,
+          "bytes": 25447353856.0,
+          "flops": 727349490352128.0,
+          "act_bytes": 12213813248.0,
+          "extra": {
+            "total_expert_params": 25367150592,
+            "per_expert_params": 66060288,
+            "activated_expert_params": 396361728,
+            "shared_expert_params": 66060288,
+            "activation_ratio": 0.01818181818181818
+          }
+        },
+        {
+          "type": "mHC",
+          "name": "layer39_mHC_post",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        }
+      ]
+    },
+    {
+      "layer_id": 40,
+      "attention_type": "CSA",
+      "use_indexer": true,
+      "ffn_type": "MoE",
+      "params": 25775596608,
+      "bytes": 26125039488.0,
+      "flops": 1672213307197312.0,
+      "act_bytes": 55968804864.0,
+      "modules": [
+        {
+          "type": "mHC",
+          "name": "layer40_mHC_pre",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        },
+        {
+          "type": "CSA",
+          "name": "layer40_CSA",
+          "params": 314591232,
+          "bytes": 629182464.0,
+          "flops": 938176013139968.0,
+          "act_bytes": 42412814336.0,
+          "extra": {}
+        },
+        {
+          "type": "Indexer",
+          "name": "layer40_Indexer",
+          "params": 22817024,
+          "bytes": 45634048.0,
+          "flops": 6597606637568.0,
+          "act_bytes": 1342177280.0,
+          "extra": {}
+        },
+        {
+          "type": "MoE",
+          "name": "layer40_MoE",
+          "params": 25436753792,
+          "bytes": 25447353856.0,
+          "flops": 727349490352128.0,
+          "act_bytes": 12213813248.0,
+          "extra": {
+            "total_expert_params": 25367150592,
+            "per_expert_params": 66060288,
+            "activated_expert_params": 396361728,
+            "shared_expert_params": 66060288,
+            "activation_ratio": 0.01818181818181818
+          }
+        },
+        {
+          "type": "mHC",
+          "name": "layer40_mHC_post",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        }
+      ]
+    },
+    {
+      "layer_id": 41,
+      "attention_type": "HCA",
+      "use_indexer": false,
+      "ffn_type": "MoE",
+      "params": 25756576576,
+      "bytes": 26086999424.0,
+      "flops": 819816649328512.0,
+      "act_bytes": 54358441984.0,
+      "modules": [
+        {
+          "type": "mHC",
+          "name": "layer41_mHC_pre",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        },
+        {
+          "type": "HCA",
+          "name": "layer41_HCA",
+          "params": 318388224,
+          "bytes": 636776448.0,
+          "flops": 92376961908736.0,
+          "act_bytes": 42144628736.0,
+          "extra": {}
+        },
+        {
+          "type": "MoE",
+          "name": "layer41_MoE",
+          "params": 25436753792,
+          "bytes": 25447353856.0,
+          "flops": 727349490352128.0,
+          "act_bytes": 12213813248.0,
+          "extra": {
+            "total_expert_params": 25367150592,
+            "per_expert_params": 66060288,
+            "activated_expert_params": 396361728,
+            "shared_expert_params": 66060288,
+            "activation_ratio": 0.01818181818181818
+          }
+        },
+        {
+          "type": "mHC",
+          "name": "layer41_mHC_post",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        }
+      ]
+    },
+    {
+      "layer_id": 42,
+      "attention_type": "CSA",
+      "use_indexer": true,
+      "ffn_type": "MoE",
+      "params": 25775596608,
+      "bytes": 26125039488.0,
+      "flops": 1672213307197312.0,
+      "act_bytes": 55968804864.0,
+      "modules": [
+        {
+          "type": "mHC",
+          "name": "layer42_mHC_pre",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        },
+        {
+          "type": "CSA",
+          "name": "layer42_CSA",
+          "params": 314591232,
+          "bytes": 629182464.0,
+          "flops": 938176013139968.0,
+          "act_bytes": 42412814336.0,
+          "extra": {}
+        },
+        {
+          "type": "Indexer",
+          "name": "layer42_Indexer",
+          "params": 22817024,
+          "bytes": 45634048.0,
+          "flops": 6597606637568.0,
+          "act_bytes": 1342177280.0,
+          "extra": {}
+        },
+        {
+          "type": "MoE",
+          "name": "layer42_MoE",
+          "params": 25436753792,
+          "bytes": 25447353856.0,
+          "flops": 727349490352128.0,
+          "act_bytes": 12213813248.0,
+          "extra": {
+            "total_expert_params": 25367150592,
+            "per_expert_params": 66060288,
+            "activated_expert_params": 396361728,
+            "shared_expert_params": 66060288,
+            "activation_ratio": 0.01818181818181818
+          }
+        },
+        {
+          "type": "mHC",
+          "name": "layer42_mHC_post",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        }
+      ]
+    },
+    {
+      "layer_id": 43,
+      "attention_type": "HCA",
+      "use_indexer": false,
+      "ffn_type": "MoE",
+      "params": 25756576576,
+      "bytes": 26086999424.0,
+      "flops": 819816649328512.0,
+      "act_bytes": 54358441984.0,
+      "modules": [
+        {
+          "type": "mHC",
+          "name": "layer43_mHC_pre",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        },
+        {
+          "type": "HCA",
+          "name": "layer43_HCA",
+          "params": 318388224,
+          "bytes": 636776448.0,
+          "flops": 92376961908736.0,
+          "act_bytes": 42144628736.0,
+          "extra": {}
+        },
+        {
+          "type": "MoE",
+          "name": "layer43_MoE",
+          "params": 25436753792,
+          "bytes": 25447353856.0,
+          "flops": 727349490352128.0,
+          "act_bytes": 12213813248.0,
+          "extra": {
+            "total_expert_params": 25367150592,
+            "per_expert_params": 66060288,
+            "activated_expert_params": 396361728,
+            "shared_expert_params": 66060288,
+            "activation_ratio": 0.01818181818181818
+          }
+        },
+        {
+          "type": "mHC",
+          "name": "layer43_mHC_post",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        }
+      ]
+    },
+    {
+      "layer_id": 44,
+      "attention_type": "CSA",
+      "use_indexer": true,
+      "ffn_type": "MoE",
+      "params": 25775596608,
+      "bytes": 26125039488.0,
+      "flops": 1672213307197312.0,
+      "act_bytes": 55968804864.0,
+      "modules": [
+        {
+          "type": "mHC",
+          "name": "layer44_mHC_pre",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        },
+        {
+          "type": "CSA",
+          "name": "layer44_CSA",
+          "params": 314591232,
+          "bytes": 629182464.0,
+          "flops": 938176013139968.0,
+          "act_bytes": 42412814336.0,
+          "extra": {}
+        },
+        {
+          "type": "Indexer",
+          "name": "layer44_Indexer",
+          "params": 22817024,
+          "bytes": 45634048.0,
+          "flops": 6597606637568.0,
+          "act_bytes": 1342177280.0,
+          "extra": {}
+        },
+        {
+          "type": "MoE",
+          "name": "layer44_MoE",
+          "params": 25436753792,
+          "bytes": 25447353856.0,
+          "flops": 727349490352128.0,
+          "act_bytes": 12213813248.0,
+          "extra": {
+            "total_expert_params": 25367150592,
+            "per_expert_params": 66060288,
+            "activated_expert_params": 396361728,
+            "shared_expert_params": 66060288,
+            "activation_ratio": 0.01818181818181818
+          }
+        },
+        {
+          "type": "mHC",
+          "name": "layer44_mHC_post",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        }
+      ]
+    },
+    {
+      "layer_id": 45,
+      "attention_type": "HCA",
+      "use_indexer": false,
+      "ffn_type": "MoE",
+      "params": 25756576576,
+      "bytes": 26086999424.0,
+      "flops": 819816649328512.0,
+      "act_bytes": 54358441984.0,
+      "modules": [
+        {
+          "type": "mHC",
+          "name": "layer45_mHC_pre",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        },
+        {
+          "type": "HCA",
+          "name": "layer45_HCA",
+          "params": 318388224,
+          "bytes": 636776448.0,
+          "flops": 92376961908736.0,
+          "act_bytes": 42144628736.0,
+          "extra": {}
+        },
+        {
+          "type": "MoE",
+          "name": "layer45_MoE",
+          "params": 25436753792,
+          "bytes": 25447353856.0,
+          "flops": 727349490352128.0,
+          "act_bytes": 12213813248.0,
+          "extra": {
+            "total_expert_params": 25367150592,
+            "per_expert_params": 66060288,
+            "activated_expert_params": 396361728,
+            "shared_expert_params": 66060288,
+            "activation_ratio": 0.01818181818181818
+          }
+        },
+        {
+          "type": "mHC",
+          "name": "layer45_mHC_post",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        }
+      ]
+    },
+    {
+      "layer_id": 46,
+      "attention_type": "CSA",
+      "use_indexer": true,
+      "ffn_type": "MoE",
+      "params": 25775596608,
+      "bytes": 26125039488.0,
+      "flops": 1672213307197312.0,
+      "act_bytes": 55968804864.0,
+      "modules": [
+        {
+          "type": "mHC",
+          "name": "layer46_mHC_pre",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        },
+        {
+          "type": "CSA",
+          "name": "layer46_CSA",
+          "params": 314591232,
+          "bytes": 629182464.0,
+          "flops": 938176013139968.0,
+          "act_bytes": 42412814336.0,
+          "extra": {}
+        },
+        {
+          "type": "Indexer",
+          "name": "layer46_Indexer",
+          "params": 22817024,
+          "bytes": 45634048.0,
+          "flops": 6597606637568.0,
+          "act_bytes": 1342177280.0,
+          "extra": {}
+        },
+        {
+          "type": "MoE",
+          "name": "layer46_MoE",
+          "params": 25436753792,
+          "bytes": 25447353856.0,
+          "flops": 727349490352128.0,
+          "act_bytes": 12213813248.0,
+          "extra": {
+            "total_expert_params": 25367150592,
+            "per_expert_params": 66060288,
+            "activated_expert_params": 396361728,
+            "shared_expert_params": 66060288,
+            "activation_ratio": 0.01818181818181818
+          }
+        },
+        {
+          "type": "mHC",
+          "name": "layer46_mHC_post",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        }
+      ]
+    },
+    {
+      "layer_id": 47,
+      "attention_type": "HCA",
+      "use_indexer": false,
+      "ffn_type": "MoE",
+      "params": 25756576576,
+      "bytes": 26086999424.0,
+      "flops": 819816649328512.0,
+      "act_bytes": 54358441984.0,
+      "modules": [
+        {
+          "type": "mHC",
+          "name": "layer47_mHC_pre",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        },
+        {
+          "type": "HCA",
+          "name": "layer47_HCA",
+          "params": 318388224,
+          "bytes": 636776448.0,
+          "flops": 92376961908736.0,
+          "act_bytes": 42144628736.0,
+          "extra": {}
+        },
+        {
+          "type": "MoE",
+          "name": "layer47_MoE",
+          "params": 25436753792,
+          "bytes": 25447353856.0,
+          "flops": 727349490352128.0,
+          "act_bytes": 12213813248.0,
+          "extra": {
+            "total_expert_params": 25367150592,
+            "per_expert_params": 66060288,
+            "activated_expert_params": 396361728,
+            "shared_expert_params": 66060288,
+            "activation_ratio": 0.01818181818181818
+          }
+        },
+        {
+          "type": "mHC",
+          "name": "layer47_mHC_post",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        }
+      ]
+    },
+    {
+      "layer_id": 48,
+      "attention_type": "CSA",
+      "use_indexer": true,
+      "ffn_type": "MoE",
+      "params": 25775596608,
+      "bytes": 26125039488.0,
+      "flops": 1672213307197312.0,
+      "act_bytes": 55968804864.0,
+      "modules": [
+        {
+          "type": "mHC",
+          "name": "layer48_mHC_pre",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        },
+        {
+          "type": "CSA",
+          "name": "layer48_CSA",
+          "params": 314591232,
+          "bytes": 629182464.0,
+          "flops": 938176013139968.0,
+          "act_bytes": 42412814336.0,
+          "extra": {}
+        },
+        {
+          "type": "Indexer",
+          "name": "layer48_Indexer",
+          "params": 22817024,
+          "bytes": 45634048.0,
+          "flops": 6597606637568.0,
+          "act_bytes": 1342177280.0,
+          "extra": {}
+        },
+        {
+          "type": "MoE",
+          "name": "layer48_MoE",
+          "params": 25436753792,
+          "bytes": 25447353856.0,
+          "flops": 727349490352128.0,
+          "act_bytes": 12213813248.0,
+          "extra": {
+            "total_expert_params": 25367150592,
+            "per_expert_params": 66060288,
+            "activated_expert_params": 396361728,
+            "shared_expert_params": 66060288,
+            "activation_ratio": 0.01818181818181818
+          }
+        },
+        {
+          "type": "mHC",
+          "name": "layer48_mHC_post",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        }
+      ]
+    },
+    {
+      "layer_id": 49,
+      "attention_type": "HCA",
+      "use_indexer": false,
+      "ffn_type": "MoE",
+      "params": 25756576576,
+      "bytes": 26086999424.0,
+      "flops": 819816649328512.0,
+      "act_bytes": 54358441984.0,
+      "modules": [
+        {
+          "type": "mHC",
+          "name": "layer49_mHC_pre",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        },
+        {
+          "type": "HCA",
+          "name": "layer49_HCA",
+          "params": 318388224,
+          "bytes": 636776448.0,
+          "flops": 92376961908736.0,
+          "act_bytes": 42144628736.0,
+          "extra": {}
+        },
+        {
+          "type": "MoE",
+          "name": "layer49_MoE",
+          "params": 25436753792,
+          "bytes": 25447353856.0,
+          "flops": 727349490352128.0,
+          "act_bytes": 12213813248.0,
+          "extra": {
+            "total_expert_params": 25367150592,
+            "per_expert_params": 66060288,
+            "activated_expert_params": 396361728,
+            "shared_expert_params": 66060288,
+            "activation_ratio": 0.01818181818181818
+          }
+        },
+        {
+          "type": "mHC",
+          "name": "layer49_mHC_post",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        }
+      ]
+    },
+    {
+      "layer_id": 50,
+      "attention_type": "CSA",
+      "use_indexer": true,
+      "ffn_type": "MoE",
+      "params": 25775596608,
+      "bytes": 26125039488.0,
+      "flops": 1672213307197312.0,
+      "act_bytes": 55968804864.0,
+      "modules": [
+        {
+          "type": "mHC",
+          "name": "layer50_mHC_pre",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        },
+        {
+          "type": "CSA",
+          "name": "layer50_CSA",
+          "params": 314591232,
+          "bytes": 629182464.0,
+          "flops": 938176013139968.0,
+          "act_bytes": 42412814336.0,
+          "extra": {}
+        },
+        {
+          "type": "Indexer",
+          "name": "layer50_Indexer",
+          "params": 22817024,
+          "bytes": 45634048.0,
+          "flops": 6597606637568.0,
+          "act_bytes": 1342177280.0,
+          "extra": {}
+        },
+        {
+          "type": "MoE",
+          "name": "layer50_MoE",
+          "params": 25436753792,
+          "bytes": 25447353856.0,
+          "flops": 727349490352128.0,
+          "act_bytes": 12213813248.0,
+          "extra": {
+            "total_expert_params": 25367150592,
+            "per_expert_params": 66060288,
+            "activated_expert_params": 396361728,
+            "shared_expert_params": 66060288,
+            "activation_ratio": 0.01818181818181818
+          }
+        },
+        {
+          "type": "mHC",
+          "name": "layer50_mHC_post",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        }
+      ]
+    },
+    {
+      "layer_id": 51,
+      "attention_type": "HCA",
+      "use_indexer": false,
+      "ffn_type": "MoE",
+      "params": 25756576576,
+      "bytes": 26086999424.0,
+      "flops": 819816649328512.0,
+      "act_bytes": 54358441984.0,
+      "modules": [
+        {
+          "type": "mHC",
+          "name": "layer51_mHC_pre",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        },
+        {
+          "type": "HCA",
+          "name": "layer51_HCA",
+          "params": 318388224,
+          "bytes": 636776448.0,
+          "flops": 92376961908736.0,
+          "act_bytes": 42144628736.0,
+          "extra": {}
+        },
+        {
+          "type": "MoE",
+          "name": "layer51_MoE",
+          "params": 25436753792,
+          "bytes": 25447353856.0,
+          "flops": 727349490352128.0,
+          "act_bytes": 12213813248.0,
+          "extra": {
+            "total_expert_params": 25367150592,
+            "per_expert_params": 66060288,
+            "activated_expert_params": 396361728,
+            "shared_expert_params": 66060288,
+            "activation_ratio": 0.01818181818181818
+          }
+        },
+        {
+          "type": "mHC",
+          "name": "layer51_mHC_post",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        }
+      ]
+    },
+    {
+      "layer_id": 52,
+      "attention_type": "CSA",
+      "use_indexer": true,
+      "ffn_type": "MoE",
+      "params": 25775596608,
+      "bytes": 26125039488.0,
+      "flops": 1672213307197312.0,
+      "act_bytes": 55968804864.0,
+      "modules": [
+        {
+          "type": "mHC",
+          "name": "layer52_mHC_pre",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        },
+        {
+          "type": "CSA",
+          "name": "layer52_CSA",
+          "params": 314591232,
+          "bytes": 629182464.0,
+          "flops": 938176013139968.0,
+          "act_bytes": 42412814336.0,
+          "extra": {}
+        },
+        {
+          "type": "Indexer",
+          "name": "layer52_Indexer",
+          "params": 22817024,
+          "bytes": 45634048.0,
+          "flops": 6597606637568.0,
+          "act_bytes": 1342177280.0,
+          "extra": {}
+        },
+        {
+          "type": "MoE",
+          "name": "layer52_MoE",
+          "params": 25436753792,
+          "bytes": 25447353856.0,
+          "flops": 727349490352128.0,
+          "act_bytes": 12213813248.0,
+          "extra": {
+            "total_expert_params": 25367150592,
+            "per_expert_params": 66060288,
+            "activated_expert_params": 396361728,
+            "shared_expert_params": 66060288,
+            "activation_ratio": 0.01818181818181818
+          }
+        },
+        {
+          "type": "mHC",
+          "name": "layer52_mHC_post",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        }
+      ]
+    },
+    {
+      "layer_id": 53,
+      "attention_type": "HCA",
+      "use_indexer": false,
+      "ffn_type": "MoE",
+      "params": 25756576576,
+      "bytes": 26086999424.0,
+      "flops": 819816649328512.0,
+      "act_bytes": 54358441984.0,
+      "modules": [
+        {
+          "type": "mHC",
+          "name": "layer53_mHC_pre",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        },
+        {
+          "type": "HCA",
+          "name": "layer53_HCA",
+          "params": 318388224,
+          "bytes": 636776448.0,
+          "flops": 92376961908736.0,
+          "act_bytes": 42144628736.0,
+          "extra": {}
+        },
+        {
+          "type": "MoE",
+          "name": "layer53_MoE",
+          "params": 25436753792,
+          "bytes": 25447353856.0,
+          "flops": 727349490352128.0,
+          "act_bytes": 12213813248.0,
+          "extra": {
+            "total_expert_params": 25367150592,
+            "per_expert_params": 66060288,
+            "activated_expert_params": 396361728,
+            "shared_expert_params": 66060288,
+            "activation_ratio": 0.01818181818181818
+          }
+        },
+        {
+          "type": "mHC",
+          "name": "layer53_mHC_post",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        }
+      ]
+    },
+    {
+      "layer_id": 54,
+      "attention_type": "CSA",
+      "use_indexer": true,
+      "ffn_type": "MoE",
+      "params": 25775596608,
+      "bytes": 26125039488.0,
+      "flops": 1672213307197312.0,
+      "act_bytes": 55968804864.0,
+      "modules": [
+        {
+          "type": "mHC",
+          "name": "layer54_mHC_pre",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        },
+        {
+          "type": "CSA",
+          "name": "layer54_CSA",
+          "params": 314591232,
+          "bytes": 629182464.0,
+          "flops": 938176013139968.0,
+          "act_bytes": 42412814336.0,
+          "extra": {}
+        },
+        {
+          "type": "Indexer",
+          "name": "layer54_Indexer",
+          "params": 22817024,
+          "bytes": 45634048.0,
+          "flops": 6597606637568.0,
+          "act_bytes": 1342177280.0,
+          "extra": {}
+        },
+        {
+          "type": "MoE",
+          "name": "layer54_MoE",
+          "params": 25436753792,
+          "bytes": 25447353856.0,
+          "flops": 727349490352128.0,
+          "act_bytes": 12213813248.0,
+          "extra": {
+            "total_expert_params": 25367150592,
+            "per_expert_params": 66060288,
+            "activated_expert_params": 396361728,
+            "shared_expert_params": 66060288,
+            "activation_ratio": 0.01818181818181818
+          }
+        },
+        {
+          "type": "mHC",
+          "name": "layer54_mHC_post",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        }
+      ]
+    },
+    {
+      "layer_id": 55,
+      "attention_type": "HCA",
+      "use_indexer": false,
+      "ffn_type": "MoE",
+      "params": 25756576576,
+      "bytes": 26086999424.0,
+      "flops": 819816649328512.0,
+      "act_bytes": 54358441984.0,
+      "modules": [
+        {
+          "type": "mHC",
+          "name": "layer55_mHC_pre",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        },
+        {
+          "type": "HCA",
+          "name": "layer55_HCA",
+          "params": 318388224,
+          "bytes": 636776448.0,
+          "flops": 92376961908736.0,
+          "act_bytes": 42144628736.0,
+          "extra": {}
+        },
+        {
+          "type": "MoE",
+          "name": "layer55_MoE",
+          "params": 25436753792,
+          "bytes": 25447353856.0,
+          "flops": 727349490352128.0,
+          "act_bytes": 12213813248.0,
+          "extra": {
+            "total_expert_params": 25367150592,
+            "per_expert_params": 66060288,
+            "activated_expert_params": 396361728,
+            "shared_expert_params": 66060288,
+            "activation_ratio": 0.01818181818181818
+          }
+        },
+        {
+          "type": "mHC",
+          "name": "layer55_mHC_post",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        }
+      ]
+    },
+    {
+      "layer_id": 56,
+      "attention_type": "CSA",
+      "use_indexer": true,
+      "ffn_type": "MoE",
+      "params": 25775596608,
+      "bytes": 26125039488.0,
+      "flops": 1672213307197312.0,
+      "act_bytes": 55968804864.0,
+      "modules": [
+        {
+          "type": "mHC",
+          "name": "layer56_mHC_pre",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        },
+        {
+          "type": "CSA",
+          "name": "layer56_CSA",
+          "params": 314591232,
+          "bytes": 629182464.0,
+          "flops": 938176013139968.0,
+          "act_bytes": 42412814336.0,
+          "extra": {}
+        },
+        {
+          "type": "Indexer",
+          "name": "layer56_Indexer",
+          "params": 22817024,
+          "bytes": 45634048.0,
+          "flops": 6597606637568.0,
+          "act_bytes": 1342177280.0,
+          "extra": {}
+        },
+        {
+          "type": "MoE",
+          "name": "layer56_MoE",
+          "params": 25436753792,
+          "bytes": 25447353856.0,
+          "flops": 727349490352128.0,
+          "act_bytes": 12213813248.0,
+          "extra": {
+            "total_expert_params": 25367150592,
+            "per_expert_params": 66060288,
+            "activated_expert_params": 396361728,
+            "shared_expert_params": 66060288,
+            "activation_ratio": 0.01818181818181818
+          }
+        },
+        {
+          "type": "mHC",
+          "name": "layer56_mHC_post",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        }
+      ]
+    },
+    {
+      "layer_id": 57,
+      "attention_type": "HCA",
+      "use_indexer": false,
+      "ffn_type": "MoE",
+      "params": 25756576576,
+      "bytes": 26086999424.0,
+      "flops": 819816649328512.0,
+      "act_bytes": 54358441984.0,
+      "modules": [
+        {
+          "type": "mHC",
+          "name": "layer57_mHC_pre",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        },
+        {
+          "type": "HCA",
+          "name": "layer57_HCA",
+          "params": 318388224,
+          "bytes": 636776448.0,
+          "flops": 92376961908736.0,
+          "act_bytes": 42144628736.0,
+          "extra": {}
+        },
+        {
+          "type": "MoE",
+          "name": "layer57_MoE",
+          "params": 25436753792,
+          "bytes": 25447353856.0,
+          "flops": 727349490352128.0,
+          "act_bytes": 12213813248.0,
+          "extra": {
+            "total_expert_params": 25367150592,
+            "per_expert_params": 66060288,
+            "activated_expert_params": 396361728,
+            "shared_expert_params": 66060288,
+            "activation_ratio": 0.01818181818181818
+          }
+        },
+        {
+          "type": "mHC",
+          "name": "layer57_mHC_post",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        }
+      ]
+    },
+    {
+      "layer_id": 58,
+      "attention_type": "CSA",
+      "use_indexer": true,
+      "ffn_type": "MoE",
+      "params": 25775596608,
+      "bytes": 26125039488.0,
+      "flops": 1672213307197312.0,
+      "act_bytes": 55968804864.0,
+      "modules": [
+        {
+          "type": "mHC",
+          "name": "layer58_mHC_pre",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        },
+        {
+          "type": "CSA",
+          "name": "layer58_CSA",
+          "params": 314591232,
+          "bytes": 629182464.0,
+          "flops": 938176013139968.0,
+          "act_bytes": 42412814336.0,
+          "extra": {}
+        },
+        {
+          "type": "Indexer",
+          "name": "layer58_Indexer",
+          "params": 22817024,
+          "bytes": 45634048.0,
+          "flops": 6597606637568.0,
+          "act_bytes": 1342177280.0,
+          "extra": {}
+        },
+        {
+          "type": "MoE",
+          "name": "layer58_MoE",
+          "params": 25436753792,
+          "bytes": 25447353856.0,
+          "flops": 727349490352128.0,
+          "act_bytes": 12213813248.0,
+          "extra": {
+            "total_expert_params": 25367150592,
+            "per_expert_params": 66060288,
+            "activated_expert_params": 396361728,
+            "shared_expert_params": 66060288,
+            "activation_ratio": 0.01818181818181818
+          }
+        },
+        {
+          "type": "mHC",
+          "name": "layer58_mHC_post",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        }
+      ]
+    },
+    {
+      "layer_id": 59,
+      "attention_type": "CSA",
+      "use_indexer": true,
+      "ffn_type": "MoE",
+      "params": 25775596608,
+      "bytes": 26125039488.0,
+      "flops": 1672213307197312.0,
+      "act_bytes": 55968804864.0,
+      "modules": [
+        {
+          "type": "mHC",
+          "name": "layer59_mHC_pre",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        },
+        {
+          "type": "CSA",
+          "name": "layer59_CSA",
+          "params": 314591232,
+          "bytes": 629182464.0,
+          "flops": 938176013139968.0,
+          "act_bytes": 42412814336.0,
+          "extra": {}
+        },
+        {
+          "type": "Indexer",
+          "name": "layer59_Indexer",
+          "params": 22817024,
+          "bytes": 45634048.0,
+          "flops": 6597606637568.0,
+          "act_bytes": 1342177280.0,
+          "extra": {}
+        },
+        {
+          "type": "MoE",
+          "name": "layer59_MoE",
+          "params": 25436753792,
+          "bytes": 25447353856.0,
+          "flops": 727349490352128.0,
+          "act_bytes": 12213813248.0,
+          "extra": {
+            "total_expert_params": 25367150592,
+            "per_expert_params": 66060288,
+            "activated_expert_params": 396361728,
+            "shared_expert_params": 66060288,
+            "activation_ratio": 0.01818181818181818
+          }
+        },
+        {
+          "type": "mHC",
+          "name": "layer59_mHC_post",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        }
+      ]
+    },
+    {
+      "layer_id": 60,
+      "attention_type": "SWA",
+      "use_indexer": false,
+      "ffn_type": "MoE",
+      "params": 25741765440,
+      "bytes": 26057377152.0,
+      "flops": 1931972392388480.0,
+      "act_bytes": 53821308928.0,
+      "modules": [
+        {
+          "type": "mHC",
+          "name": "layer60_mHC_pre",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        },
+        {
+          "type": "SWA",
+          "name": "layer60_SWA",
+          "params": 303577088,
+          "bytes": 607154176.0,
+          "flops": 1204532704968704.0,
+          "act_bytes": 41607495680.0,
+          "extra": {}
+        },
+        {
+          "type": "MoE",
+          "name": "layer60_MoE",
+          "params": 25436753792,
+          "bytes": 25447353856.0,
+          "flops": 727349490352128.0,
+          "act_bytes": 12213813248.0,
+          "extra": {
+            "total_expert_params": 25367150592,
+            "per_expert_params": 66060288,
+            "activated_expert_params": 396361728,
+            "shared_expert_params": 66060288,
+            "activation_ratio": 0.01818181818181818
+          }
+        },
+        {
+          "type": "mHC",
+          "name": "layer60_mHC_post",
+          "params": 717280,
+          "bytes": 1434560.0,
+          "flops": 45098533824.0,
+          "act_bytes": 0.0,
+          "extra": {}
+        }
+      ]
+    }
+  ]
+}
