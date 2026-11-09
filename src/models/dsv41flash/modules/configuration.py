@@ -38,13 +38,11 @@ def normalize_config(config: dict, base_dir: Path | None = None) -> dict:
     for key in required:
         if key not in arch:
             raise ValueError(f"architecture.{key} is required")
-        _positive(arch[key], f"architecture.{key}", allow_zero=key == "n_shared_experts")
+        _positive(arch[key], f"architecture.{key}")
     if arch["n_heads"] % arch["o_groups"]:
         raise ValueError("n_heads must be divisible by o_groups")
     if arch["n_activated_experts"] > arch["n_routed_experts"]:
         raise ValueError("n_activated_experts cannot exceed n_routed_experts")
-    if arch["n_shared_experts"] != 1:
-        raise ValueError("The source implementation constructs exactly one shared expert")
     if cfg.get("include_vision", False):
         raise ValueError("Vision-tower analysis is not implemented; this version covers the text path")
     n = arch["n_layers"]
