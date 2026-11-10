@@ -17,18 +17,29 @@ def _positive(value, name, allow_zero=False):
 
 def normalize_config(config: dict, base_dir: Path | None = None) -> dict:
     cfg = copy.deepcopy(config)
-    if "architecture" in cfg:
+    if isinstance(cfg.get("architecture"), dict) and cfg.get("source", {}).get("architecture_file"):
+        # Already normalized (e.g. ConfigParser loaded the scenario, then the
+        # model constructor normalizes again): keep the merged architecture.
         arch = cfg["architecture"]
-    else:
+    elif "architecture_file" in cfg or "architecture" not in cfg:
         source = cfg.get("architecture_file")
         path = (base_dir or Path.cwd()) / source if source else Path(__file__).resolve().parent.parent / "config.json"
         data = path.read_bytes()
-        arch = json.loads(data)
+        loaded = json.loads(data)
+        overrides = cfg.pop("architecture", {})
+        if not isinstance(overrides, dict):
+            raise ValueError("architecture must be an object")
+        arch = {**loaded, **overrides}
         cfg["architecture"] = arch
-        cfg["source"] = {"architecture_file": str(path.resolve()),
-                         "sha256": hashlib.sha256(data).hexdigest(),
-                         "implementation": "DeepSeek-V4.1-Flash/inference/model.py",
-                         "scope": "Text path; excludes vision tower/aligner and quantization metadata."}
+        source_info = {"architecture_file": str(path.resolve()),
+                       "sha256": hashlib.sha256(data).hexdigest(),
+                       "implementation": "DeepSeek-V4.1-Flash/inference/model.py",
+                       "scope": "Text path; excludes vision tower/aligner and quantization metadata."}
+        if overrides:
+            source_info["architecture_overrides"] = sorted(overrides)
+        cfg["source"] = source_info
+    else:
+        arch = cfg["architecture"]
     if not isinstance(arch, dict):
         raise ValueError("architecture must be an object")
     required = ("dim", "vocab_size", "n_layers", "moe_inter_dim", "n_heads", "head_dim",

@@ -1,6 +1,17 @@
 {
   "model": "DSV41Flash",
-  "architecture_file": "../src/models/dsv41flash/config_next80t.json",
+  "architecture_file": "../src/models/dsv41flash/config_next_base.json",
+  "architecture": {
+    "moe_inter_dim": 6144,
+    "n_routed_experts": 8192,
+    "n_shared_experts": 6,
+    "n_activated_experts": 32,
+    "n_heads": 224,
+    "engram_num_embeddings": [
+      65625000000,
+      65625000000
+    ]
+  },
   "description": "Next-80T extension of DSV4.1-Flash: 120 layers, 8192 routed experts (32 active) + 6 shared, inter_dim 6144, 224 heads, 129k vocab, Engram 33.6T params. dim and layer layout inherit the Next-10T/20T/40T extensions; total parameter count is whatever the given dimensions produce.",
   "max_seq_len": 4096,
   "dtype": "bf16",
@@ -12,9 +23,21 @@
   "training": {
     "num_devices": 1,
     "groups": {
-      "dense": {"device": "gpu", "shards": 1, "optimizer": "adamw"},
-      "expert": {"device": "gpu", "shards": 1, "optimizer": "adamw"},
-      "engram": {"device": "gpu", "shards": 1, "optimizer": "momentum"}
+      "dense": {
+        "device": "gpu",
+        "shards": 1,
+        "optimizer": "adamw"
+      },
+      "expert": {
+        "device": "gpu",
+        "shards": 1,
+        "optimizer": "adamw"
+      },
+      "engram": {
+        "device": "gpu",
+        "shards": 1,
+        "optimizer": "momentum"
+      }
     }
   }
 }
