@@ -78,8 +78,6 @@ def normalize_config(config: dict, base_dir: Path | None = None) -> dict:
         if key not in arch:
             raise ValueError(f"architecture.{key} is required")
         _positive(arch[key], f"architecture.{key}")
-    if arch["n_shared_experts"] != 1:
-        raise ValueError("The workbook structure assumes exactly one shared expert")
     if arch["num_experts_per_tok"] > arch["n_routed_experts"]:
         raise ValueError("num_experts_per_tok cannot exceed n_routed_experts")
     n = arch["num_hidden_layers"]

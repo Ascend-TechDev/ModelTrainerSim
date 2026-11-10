@@ -38,6 +38,7 @@ class MoE(BaseModule):
 
     def compute_params(self) -> list[ModuleParamBreakdown]:
         H, E, I = self.hidden_size, self.n_routed_experts, self.moe_intermediate_size
+        n_shared = self.n_shared_experts
         return [
             GroupedParamBreakdown("router_weight", (H, E), H * E, self.dtype, group="dense"),
             GroupedParamBreakdown("e_score_correction_bias", (E,), E, self.dtype, group="buffer"),
@@ -45,9 +46,10 @@ class MoE(BaseModule):
                                   self.dtype, group="expert"),
             GroupedParamBreakdown("routed_down_proj", (E, I, H), E * I * H,
                                   self.dtype, group="expert"),
-            GroupedParamBreakdown("shared_gate_up_proj", (H, 2 * I), H * 2 * I,
-                                  self.dtype, group="dense"),
-            GroupedParamBreakdown("shared_down_proj", (I, H), I * H, self.dtype, group="dense"),
+            GroupedParamBreakdown("shared_gate_up_proj", (n_shared, H, 2 * I),
+                                  n_shared * H * 2 * I, self.dtype, group="dense"),
+            GroupedParamBreakdown("shared_down_proj", (n_shared, I, H),
+                                  n_shared * I * H, self.dtype, group="dense"),
         ]
 
     def compute_flops(self, seq_len: int, batch_size: int = 1) -> float:
@@ -58,7 +60,7 @@ class MoE(BaseModule):
         n_e = B * S * K                                   # sum of selected-expert tokens
         routed_up = 2 * n_e * (2 * I) * H
         routed_down = 2 * n_e * H * I
-        shared = 3 * 2 * B * S * I * H                    # gate + up + down on all tokens
+        shared = 3 * 2 * B * S * I * H * self.n_shared_experts  # gate + up + down, all shared experts
         return router + routed_up + routed_down + shared
 
     def compute_activations(self, seq_len: int, batch_size: int = 1) -> float:
@@ -77,9 +79,9 @@ class MoE(BaseModule):
         routed_down = n_e * H * a                         # [N_e, H]
         weighted = n_e * H * a                            # x routing weights
         final = B * S * H * a                             # index_add result
-        shared_up = B * S * (2 * I) * a
-        shared_act = B * S * I * a
-        shared_down = B * S * H * a
+        shared_up = B * S * (2 * I) * a * self.n_shared_experts
+        shared_act = B * S * I * a * self.n_shared_experts
+        shared_down = B * S * H * a * self.n_shared_experts
         summed = B * S * H * a                            # routed + shared
         return (logits + scores + topk_ids + routing_w + routed_up + routed_act
                 + routed_down + weighted + final + shared_up + shared_act
@@ -92,5 +94,5 @@ class MoE(BaseModule):
             "router_params": H * E,
             "bias_params": E,
             "per_routed_expert_params": H * 2 * I + I * H,
-            "shared_expert_params": H * 2 * I + I * H,
+            "shared_expert_params": (H * 2 * I + I * H) * self.n_shared_experts,
         }
