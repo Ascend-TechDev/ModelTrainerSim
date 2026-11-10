@@ -90,6 +90,9 @@ ModelTrainerSimluator/
 │   ├── dsv41flash_config.json       # Flash 默认分析场景
 │   ├── dsv41flash_32gpu_config.json # Flash 32 卡分析场景
 │   ├── glm_5_2_config.json          # GLM-5.2 分析场景
+│   ├── glm_10t_config.json          # GLM-10T 分析场景
+│   ├── glm_20t_config.json          # GLM-20T 分析场景
+│   ├── glm_50t_config.json          # GLM-50T 分析场景
 │   ├── hy4_10t_config.json          # Hy4 10T 默认分析场景
 │   ├── hy4_ep_config.json           # Hy4 纯 EP 策略场景
 │   ├── hy4_fsdp_config.json         # Hy4 纯 FSDP 策略场景
@@ -136,6 +139,12 @@ python -m src.main --config configs/kimi_10t_deep_v2_config.json
 python -m src.main --config configs/kimi_10t_wide_v2_config.json
 python -m src.main --config configs/kimi_50t_config.json
 python -m src.main --config configs/kimi_100t_config.json
+
+# 分析 GLM-5.2 系列（MLA+DSA+Indexer MoE，743B / 10T / 20T / 50T）
+python -m src.main --config configs/glm_5_2_config.json
+python -m src.main --config configs/glm_10t_config.json
+python -m src.main --config configs/glm_20t_config.json
+python -m src.main --config configs/glm_50t_config.json
 ```
 
 ### Python API 使用

@@ -383,6 +383,78 @@ class TestGLMFutureParameters(unittest.TestCase):
                                  case["total_params"])
 
 
+# GLM-10T / 20T / 50T series configs (configs/glm_{10t,20t,50t}_config.json).
+# The golden totals are the exact model outputs; they round to the analysis
+# table's 10.000T / 19.984T / 49.990T totals and 185.4B / 296.1B / 535.0B
+# active parameters per token.  All attention/indexer dims and hidden_size
+# stay at the GLM-5.2 baseline; only layer count, expert dims/counts, and
+# the indexer schedule change.
+SERIES_CASES = {
+    "GLM-10T": {
+        "config_path": "configs/glm_10t_config.json",
+        "num_layers": 96, "num_indexer_layers": 26,
+        "total_params": 9_999_772_512_768,
+        "active_params": 185_360_675_328,
+    },
+    "GLM-20T": {
+        "config_path": "configs/glm_20t_config.json",
+        "num_layers": 112, "num_indexer_layers": 30,
+        "total_params": 19_984_031_782_400,
+        "active_params": 296_126_617_088,
+    },
+    "GLM-50T": {
+        "config_path": "configs/glm_50t_config.json",
+        "num_layers": 128, "num_indexer_layers": 34,
+        "total_params": 49_989_663_341_056,
+        "active_params": 534_985_325_056,
+    },
+}
+
+
+class TestGLMSeriesParameters(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.models = {}
+        cls.reports = {}
+        for name, case in SERIES_CASES.items():
+            cfg = ConfigParser(ROOT / case["config_path"]).load()
+            cls.models[name] = ModelRegistry.build("GLM-5.2", cfg)
+            cls.reports[name] = cls.models[name].analyze(4096, 1)
+
+    def test_series_total_and_active_parameters(self):
+        for name, case in SERIES_CASES.items():
+            with self.subTest(sheet=name):
+                report = self.reports[name]
+                self.assertEqual(report["model_params"]["total_params"],
+                                 case["total_params"])
+                self.assertEqual(report["model_params"]["active_params_per_token"],
+                                 case["active_params"])
+
+    def test_series_indexer_schedule(self):
+        for name, case in SERIES_CASES.items():
+            with self.subTest(sheet=name):
+                model = self.models[name]
+                report = self.reports[name]
+                self.assertEqual(model.num_indexer_layers, case["num_indexer_layers"])
+                self.assertEqual(len(report["layers"]), case["num_layers"])
+                self.assertEqual([r["indexer_type"] for r in report["layers"][:4]],
+                                 ["full", "full", "full", "shared"])
+                self.assertTrue(all(r["is_dense"] and r["use_indexer"]
+                                    for r in report["layers"][:3]))
+
+    def test_series_layer_and_global_sums_reconcile(self):
+        for name, case in SERIES_CASES.items():
+            with self.subTest(sheet=name):
+                report = self.reports[name]
+                summary = report["per_module_summary_excel"]
+                for module_type, stats in report["per_module_summary"].items():
+                    self.assertEqual(stats["params"], summary[module_type.lower()]["params"])
+                top = sum(summary[k]["params"]
+                          for k in ("wordembedding", "outputlayernorm", "lmhead"))
+                self.assertEqual(sum(row["params"] for row in report["layers"]) + top,
+                                 case["total_params"])
+
+
 class TestGLMIntegration(unittest.TestCase):
     def test_registry_preserves_all_model_families(self):
         self.assertEqual(ModelRegistry.list_models(),
