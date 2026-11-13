@@ -1,0 +1,77 @@
+{
+  "model": "DSV41Flash",
+  "description": "Qwen3.5-35B-A3B — 40-layer hybrid MoE (30 Gated DeltaNet + 10 Full Attention GQA), 256 routed experts (Top-8) + 1 shared expert, moe_inter_dim 512, hidden 2048, 16 heads (GQA 16:2), head_dim 256, vocab 248320, 1 MTP layer (excluded). Total ~35B params, ~3B active per token. DSV41Flash proxy: GQA mapped to MLA (q_lora_rank=1365 → Q=8.39M, o_lora_rank=683 → O=8.39M, matching Qwen GQA Q/O projection param counts within 0.1%). GDN layers approximated as Full attention (compress_ratio=1). No Engram/DSpark/Indexer. KV params undercounted by ~1.6M/layer (MLA single wkv vs GQA separate K+V), <0.2% of 35B total. mHC module adds minor overhead. Vision tower and MTP layer excluded. Source: HF config.json (Qwen/Qwen3.5-35B-A3B).",
+  "architecture": {
+    "dim": 2048,
+    "vocab_size": 248320,
+    "n_layers": 40,
+    "moe_inter_dim": 512,
+    "n_heads": 16,
+    "head_dim": 256,
+    "q_lora_rank": 1365,
+    "o_lora_rank": 683,
+    "o_groups": 4,
+    "window_size": 128,
+    "rope_head_dim": 64,
+    "rope_theta": 10000000,
+    "rope_factor": 1,
+    "beta_fast": 32,
+    "beta_slow": 1,
+    "n_routed_experts": 256,
+    "n_shared_experts": 1,
+    "n_activated_experts": 8,
+    "score_func": "sqrtsoftplus",
+    "route_scale": 1.5,
+    "swiglu_limit": 10.0,
+    "norm_eps": 1e-06,
+    "index_n_heads": 1,
+    "index_head_dim": 128,
+    "index_topk": 1,
+    "hc_mult": 4,
+    "hc_sinkhorn_iters": 20,
+    "hc_eps": 1e-06,
+    "candidate_block_size": 8,
+    "candidate_topk_blocks": 2048,
+    "candidate_source_layer": 0,
+    "kv_source_layers": [0],
+    "index_source_layers": [0],
+    "compress_ratios": [
+      1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+      1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+      1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+      1, 1, 1, 1, 1, 1, 1, 1, 1, 1
+    ],
+    "original_seq_len": 262144,
+    "dtype": "bf16",
+    "expert_dtype": "bf16",
+    "engram_layer_ids": [],
+    "engram_num_embeddings": []
+  },
+  "max_seq_len": 4096,
+  "dtype": "bf16",
+  "activation_dtype": "bf16",
+  "logits_dtype": "fp32",
+  "cache_dtype": "bf16",
+  "include_engram": false,
+  "include_dspark": false,
+  "training": {
+    "num_devices": 1,
+    "groups": {
+      "dense": {
+        "device": "gpu",
+        "shards": 1,
+        "optimizer": "adamw"
+      },
+      "expert": {
+        "device": "gpu",
+        "shards": 1,
+        "optimizer": "adamw"
+      },
+      "engram": {
+        "device": "gpu",
+        "shards": 1,
+        "optimizer": "momentum"
+      }
+    }
+  }
+}
