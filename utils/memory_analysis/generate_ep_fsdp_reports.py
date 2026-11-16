@@ -14,13 +14,13 @@ from src.core.config_parser import ConfigParser
 from src.core.model_registry import ModelRegistry
 
 GB = 1e9
-MFU = 0.56
+MFU = 0.40
 HBM_SAFETY = 0.95
 BUFFER_GB = 3.0
 HBM_CAPACITIES_GB = [192, 288]
 BANDWIDTHS_GBS = [200, 250, 300, 350, 400, 450, 500]
 DDR_CAPACITIES_GB = [256, 384, 512, 540, 768]
-EP_VALUES = [128, 256, 512, 1024]
+EP_VALUES = [128, 256, 512, 1024, 2048]
 EFSDP_VALUES = [1, 2, 4, 8, 16, 32]
 
 # Parameter counts and 970DT card counts come from the table in
@@ -301,7 +301,7 @@ def make_report(
         "",
         f"- 配置：[`{config_name}`](../../configs/{config_name})",
         f"- 配置实际参数量：{data['config_params'] / 1e12:.4f}T；层数：{data['layers']}",
-        f"- 输入：seq_len=4096，batch_size=1；BF16={bf16_tflops:g} TFLOPS，MFU=0.56",
+        f"- 输入：seq_len=4096，batch_size=1；BF16={bf16_tflops:g} TFLOPS，MFU={MFU:.2f}",
         "- 静态HBM按公式包含最大单层激活、权重与梯度及 3GB buffer；HBM预算为容量的 95%。",
     ]
     if abs(data["config_params"] / 1e12 - table_params_t) > 0.01:

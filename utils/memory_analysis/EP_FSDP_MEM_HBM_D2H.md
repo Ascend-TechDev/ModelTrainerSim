@@ -23,7 +23,7 @@
 - 配置文件：`configs/` 目录下带有 [`qwen_`, `dsv`, `glm_`, `hy4_`, `kimi_`, `qwen`] 前缀的配置文件
 - 算力规格：970DT — BF16 1769 Tops，FP8 3538 Tops，FP4 14155 Tops, 980DT — BF16 3538 Tops，FP8 7076 Tops，FP4 28310 Tops,
 - HBM 容量：192 GB / 288 GB 两种情况
-- MFU：0.56
+- MFU：0.40
 
 请查表"训练所需卡数"获取对应模型在 970DT 所需的训练卡数 K，遍历以下并行策略，执行任务一、二、三、四：
 请查表"训练所需卡数"获取对应模型在 980DT 所需的训练卡数 K，遍历以下并行策略，执行任务一、二、三、四：
@@ -53,7 +53,12 @@
 21. EP=1024, EDP=floor(K/1024/8),  EFSDP=8,  FSDP=K
 22. EP=1024, EDP=floor(K/1024/16),  EFSDP=16,  FSDP=K
 23. EP=1024, EDP=floor(K/1024/32),  EFSDP=32,  FSDP=K
-
+24. EP=2048, EDP=floor(K/2048),  EFSDP=1,  FSDP=K
+25. EP=2048, EDP=floor(K/2048/2),  EFSDP=2,  FSDP=K
+26. EP=2048, EDP=floor(K/2048/4),  EFSDP=4,  FSDP=K
+27. EP=2048, EDP=floor(K/2048/8),  EFSDP=8,  FSDP=K
+28. EP=2048, EDP=floor(K/2048/16),  EFSDP=16,  FSDP=K
+29. EP=2048, EDP=floor(K/2048/32),  EFSDP=32,  FSDP=K
 
 ## 输入
 
