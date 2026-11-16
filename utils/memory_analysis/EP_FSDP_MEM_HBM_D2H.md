@@ -20,17 +20,40 @@
 
 ## 实验设定
 
-- 配置文件：`configs/` 目录下带有 `qwen_` 前缀的配置文件
-- 算力规格：970DT — BF16 1769 Tops，FP8 3538 Tops，FP4 14155 Tops
+- 配置文件：`configs/` 目录下带有 [`qwen_`, `dsv`, `glm_`, `hy4_`, `kimi_`, `qwen`] 前缀的配置文件
+- 算力规格：970DT — BF16 1769 Tops，FP8 3538 Tops，FP4 14155 Tops, 980DT — BF16 3538 Tops，FP8 7076 Tops，FP4 28310 Tops,
 - HBM 容量：192 GB / 288 GB 两种情况
 - MFU：0.56
 
 请查表"训练所需卡数"获取对应模型在 970DT 所需的训练卡数 K，遍历以下并行策略，执行任务一、二、三、四：
+请查表"训练所需卡数"获取对应模型在 980DT 所需的训练卡数 K，遍历以下并行策略，执行任务一、二、三、四：
 
-1. EP=128,  EDP=floor(K/128/2),   EFSDP=floor(K/128/2),  FSDP=K
-2. EP=256,  EDP=floor(K/256/2),   EFSDP=floor(K/128/2),  FSDP=K
-3. EP=512,  EDP=floor(K/512/2),   EFSDP=floor(K/128/2),  FSDP=K
-4. EP=1024, EDP=floor(K/1024/2),  EFSDP=floor(K/128/2),  FSDP=K
+
+1. EP=128,  EDP=floor(K/128),   EFSDP=1,  FSDP=K
+2. EP=128,  EDP=floor(K/128/2),   EFSDP=2,  FSDP=K
+3. EP=128,  EDP=floor(K/128/4),   EFSDP=4,  FSDP=K
+3. EP=128,  EDP=floor(K/128/8),   EFSDP=8,  FSDP=K
+4. EP=128,  EDP=floor(K/128/16),   EFSDP=16,  FSDP=K
+5. EP=128,  EDP=floor(K/128/32),   EFSDP=32,  FSDP=K
+6. EP=256,  EDP=floor(K/256),   EFSDP=1,  FSDP=K
+7. EP=256,  EDP=floor(K/256/2),   EFSDP=2,  FSDP=K
+8. EP=256,  EDP=floor(K/256/4),   EFSDP=4,  FSDP=K
+9. EP=256,  EDP=floor(K/256/8),   EFSDP=8,  FSDP=K
+10. EP=256,  EDP=floor(K/256/16),   EFSDP=16,  FSDP=K
+11. EP=256,  EDP=floor(K/256/32),   EFSDP=32,  FSDP=K
+12. EP=512,  EDP=floor(K/512),   EFSDP=1,  FSDP=K
+13. EP=512,  EDP=floor(K/512/2),   EFSDP=2,  FSDP=K
+14. EP=512,  EDP=floor(K/512/4),   EFSDP=4,  FSDP=K
+15. EP=512,  EDP=floor(K/512/8),   EFSDP=8,  FSDP=K
+16. EP=512,  EDP=floor(K/512/16),   EFSDP=16,  FSDP=K
+17. EP=512,  EDP=floor(K/512/32),   EFSDP=32,  FSDP=K
+18. EP=1024, EDP=floor(K/1024),  EFSDP=1,  FSDP=K
+19. EP=1024, EDP=floor(K/1024/2),  EFSDP=2,  FSDP=K
+20. EP=1024, EDP=floor(K/1024/4),  EFSDP=4,  FSDP=K
+21. EP=1024, EDP=floor(K/1024/8),  EFSDP=8,  FSDP=K
+22. EP=1024, EDP=floor(K/1024/16),  EFSDP=16,  FSDP=K
+23. EP=1024, EDP=floor(K/1024/32),  EFSDP=32,  FSDP=K
+
 
 ## 输入
 
@@ -74,7 +97,7 @@
 
 ## 内存建模方法
 
-约束条件：`SU=K`，`EP < SU`，`EDP=floor(K/EP/2)`，`EFSDP=floor(K/128/2)`，`FSDP=SU`。
+约束条件：`SU=K`，`EP < SU`，`EDP=floor(K/EP/EFSDP)`，`EFSDP`，`FSDP=SU`。
 
 使用如下命令获取模型结构数据：
 
@@ -134,6 +157,11 @@ D2H带宽诉求2 (全激活卸载)  = max( 第i层激活显存占用     * 全�
 
 > D2H 掩盖窗口：第 *i* 层卸载被第 *i+1* 层计算掩盖（*i* = 0 .. N-2）。第 0 层没有前置计算可掩盖卸载，最后一层的卸载无后续计算可掩盖 — 这两个边缘场景在 `max over N-1 layers` 中已隐含处理。
 
+
+### SSD 容量诉求
+
+
+
 ### 任务三: D2H 带宽遍历
 
 带宽范围 `[200, 250, 300, 350, 400, 450, 500]` GB/s，利用率 80%，实际带宽 `[160, 200, 240, 280, 320, 360, 400]` GB/s。
@@ -169,6 +197,25 @@ if 可用DDR空间 <  激活需要放在DDR上的容量 → offload_ratio = 1 - 
 端到端收益 = offload_ratio × 25%
 ```
 
+
+### 任务五：SSD容量
+
+SSD用于存储训练 checkpoint。此处统计**每 GPU 的 checkpoint 分片容量**，并非全作业的 checkpoint 总容量，也不是 SSD 硬件规划容量。
+
+```
+单卡MoE checkpoint分片
+  = (MoE权重 + 对应的master weights + 对应的optimizer states) / EP / EFSDP
+
+单卡Backbone checkpoint分片
+  = (Backbone权重 + 对应的master weights + 对应的optimizer states) / FSDP
+
+单卡SSD分片需求
+  = 单卡MoE checkpoint分片 + 单卡Backbone checkpoint分片
+```
+
+使用配置中各模型实际的 `weights`、`master_weights` 和 `optimizer_states` 字节数；checkpoint 估算不包含训练梯度。模型未提供按参数组拆分的 optimizer 状态时，按对应权重比例估算。整机/节点 SSD 需求还需乘以每节点 GPU 数；全作业逻辑 checkpoint 总容量应以模型全局权重、master weights 和 optimizer states 汇总，不能将单卡数直接当作全局总量。
+
+
 ## 任务
 
 参考建模方法章节，执行下列任务：
@@ -177,8 +224,12 @@ if 可用DDR空间 <  激活需要放在DDR上的容量 → offload_ratio = 1 - 
 2. **任务二**：输出 D2H 带宽诉求
 3. **任务三**：不考虑 DDR 容量不够的情况下，遍历带宽，输出对应带宽下消除重计算比例（端到端收益）
 4. **任务四**：不考虑 D2H 带宽不够的情况下，遍历 DDR 容量，输出对应 DDR 容量下消除重计算比例（端到端收益）
+5. **任务五**: 输出SSD容量诉求
 
-A7.A8算力翻倍
-EP开到多大，FSDP开多大，能放下。1T~100T模型怎么切分，放置。使用什么卡训练，多少张，训练多久。
-DDR、D2H、HBM（给带宽诉求、通过算子给）、SSD（ckpt、优化器）
-不确定的东西给出结论。
+
+1. 在HBM=288GB，DDR=768GB时候，给出各个模型的最佳并行策略；在HBM=192GB，DDR=512GB时候，给出各个模型的最佳并行策略。做成表格的形式。
+2. 给出在上述并行策略下，各个模型的DDR容量诉求，做成PPT插入图表的折线图。
+3. 给出在上述并行策略下，各个模型的SSD容量诉求，做成PPT插入图表的折线图。
+4. 给出在上述并行策略下，各个模型的D2H带宽诉求，做成PPT的表格，和折线图，并且给出在D2H=200GB/s时（考虑带宽利用率在80%下）的消除重计算的比例（也即端到端收益），绘制成PPT的表格。
+5. 给出在上述并行策略下，各个模型随着D2H带宽增加，统计能消除重计算的模型个数，统计消除重计算的平均值，绘制成PPT表格。
+6. 给出在上述并行策略下，各个模型随着DDR容量增加，统计能消除重计算的模型个数，统计消除重计算的平均值，绘制成PPT表格。
