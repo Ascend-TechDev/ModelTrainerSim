@@ -65,7 +65,9 @@ FULL_INDEXER_LAYERS = [0, 1, 5, 9, 13, 17, 21, 25, 29, 33, 37, 41, 45, 49, 53,
 class TestHy4(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.config = ConfigParser(ROOT / "configs/hy4_10t_config.json").load()
+        # Keep the original workbook goldens independent of newer planning
+        # inputs, whose 10T variant now has 120 layers and Top-18.
+        cls.config = ConfigParser(ROOT / "tests/fixtures/hy4_legacy_workbook_config.json").load()
         cls.report = ModelRegistry.build("Hy4", cls.config).analyze(4096, 1)
 
     def analyze(self, cfg=None, S=4096, B=1):

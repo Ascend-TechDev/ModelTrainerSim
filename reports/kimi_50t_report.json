@@ -6,10 +6,11 @@
     "vocab_size": 163840,
     "max_seq_len": 4096,
     "dtype": "bf16",
+    "activation_dtype": "bf16",
     "variant": "next-50t"
   },
   "source": {
-    "architecture_file": "/home/y00893431/ModelTrainerSim/src/models/kimi/config.json",
+    "architecture_file": "/home/l00619433/workspace/su_so_analysis/ModelTrainerSim/src/models/kimi/config.json",
     "sha256": "7ce7a82f7f1beeb92dd90c96794436ea79ad758f85c32eeb9c9c5c15c3c8b8a3"
   },
   "model_params": {
@@ -70,7 +71,7 @@
         "master_weights": 0.0,
         "optimizer_states": 399979847006464.0,
         "total": 599965072889216.0,
-        "note": "Weights/gradients: dense modules \u00f7TP, routed experts \u00f7EP (row G68). Optimizer states \u00f7 total cards (row K66). Shared experts, latent mapping and gate are placed with the dense modules (\u00f7TP)."
+        "note": "Weights/gradients: dense modules ÷TP, routed experts ÷EP (row G68). Optimizer states ÷ total cards (row K66). Shared experts, latent mapping and gate are placed with the dense modules (÷TP)."
       },
       "note": "Whole-model training states; per_rank carries the sharded static memory for one card under the workbook mesh (rows G63/G68/K66). Activation memory and all-gather traffic are reported separately."
     },
@@ -81,7 +82,7 @@
       "master_weights": 0.0,
       "optimizer_states": 399979847006464.0,
       "total": 599965072889216.0,
-      "note": "Weights/gradients: dense modules \u00f7TP, routed experts \u00f7EP (row G68). Optimizer states \u00f7 total cards (row K66). Shared experts, latent mapping and gate are placed with the dense modules (\u00f7TP)."
+      "note": "Weights/gradients: dense modules ÷TP, routed experts ÷EP (row G68). Optimizer states ÷ total cards (row K66). Shared experts, latent mapping and gate are placed with the dense modules (÷TP)."
     }
   },
   "per_module_summary": {
@@ -3793,11 +3794,49 @@
     }
   ],
   "notes": [
-    "10T Kimi is a planning extension derived from the workbook '10T Kimi \u663e\u5b58\u5efa\u6a21.xlsx' (sheets 10T-\u6df1\u5ea6-v2 / 10T-\u5bbd\u5ea6-v2); no official HF config is pinned.",
-    "Param totals reproduce the workbook I-column formula chain; the cached J55 on \u6df1\u5ea6-v2 predates the v2 MLA g_proj \u8865\u6863 and is stale.",
+    "Kimi planning variant next-50t: 128 layers, E=4096, Top-48, shared=2; scenario dimensions extend the workbook-derived module formulas; no official HF config is pinned.",
+    "Param totals reproduce the workbook I-column formula chain; the cached J55 on 深度-v2 predates the v2 MLA g_proj 补档 and is stale.",
     "Optimizer states: AdamW 12 B/param (embedding + LM head), Muon 8 B/param (everything else); gradients 2 B; master weights 0.",
     "Per-rank static memory: dense modules /TP, routed experts /EP, optimizer states /total cards (rows G63/G68/K66).",
-    "Dense layer (layer 0) carries no attention in \u6df1\u5ea6-v2 (mla+kda == moe_layers) and an MLA in \u5bbd\u5ea6-v2 (mla+kda == num_hidden_layers), mirroring the workbook counts.",
+    "Dense layer (layer 0) carries no attention in 深度-v2 (mla+kda == moe_layers) and an MLA in 宽度-v2 (mla+kda == num_hidden_layers), mirroring the workbook counts.",
     "All displayed GiB use 2^30 bytes. JSON carries raw bytes."
-  ]
+  ],
+  "input_alignment": {
+    "workbook": "model_struct_input.xlsx",
+    "workbook_sha256": "4380a748a1c312609e4c596b7522311242d4f99ed5f96181dcd2c78b4c5f8883",
+    "sheet": "Sheet1",
+    "row": 16,
+    "key_parameters": {
+      "num_layers": 128,
+      "moe_intermediate_size": 6144,
+      "routed_experts": 4096,
+      "top_k": 48,
+      "shared_experts": 2,
+      "attention_heads": 96
+    },
+    "key_parameters_match": true,
+    "vocabulary_size": 163840,
+    "vocabulary_policy": "Retain exact family/report vocabulary; workbook K shorthand is not a replacement value.",
+    "total_target_b": 50000.0,
+    "total_actual_b": 49996.306470688,
+    "total_delta_pct": -0.007387058623997689,
+    "total_within_tolerance": true,
+    "active_target_candidates_b": [
+      600.0
+    ],
+    "active_comparison_target_b": 600.0,
+    "active_actual_b": 684.1523464,
+    "active_delta_pct": 14.025391066666671,
+    "active_within_tolerance": false,
+    "engram_target_b": 0.0,
+    "engram_actual_b": 0.0,
+    "tolerance_pct": 5.0,
+    "aggregate_status": "requires_review",
+    "unspecified_dimensions_policy": "Retain existing family dimensions; new-model assumptions are recorded in config. Do not adjust formulas or invent dimensions to fit aggregate targets.",
+    "attention_name_policy": "Name differences ignored as requested.",
+    "vision": "MoonViT-V2",
+    "vision_scope": "Language backbone only; workbook gives no encoder dimensions.",
+    "modeling_assumptions": {},
+    "config_sha256": "36f952f83556520ec09ecb1ef309f886605e66e58179ec6bc6a9818e889b6211"
+  }
 }

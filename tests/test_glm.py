@@ -384,17 +384,14 @@ class TestGLMFutureParameters(unittest.TestCase):
 
 
 # GLM-10T / 20T / 50T series configs (configs/glm_{10t,20t,50t}_config.json).
-# The golden totals are the exact model outputs; they round to the analysis
-# table's 10.000T / 19.984T / 49.990T totals and 185.4B / 296.1B / 535.0B
-# active parameters per token.  All attention/indexer dims and hidden_size
-# stay at the GLM-5.2 baseline; only layer count, expert dims/counts, and
-# the indexer schedule change.
+# GLM-10T follows model_struct_input.xlsx row 19: 100 layers, 128 heads,
+# expert intermediate 3072 and Top-18. 20T/50T retain their existing scenarios.
 SERIES_CASES = {
     "GLM-10T": {
         "config_path": "configs/glm_10t_config.json",
-        "num_layers": 96, "num_indexer_layers": 26,
-        "total_params": 9_999_772_512_768,
-        "active_params": 185_360_675_328,
+        "num_layers": 100, "num_indexer_layers": 27,
+        "total_params": 11_294_953_691_904,
+        "active_params": 145_298_283_264,
     },
     "GLM-20T": {
         "config_path": "configs/glm_20t_config.json",

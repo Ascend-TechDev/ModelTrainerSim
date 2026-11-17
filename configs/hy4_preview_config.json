@@ -1,0 +1,25 @@
+{
+  "model": "Hy4",
+  "variant": "preview",
+  "architecture_file": "../src/models/hunyuan/config.json",
+  "description": "Hunyuan 4 preview; model_struct_input.xlsx Sheet1 row 10.",
+  "architecture": {
+    "output_all_positions": true
+  },
+  "max_seq_len": 4096,
+  "dtype": "bf16",
+  "training": {
+    "num_devices": 1,
+    "groups": {
+      "dense": {
+        "master_dtype": "none"
+      },
+      "expert": {
+        "master_dtype": "none"
+      },
+      "buffer": {
+        "master_dtype": "none"
+      }
+    }
+  }
+}

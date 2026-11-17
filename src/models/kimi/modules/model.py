@@ -251,9 +251,10 @@ class KimiModel:
             "per_module_summary_excel": excel_summary,
             "layers": layer_reports,
             "notes": [
-                "10T Kimi is a planning extension derived from the workbook "
-                "'10T Kimi 显存建模.xlsx' (sheets 10T-深度-v2 / 10T-宽度-v2); "
-                "no official HF config is pinned.",
+                f"Kimi planning variant {self.config.get('variant', 'deep-v2')}: "
+                f"{self.num_layers} layers, E={self.arch['n_routed_experts']}, "
+                f"Top-{self.arch['top_k']}, shared={self.arch['n_shared_experts']}; "
+                "scenario dimensions extend the workbook-derived module formulas; no official HF config is pinned.",
                 "Param totals reproduce the workbook I-column formula chain; the "
                 "cached J55 on 深度-v2 predates the v2 MLA g_proj 补档 and is stale.",
                 "Optimizer states: AdamW 12 B/param (embedding + LM head), "

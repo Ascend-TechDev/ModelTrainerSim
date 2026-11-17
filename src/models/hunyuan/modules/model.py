@@ -292,10 +292,12 @@ class Hy4Model:
             "per_module_summary_excel": excel_summary,
             "layers": layer_reports,
             "notes": [
-                "Hy4-preview 10T is a planning extension, not an official release; "
-                "dimensions follow the workbook planning assumptions (E=2048, Top-64).",
+                f"Hy4 variant {self.config.get('variant', 'preview')}: "
+                f"{self.num_layers} layers, E={self.arch['n_routed_experts']}, "
+                f"Top-{self.arch['num_experts_per_tok']}, shared={self.arch['n_shared_experts']}; "
+                "planning variants use scenario overrides on the pinned base architecture.",
                 "MTP layer excluded from the backbone analysis (workbook D31).",
-                "Unsharded model; TP1/PP4/VPP2/EP64/CP1 are informational (workbook B7).",
+                "Whole-model logical parameter inventory; training-state sharding is reported separately.",
                 "Weights count in BF16-equivalent bytes; logits default to FP32.",
                 "Router correction bias counts toward weights but not gradients/optimizer states.",
                 "All displayed GiB use 1e9 bytes. JSON carries raw bytes.",

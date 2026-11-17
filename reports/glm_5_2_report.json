@@ -5,7 +5,8 @@
     "num_layers": 78,
     "vocab_size": 154880,
     "max_seq_len": 1048576,
-    "dtype": "bf16"
+    "dtype": "bf16",
+    "activation_dtype": "bf16"
   },
   "model_params": {
     "total_params": 743377000704,
@@ -21,7 +22,7 @@
   },
   "memory": {
     "weight_memory_bytes": 1486989931008.0,
-    "activation_memory_bytes": 42291536330752.0,
+    "activation_memory_bytes": 42251271012352.0,
     "kv_cache_bytes": 94220845056.0,
     "training_total_bytes": 11895919448064.0,
     "training_breakdown": {
@@ -95,7 +96,7 @@
       "params": 117964800,
       "bytes": 471859200.0,
       "flops": 247450514227200.0,
-      "act_bytes": 80530636800.0,
+      "act_bytes": 40265318400.0,
       "count": 75
     }
   },
@@ -167,7 +168,7 @@
       "params": 117964800,
       "bytes": 471859200.0,
       "flops": 247450514227200.0,
-      "act_bytes": 80530636800.0,
+      "act_bytes": 40265318400.0,
       "count": 75
     },
     "outputlayernorm": {
@@ -396,7 +397,7 @@
       "params": 9868032512,
       "bytes": 19739210752.0,
       "flops": 7.311953731833037e+16,
-      "act_bytes": 544521322496.0,
+      "act_bytes": 543984451584.0,
       "modules": [
         {
           "type": "InputLayerNorm",
@@ -458,7 +459,7 @@
           "params": 1572864,
           "bytes": 6291456.0,
           "flops": 3299340189696.0,
-          "act_bytes": 1073741824.0,
+          "act_bytes": 536870912.0,
           "extra": {}
         }
       ]
@@ -472,7 +473,7 @@
       "params": 9868032512,
       "bytes": 19739210752.0,
       "flops": 7.311953731833037e+16,
-      "act_bytes": 544521322496.0,
+      "act_bytes": 543984451584.0,
       "modules": [
         {
           "type": "InputLayerNorm",
@@ -534,7 +535,7 @@
           "params": 1572864,
           "bytes": 6291456.0,
           "flops": 3299340189696.0,
-          "act_bytes": 1073741824.0,
+          "act_bytes": 536870912.0,
           "extra": {}
         }
       ]
@@ -548,7 +549,7 @@
       "params": 9868032512,
       "bytes": 19739210752.0,
       "flops": 7.311953731833037e+16,
-      "act_bytes": 544521322496.0,
+      "act_bytes": 543984451584.0,
       "modules": [
         {
           "type": "InputLayerNorm",
@@ -610,7 +611,7 @@
           "params": 1572864,
           "bytes": 6291456.0,
           "flops": 3299340189696.0,
-          "act_bytes": 1073741824.0,
+          "act_bytes": 536870912.0,
           "extra": {}
         }
       ]
@@ -624,7 +625,7 @@
       "params": 9877404416,
       "bytes": 19757954560.0,
       "flops": 7.313919377303142e+16,
-      "act_bytes": 562305171456.0,
+      "act_bytes": 561768300544.0,
       "modules": [
         {
           "type": "InputLayerNorm",
@@ -695,7 +696,7 @@
           "params": 1572864,
           "bytes": 6291456.0,
           "flops": 3299340189696.0,
-          "act_bytes": 1073741824.0,
+          "act_bytes": 536870912.0,
           "extra": {}
         }
       ]
@@ -709,7 +710,7 @@
       "params": 9868032512,
       "bytes": 19739210752.0,
       "flops": 7.311953731833037e+16,
-      "act_bytes": 544521322496.0,
+      "act_bytes": 543984451584.0,
       "modules": [
         {
           "type": "InputLayerNorm",
@@ -771,7 +772,7 @@
           "params": 1572864,
           "bytes": 6291456.0,
           "flops": 3299340189696.0,
-          "act_bytes": 1073741824.0,
+          "act_bytes": 536870912.0,
           "extra": {}
         }
       ]
@@ -785,7 +786,7 @@
       "params": 9868032512,
       "bytes": 19739210752.0,
       "flops": 7.311953731833037e+16,
-      "act_bytes": 544521322496.0,
+      "act_bytes": 543984451584.0,
       "modules": [
         {
           "type": "InputLayerNorm",
@@ -847,7 +848,7 @@
           "params": 1572864,
           "bytes": 6291456.0,
           "flops": 3299340189696.0,
-          "act_bytes": 1073741824.0,
+          "act_bytes": 536870912.0,
           "extra": {}
         }
       ]
@@ -861,7 +862,7 @@
       "params": 9868032512,
       "bytes": 19739210752.0,
       "flops": 7.311953731833037e+16,
-      "act_bytes": 544521322496.0,
+      "act_bytes": 543984451584.0,
       "modules": [
         {
           "type": "InputLayerNorm",
@@ -923,7 +924,7 @@
           "params": 1572864,
           "bytes": 6291456.0,
           "flops": 3299340189696.0,
-          "act_bytes": 1073741824.0,
+          "act_bytes": 536870912.0,
           "extra": {}
         }
       ]
@@ -937,7 +938,7 @@
       "params": 9877404416,
       "bytes": 19757954560.0,
       "flops": 7.313919377303142e+16,
-      "act_bytes": 562305171456.0,
+      "act_bytes": 561768300544.0,
       "modules": [
         {
           "type": "InputLayerNorm",
@@ -1008,7 +1009,7 @@
           "params": 1572864,
           "bytes": 6291456.0,
           "flops": 3299340189696.0,
-          "act_bytes": 1073741824.0,
+          "act_bytes": 536870912.0,
           "extra": {}
         }
       ]
@@ -1022,7 +1023,7 @@
       "params": 9868032512,
       "bytes": 19739210752.0,
       "flops": 7.311953731833037e+16,
-      "act_bytes": 544521322496.0,
+      "act_bytes": 543984451584.0,
       "modules": [
         {
           "type": "InputLayerNorm",
@@ -1084,7 +1085,7 @@
           "params": 1572864,
           "bytes": 6291456.0,
           "flops": 3299340189696.0,
-          "act_bytes": 1073741824.0,
+          "act_bytes": 536870912.0,
           "extra": {}
         }
       ]
@@ -1098,7 +1099,7 @@
       "params": 9868032512,
       "bytes": 19739210752.0,
       "flops": 7.311953731833037e+16,
-      "act_bytes": 544521322496.0,
+      "act_bytes": 543984451584.0,
       "modules": [
         {
           "type": "InputLayerNorm",
@@ -1160,7 +1161,7 @@
           "params": 1572864,
           "bytes": 6291456.0,
           "flops": 3299340189696.0,
-          "act_bytes": 1073741824.0,
+          "act_bytes": 536870912.0,
           "extra": {}
         }
       ]
@@ -1174,7 +1175,7 @@
       "params": 9868032512,
       "bytes": 19739210752.0,
       "flops": 7.311953731833037e+16,
-      "act_bytes": 544521322496.0,
+      "act_bytes": 543984451584.0,
       "modules": [
         {
           "type": "InputLayerNorm",
@@ -1236,7 +1237,7 @@
           "params": 1572864,
           "bytes": 6291456.0,
           "flops": 3299340189696.0,
-          "act_bytes": 1073741824.0,
+          "act_bytes": 536870912.0,
           "extra": {}
         }
       ]
@@ -1250,7 +1251,7 @@
       "params": 9877404416,
       "bytes": 19757954560.0,
       "flops": 7.313919377303142e+16,
-      "act_bytes": 562305171456.0,
+      "act_bytes": 561768300544.0,
       "modules": [
         {
           "type": "InputLayerNorm",
@@ -1321,7 +1322,7 @@
           "params": 1572864,
           "bytes": 6291456.0,
           "flops": 3299340189696.0,
-          "act_bytes": 1073741824.0,
+          "act_bytes": 536870912.0,
           "extra": {}
         }
       ]
@@ -1335,7 +1336,7 @@
       "params": 9868032512,
       "bytes": 19739210752.0,
       "flops": 7.311953731833037e+16,
-      "act_bytes": 544521322496.0,
+      "act_bytes": 543984451584.0,
       "modules": [
         {
           "type": "InputLayerNorm",
@@ -1397,7 +1398,7 @@
           "params": 1572864,
           "bytes": 6291456.0,
           "flops": 3299340189696.0,
-          "act_bytes": 1073741824.0,
+          "act_bytes": 536870912.0,
           "extra": {}
         }
       ]
@@ -1411,7 +1412,7 @@
       "params": 9868032512,
       "bytes": 19739210752.0,
       "flops": 7.311953731833037e+16,
-      "act_bytes": 544521322496.0,
+      "act_bytes": 543984451584.0,
       "modules": [
         {
           "type": "InputLayerNorm",
@@ -1473,7 +1474,7 @@
           "params": 1572864,
           "bytes": 6291456.0,
           "flops": 3299340189696.0,
-          "act_bytes": 1073741824.0,
+          "act_bytes": 536870912.0,
           "extra": {}
         }
       ]
@@ -1487,7 +1488,7 @@
       "params": 9868032512,
       "bytes": 19739210752.0,
       "flops": 7.311953731833037e+16,
-      "act_bytes": 544521322496.0,
+      "act_bytes": 543984451584.0,
       "modules": [
         {
           "type": "InputLayerNorm",
@@ -1549,7 +1550,7 @@
           "params": 1572864,
           "bytes": 6291456.0,
           "flops": 3299340189696.0,
-          "act_bytes": 1073741824.0,
+          "act_bytes": 536870912.0,
           "extra": {}
         }
       ]
@@ -1563,7 +1564,7 @@
       "params": 9877404416,
       "bytes": 19757954560.0,
       "flops": 7.313919377303142e+16,
-      "act_bytes": 562305171456.0,
+      "act_bytes": 561768300544.0,
       "modules": [
         {
           "type": "InputLayerNorm",
@@ -1634,7 +1635,7 @@
           "params": 1572864,
           "bytes": 6291456.0,
           "flops": 3299340189696.0,
-          "act_bytes": 1073741824.0,
+          "act_bytes": 536870912.0,
           "extra": {}
         }
       ]
@@ -1648,7 +1649,7 @@
       "params": 9868032512,
       "bytes": 19739210752.0,
       "flops": 7.311953731833037e+16,
-      "act_bytes": 544521322496.0,
+      "act_bytes": 543984451584.0,
       "modules": [
         {
           "type": "InputLayerNorm",
@@ -1710,7 +1711,7 @@
           "params": 1572864,
           "bytes": 6291456.0,
           "flops": 3299340189696.0,
-          "act_bytes": 1073741824.0,
+          "act_bytes": 536870912.0,
           "extra": {}
         }
       ]
@@ -1724,7 +1725,7 @@
       "params": 9868032512,
       "bytes": 19739210752.0,
       "flops": 7.311953731833037e+16,
-      "act_bytes": 544521322496.0,
+      "act_bytes": 543984451584.0,
       "modules": [
         {
           "type": "InputLayerNorm",
@@ -1786,7 +1787,7 @@
           "params": 1572864,
           "bytes": 6291456.0,
           "flops": 3299340189696.0,
-          "act_bytes": 1073741824.0,
+          "act_bytes": 536870912.0,
           "extra": {}
         }
       ]
@@ -1800,7 +1801,7 @@
       "params": 9868032512,
       "bytes": 19739210752.0,
       "flops": 7.311953731833037e+16,
-      "act_bytes": 544521322496.0,
+      "act_bytes": 543984451584.0,
       "modules": [
         {
           "type": "InputLayerNorm",
@@ -1862,7 +1863,7 @@
           "params": 1572864,
           "bytes": 6291456.0,
           "flops": 3299340189696.0,
-          "act_bytes": 1073741824.0,
+          "act_bytes": 536870912.0,
           "extra": {}
         }
       ]
@@ -1876,7 +1877,7 @@
       "params": 9877404416,
       "bytes": 19757954560.0,
       "flops": 7.313919377303142e+16,
-      "act_bytes": 562305171456.0,
+      "act_bytes": 561768300544.0,
       "modules": [
         {
           "type": "InputLayerNorm",
@@ -1947,7 +1948,7 @@
           "params": 1572864,
           "bytes": 6291456.0,
           "flops": 3299340189696.0,
-          "act_bytes": 1073741824.0,
+          "act_bytes": 536870912.0,
           "extra": {}
         }
       ]
@@ -1961,7 +1962,7 @@
       "params": 9868032512,
       "bytes": 19739210752.0,
       "flops": 7.311953731833037e+16,
-      "act_bytes": 544521322496.0,
+      "act_bytes": 543984451584.0,
       "modules": [
         {
           "type": "InputLayerNorm",
@@ -2023,7 +2024,7 @@
           "params": 1572864,
           "bytes": 6291456.0,
           "flops": 3299340189696.0,
-          "act_bytes": 1073741824.0,
+          "act_bytes": 536870912.0,
           "extra": {}
         }
       ]
@@ -2037,7 +2038,7 @@
       "params": 9868032512,
       "bytes": 19739210752.0,
       "flops": 7.311953731833037e+16,
-      "act_bytes": 544521322496.0,
+      "act_bytes": 543984451584.0,
       "modules": [
         {
           "type": "InputLayerNorm",
@@ -2099,7 +2100,7 @@
           "params": 1572864,
           "bytes": 6291456.0,
           "flops": 3299340189696.0,
-          "act_bytes": 1073741824.0,
+          "act_bytes": 536870912.0,
           "extra": {}
         }
       ]
@@ -2113,7 +2114,7 @@
       "params": 9868032512,
       "bytes": 19739210752.0,
       "flops": 7.311953731833037e+16,
-      "act_bytes": 544521322496.0,
+      "act_bytes": 543984451584.0,
       "modules": [
         {
           "type": "InputLayerNorm",
@@ -2175,7 +2176,7 @@
           "params": 1572864,
           "bytes": 6291456.0,
           "flops": 3299340189696.0,
-          "act_bytes": 1073741824.0,
+          "act_bytes": 536870912.0,
           "extra": {}
         }
       ]
@@ -2189,7 +2190,7 @@
       "params": 9877404416,
       "bytes": 19757954560.0,
       "flops": 7.313919377303142e+16,
-      "act_bytes": 562305171456.0,
+      "act_bytes": 561768300544.0,
       "modules": [
         {
           "type": "InputLayerNorm",
@@ -2260,7 +2261,7 @@
           "params": 1572864,
           "bytes": 6291456.0,
           "flops": 3299340189696.0,
-          "act_bytes": 1073741824.0,
+          "act_bytes": 536870912.0,
           "extra": {}
         }
       ]
@@ -2274,7 +2275,7 @@
       "params": 9868032512,
       "bytes": 19739210752.0,
       "flops": 7.311953731833037e+16,
-      "act_bytes": 544521322496.0,
+      "act_bytes": 543984451584.0,
       "modules": [
         {
           "type": "InputLayerNorm",
@@ -2336,7 +2337,7 @@
           "params": 1572864,
           "bytes": 6291456.0,
           "flops": 3299340189696.0,
-          "act_bytes": 1073741824.0,
+          "act_bytes": 536870912.0,
           "extra": {}
         }
       ]
@@ -2350,7 +2351,7 @@
       "params": 9868032512,
       "bytes": 19739210752.0,
       "flops": 7.311953731833037e+16,
-      "act_bytes": 544521322496.0,
+      "act_bytes": 543984451584.0,
       "modules": [
         {
           "type": "InputLayerNorm",
@@ -2412,7 +2413,7 @@
           "params": 1572864,
           "bytes": 6291456.0,
           "flops": 3299340189696.0,
-          "act_bytes": 1073741824.0,
+          "act_bytes": 536870912.0,
           "extra": {}
         }
       ]
@@ -2426,7 +2427,7 @@
       "params": 9868032512,
       "bytes": 19739210752.0,
       "flops": 7.311953731833037e+16,
-      "act_bytes": 544521322496.0,
+      "act_bytes": 543984451584.0,
       "modules": [
         {
           "type": "InputLayerNorm",
@@ -2488,7 +2489,7 @@
           "params": 1572864,
           "bytes": 6291456.0,
           "flops": 3299340189696.0,
-          "act_bytes": 1073741824.0,
+          "act_bytes": 536870912.0,
           "extra": {}
         }
       ]
@@ -2502,7 +2503,7 @@
       "params": 9877404416,
       "bytes": 19757954560.0,
       "flops": 7.313919377303142e+16,
-      "act_bytes": 562305171456.0,
+      "act_bytes": 561768300544.0,
       "modules": [
         {
           "type": "InputLayerNorm",
@@ -2573,7 +2574,7 @@
           "params": 1572864,
           "bytes": 6291456.0,
           "flops": 3299340189696.0,
-          "act_bytes": 1073741824.0,
+          "act_bytes": 536870912.0,
           "extra": {}
         }
       ]
@@ -2587,7 +2588,7 @@
       "params": 9868032512,
       "bytes": 19739210752.0,
       "flops": 7.311953731833037e+16,
-      "act_bytes": 544521322496.0,
+      "act_bytes": 543984451584.0,
       "modules": [
         {
           "type": "InputLayerNorm",
@@ -2649,7 +2650,7 @@
           "params": 1572864,
           "bytes": 6291456.0,
           "flops": 3299340189696.0,
-          "act_bytes": 1073741824.0,
+          "act_bytes": 536870912.0,
           "extra": {}
         }
       ]
@@ -2663,7 +2664,7 @@
       "params": 9868032512,
       "bytes": 19739210752.0,
       "flops": 7.311953731833037e+16,
-      "act_bytes": 544521322496.0,
+      "act_bytes": 543984451584.0,
       "modules": [
         {
           "type": "InputLayerNorm",
@@ -2725,7 +2726,7 @@
           "params": 1572864,
           "bytes": 6291456.0,
           "flops": 3299340189696.0,
-          "act_bytes": 1073741824.0,
+          "act_bytes": 536870912.0,
           "extra": {}
         }
       ]
@@ -2739,7 +2740,7 @@
       "params": 9868032512,
       "bytes": 19739210752.0,
       "flops": 7.311953731833037e+16,
-      "act_bytes": 544521322496.0,
+      "act_bytes": 543984451584.0,
       "modules": [
         {
           "type": "InputLayerNorm",
@@ -2801,7 +2802,7 @@
           "params": 1572864,
           "bytes": 6291456.0,
           "flops": 3299340189696.0,
-          "act_bytes": 1073741824.0,
+          "act_bytes": 536870912.0,
           "extra": {}
         }
       ]
@@ -2815,7 +2816,7 @@
       "params": 9877404416,
       "bytes": 19757954560.0,
       "flops": 7.313919377303142e+16,
-      "act_bytes": 562305171456.0,
+      "act_bytes": 561768300544.0,
       "modules": [
         {
           "type": "InputLayerNorm",
@@ -2886,7 +2887,7 @@
           "params": 1572864,
           "bytes": 6291456.0,
           "flops": 3299340189696.0,
-          "act_bytes": 1073741824.0,
+          "act_bytes": 536870912.0,
           "extra": {}
         }
       ]
@@ -2900,7 +2901,7 @@
       "params": 9868032512,
       "bytes": 19739210752.0,
       "flops": 7.311953731833037e+16,
-      "act_bytes": 544521322496.0,
+      "act_bytes": 543984451584.0,
       "modules": [
         {
           "type": "InputLayerNorm",
@@ -2962,7 +2963,7 @@
           "params": 1572864,
           "bytes": 6291456.0,
           "flops": 3299340189696.0,
-          "act_bytes": 1073741824.0,
+          "act_bytes": 536870912.0,
           "extra": {}
         }
       ]
@@ -2976,7 +2977,7 @@
       "params": 9868032512,
       "bytes": 19739210752.0,
       "flops": 7.311953731833037e+16,
-      "act_bytes": 544521322496.0,
+      "act_bytes": 543984451584.0,
       "modules": [
         {
           "type": "InputLayerNorm",
@@ -3038,7 +3039,7 @@
           "params": 1572864,
           "bytes": 6291456.0,
           "flops": 3299340189696.0,
-          "act_bytes": 1073741824.0,
+          "act_bytes": 536870912.0,
           "extra": {}
         }
       ]
@@ -3052,7 +3053,7 @@
       "params": 9868032512,
       "bytes": 19739210752.0,
       "flops": 7.311953731833037e+16,
-      "act_bytes": 544521322496.0,
+      "act_bytes": 543984451584.0,
       "modules": [
         {
           "type": "InputLayerNorm",
@@ -3114,7 +3115,7 @@
           "params": 1572864,
           "bytes": 6291456.0,
           "flops": 3299340189696.0,
-          "act_bytes": 1073741824.0,
+          "act_bytes": 536870912.0,
           "extra": {}
         }
       ]
@@ -3128,7 +3129,7 @@
       "params": 9877404416,
       "bytes": 19757954560.0,
       "flops": 7.313919377303142e+16,
-      "act_bytes": 562305171456.0,
+      "act_bytes": 561768300544.0,
       "modules": [
         {
           "type": "InputLayerNorm",
@@ -3199,7 +3200,7 @@
           "params": 1572864,
           "bytes": 6291456.0,
           "flops": 3299340189696.0,
-          "act_bytes": 1073741824.0,
+          "act_bytes": 536870912.0,
           "extra": {}
         }
       ]
@@ -3213,7 +3214,7 @@
       "params": 9868032512,
       "bytes": 19739210752.0,
       "flops": 7.311953731833037e+16,
-      "act_bytes": 544521322496.0,
+      "act_bytes": 543984451584.0,
       "modules": [
         {
           "type": "InputLayerNorm",
@@ -3275,7 +3276,7 @@
           "params": 1572864,
           "bytes": 6291456.0,
           "flops": 3299340189696.0,
-          "act_bytes": 1073741824.0,
+          "act_bytes": 536870912.0,
           "extra": {}
         }
       ]
@@ -3289,7 +3290,7 @@
       "params": 9868032512,
       "bytes": 19739210752.0,
       "flops": 7.311953731833037e+16,
-      "act_bytes": 544521322496.0,
+      "act_bytes": 543984451584.0,
       "modules": [
         {
           "type": "InputLayerNorm",
@@ -3351,7 +3352,7 @@
           "params": 1572864,
           "bytes": 6291456.0,
           "flops": 3299340189696.0,
-          "act_bytes": 1073741824.0,
+          "act_bytes": 536870912.0,
           "extra": {}
         }
       ]
@@ -3365,7 +3366,7 @@
       "params": 9868032512,
       "bytes": 19739210752.0,
       "flops": 7.311953731833037e+16,
-      "act_bytes": 544521322496.0,
+      "act_bytes": 543984451584.0,
       "modules": [
         {
           "type": "InputLayerNorm",
@@ -3427,7 +3428,7 @@
           "params": 1572864,
           "bytes": 6291456.0,
           "flops": 3299340189696.0,
-          "act_bytes": 1073741824.0,
+          "act_bytes": 536870912.0,
           "extra": {}
         }
       ]
@@ -3441,7 +3442,7 @@
       "params": 9877404416,
       "bytes": 19757954560.0,
       "flops": 7.313919377303142e+16,
-      "act_bytes": 562305171456.0,
+      "act_bytes": 561768300544.0,
       "modules": [
         {
           "type": "InputLayerNorm",
@@ -3512,7 +3513,7 @@
           "params": 1572864,
           "bytes": 6291456.0,
           "flops": 3299340189696.0,
-          "act_bytes": 1073741824.0,
+          "act_bytes": 536870912.0,
           "extra": {}
         }
       ]
@@ -3526,7 +3527,7 @@
       "params": 9868032512,
       "bytes": 19739210752.0,
       "flops": 7.311953731833037e+16,
-      "act_bytes": 544521322496.0,
+      "act_bytes": 543984451584.0,
       "modules": [
         {
           "type": "InputLayerNorm",
@@ -3588,7 +3589,7 @@
           "params": 1572864,
           "bytes": 6291456.0,
           "flops": 3299340189696.0,
-          "act_bytes": 1073741824.0,
+          "act_bytes": 536870912.0,
           "extra": {}
         }
       ]
@@ -3602,7 +3603,7 @@
       "params": 9868032512,
       "bytes": 19739210752.0,
       "flops": 7.311953731833037e+16,
-      "act_bytes": 544521322496.0,
+      "act_bytes": 543984451584.0,
       "modules": [
         {
           "type": "InputLayerNorm",
@@ -3664,7 +3665,7 @@
           "params": 1572864,
           "bytes": 6291456.0,
           "flops": 3299340189696.0,
-          "act_bytes": 1073741824.0,
+          "act_bytes": 536870912.0,
           "extra": {}
         }
       ]
@@ -3678,7 +3679,7 @@
       "params": 9868032512,
       "bytes": 19739210752.0,
       "flops": 7.311953731833037e+16,
-      "act_bytes": 544521322496.0,
+      "act_bytes": 543984451584.0,
       "modules": [
         {
           "type": "InputLayerNorm",
@@ -3740,7 +3741,7 @@
           "params": 1572864,
           "bytes": 6291456.0,
           "flops": 3299340189696.0,
-          "act_bytes": 1073741824.0,
+          "act_bytes": 536870912.0,
           "extra": {}
         }
       ]
@@ -3754,7 +3755,7 @@
       "params": 9877404416,
       "bytes": 19757954560.0,
       "flops": 7.313919377303142e+16,
-      "act_bytes": 562305171456.0,
+      "act_bytes": 561768300544.0,
       "modules": [
         {
           "type": "InputLayerNorm",
@@ -3825,7 +3826,7 @@
           "params": 1572864,
           "bytes": 6291456.0,
           "flops": 3299340189696.0,
-          "act_bytes": 1073741824.0,
+          "act_bytes": 536870912.0,
           "extra": {}
         }
       ]
@@ -3839,7 +3840,7 @@
       "params": 9868032512,
       "bytes": 19739210752.0,
       "flops": 7.311953731833037e+16,
-      "act_bytes": 544521322496.0,
+      "act_bytes": 543984451584.0,
       "modules": [
         {
           "type": "InputLayerNorm",
@@ -3901,7 +3902,7 @@
           "params": 1572864,
           "bytes": 6291456.0,
           "flops": 3299340189696.0,
-          "act_bytes": 1073741824.0,
+          "act_bytes": 536870912.0,
           "extra": {}
         }
       ]
@@ -3915,7 +3916,7 @@
       "params": 9868032512,
       "bytes": 19739210752.0,
       "flops": 7.311953731833037e+16,
-      "act_bytes": 544521322496.0,
+      "act_bytes": 543984451584.0,
       "modules": [
         {
           "type": "InputLayerNorm",
@@ -3977,7 +3978,7 @@
           "params": 1572864,
           "bytes": 6291456.0,
           "flops": 3299340189696.0,
-          "act_bytes": 1073741824.0,
+          "act_bytes": 536870912.0,
           "extra": {}
         }
       ]
@@ -3991,7 +3992,7 @@
       "params": 9868032512,
       "bytes": 19739210752.0,
       "flops": 7.311953731833037e+16,
-      "act_bytes": 544521322496.0,
+      "act_bytes": 543984451584.0,
       "modules": [
         {
           "type": "InputLayerNorm",
@@ -4053,7 +4054,7 @@
           "params": 1572864,
           "bytes": 6291456.0,
           "flops": 3299340189696.0,
-          "act_bytes": 1073741824.0,
+          "act_bytes": 536870912.0,
           "extra": {}
         }
       ]
@@ -4067,7 +4068,7 @@
       "params": 9877404416,
       "bytes": 19757954560.0,
       "flops": 7.313919377303142e+16,
-      "act_bytes": 562305171456.0,
+      "act_bytes": 561768300544.0,
       "modules": [
         {
           "type": "InputLayerNorm",
@@ -4138,7 +4139,7 @@
           "params": 1572864,
           "bytes": 6291456.0,
           "flops": 3299340189696.0,
-          "act_bytes": 1073741824.0,
+          "act_bytes": 536870912.0,
           "extra": {}
         }
       ]
@@ -4152,7 +4153,7 @@
       "params": 9868032512,
       "bytes": 19739210752.0,
       "flops": 7.311953731833037e+16,
-      "act_bytes": 544521322496.0,
+      "act_bytes": 543984451584.0,
       "modules": [
         {
           "type": "InputLayerNorm",
@@ -4214,7 +4215,7 @@
           "params": 1572864,
           "bytes": 6291456.0,
           "flops": 3299340189696.0,
-          "act_bytes": 1073741824.0,
+          "act_bytes": 536870912.0,
           "extra": {}
         }
       ]
@@ -4228,7 +4229,7 @@
       "params": 9868032512,
       "bytes": 19739210752.0,
       "flops": 7.311953731833037e+16,
-      "act_bytes": 544521322496.0,
+      "act_bytes": 543984451584.0,
       "modules": [
         {
           "type": "InputLayerNorm",
@@ -4290,7 +4291,7 @@
           "params": 1572864,
           "bytes": 6291456.0,
           "flops": 3299340189696.0,
-          "act_bytes": 1073741824.0,
+          "act_bytes": 536870912.0,
           "extra": {}
         }
       ]
@@ -4304,7 +4305,7 @@
       "params": 9868032512,
       "bytes": 19739210752.0,
       "flops": 7.311953731833037e+16,
-      "act_bytes": 544521322496.0,
+      "act_bytes": 543984451584.0,
       "modules": [
         {
           "type": "InputLayerNorm",
@@ -4366,7 +4367,7 @@
           "params": 1572864,
           "bytes": 6291456.0,
           "flops": 3299340189696.0,
-          "act_bytes": 1073741824.0,
+          "act_bytes": 536870912.0,
           "extra": {}
         }
       ]
@@ -4380,7 +4381,7 @@
       "params": 9877404416,
       "bytes": 19757954560.0,
       "flops": 7.313919377303142e+16,
-      "act_bytes": 562305171456.0,
+      "act_bytes": 561768300544.0,
       "modules": [
         {
           "type": "InputLayerNorm",
@@ -4451,7 +4452,7 @@
           "params": 1572864,
           "bytes": 6291456.0,
           "flops": 3299340189696.0,
-          "act_bytes": 1073741824.0,
+          "act_bytes": 536870912.0,
           "extra": {}
         }
       ]
@@ -4465,7 +4466,7 @@
       "params": 9868032512,
       "bytes": 19739210752.0,
       "flops": 7.311953731833037e+16,
-      "act_bytes": 544521322496.0,
+      "act_bytes": 543984451584.0,
       "modules": [
         {
           "type": "InputLayerNorm",
@@ -4527,7 +4528,7 @@
           "params": 1572864,
           "bytes": 6291456.0,
           "flops": 3299340189696.0,
-          "act_bytes": 1073741824.0,
+          "act_bytes": 536870912.0,
           "extra": {}
         }
       ]
@@ -4541,7 +4542,7 @@
       "params": 9868032512,
       "bytes": 19739210752.0,
       "flops": 7.311953731833037e+16,
-      "act_bytes": 544521322496.0,
+      "act_bytes": 543984451584.0,
       "modules": [
         {
           "type": "InputLayerNorm",
@@ -4603,7 +4604,7 @@
           "params": 1572864,
           "bytes": 6291456.0,
           "flops": 3299340189696.0,
-          "act_bytes": 1073741824.0,
+          "act_bytes": 536870912.0,
           "extra": {}
         }
       ]
@@ -4617,7 +4618,7 @@
       "params": 9868032512,
       "bytes": 19739210752.0,
       "flops": 7.311953731833037e+16,
-      "act_bytes": 544521322496.0,
+      "act_bytes": 543984451584.0,
       "modules": [
         {
           "type": "InputLayerNorm",
@@ -4679,7 +4680,7 @@
           "params": 1572864,
           "bytes": 6291456.0,
           "flops": 3299340189696.0,
-          "act_bytes": 1073741824.0,
+          "act_bytes": 536870912.0,
           "extra": {}
         }
       ]
@@ -4693,7 +4694,7 @@
       "params": 9877404416,
       "bytes": 19757954560.0,
       "flops": 7.313919377303142e+16,
-      "act_bytes": 562305171456.0,
+      "act_bytes": 561768300544.0,
       "modules": [
         {
           "type": "InputLayerNorm",
@@ -4764,7 +4765,7 @@
           "params": 1572864,
           "bytes": 6291456.0,
           "flops": 3299340189696.0,
-          "act_bytes": 1073741824.0,
+          "act_bytes": 536870912.0,
           "extra": {}
         }
       ]
@@ -4778,7 +4779,7 @@
       "params": 9868032512,
       "bytes": 19739210752.0,
       "flops": 7.311953731833037e+16,
-      "act_bytes": 544521322496.0,
+      "act_bytes": 543984451584.0,
       "modules": [
         {
           "type": "InputLayerNorm",
@@ -4840,7 +4841,7 @@
           "params": 1572864,
           "bytes": 6291456.0,
           "flops": 3299340189696.0,
-          "act_bytes": 1073741824.0,
+          "act_bytes": 536870912.0,
           "extra": {}
         }
       ]
@@ -4854,7 +4855,7 @@
       "params": 9868032512,
       "bytes": 19739210752.0,
       "flops": 7.311953731833037e+16,
-      "act_bytes": 544521322496.0,
+      "act_bytes": 543984451584.0,
       "modules": [
         {
           "type": "InputLayerNorm",
@@ -4916,7 +4917,7 @@
           "params": 1572864,
           "bytes": 6291456.0,
           "flops": 3299340189696.0,
-          "act_bytes": 1073741824.0,
+          "act_bytes": 536870912.0,
           "extra": {}
         }
       ]
@@ -4930,7 +4931,7 @@
       "params": 9868032512,
       "bytes": 19739210752.0,
       "flops": 7.311953731833037e+16,
-      "act_bytes": 544521322496.0,
+      "act_bytes": 543984451584.0,
       "modules": [
         {
           "type": "InputLayerNorm",
@@ -4992,7 +4993,7 @@
           "params": 1572864,
           "bytes": 6291456.0,
           "flops": 3299340189696.0,
-          "act_bytes": 1073741824.0,
+          "act_bytes": 536870912.0,
           "extra": {}
         }
       ]
@@ -5006,7 +5007,7 @@
       "params": 9877404416,
       "bytes": 19757954560.0,
       "flops": 7.313919377303142e+16,
-      "act_bytes": 562305171456.0,
+      "act_bytes": 561768300544.0,
       "modules": [
         {
           "type": "InputLayerNorm",
@@ -5077,7 +5078,7 @@
           "params": 1572864,
           "bytes": 6291456.0,
           "flops": 3299340189696.0,
-          "act_bytes": 1073741824.0,
+          "act_bytes": 536870912.0,
           "extra": {}
         }
       ]
@@ -5091,7 +5092,7 @@
       "params": 9868032512,
       "bytes": 19739210752.0,
       "flops": 7.311953731833037e+16,
-      "act_bytes": 544521322496.0,
+      "act_bytes": 543984451584.0,
       "modules": [
         {
           "type": "InputLayerNorm",
@@ -5153,7 +5154,7 @@
           "params": 1572864,
           "bytes": 6291456.0,
           "flops": 3299340189696.0,
-          "act_bytes": 1073741824.0,
+          "act_bytes": 536870912.0,
           "extra": {}
         }
       ]
@@ -5167,7 +5168,7 @@
       "params": 9868032512,
       "bytes": 19739210752.0,
       "flops": 7.311953731833037e+16,
-      "act_bytes": 544521322496.0,
+      "act_bytes": 543984451584.0,
       "modules": [
         {
           "type": "InputLayerNorm",
@@ -5229,7 +5230,7 @@
           "params": 1572864,
           "bytes": 6291456.0,
           "flops": 3299340189696.0,
-          "act_bytes": 1073741824.0,
+          "act_bytes": 536870912.0,
           "extra": {}
         }
       ]
@@ -5243,7 +5244,7 @@
       "params": 9868032512,
       "bytes": 19739210752.0,
       "flops": 7.311953731833037e+16,
-      "act_bytes": 544521322496.0,
+      "act_bytes": 543984451584.0,
       "modules": [
         {
           "type": "InputLayerNorm",
@@ -5305,7 +5306,7 @@
           "params": 1572864,
           "bytes": 6291456.0,
           "flops": 3299340189696.0,
-          "act_bytes": 1073741824.0,
+          "act_bytes": 536870912.0,
           "extra": {}
         }
       ]
@@ -5319,7 +5320,7 @@
       "params": 9877404416,
       "bytes": 19757954560.0,
       "flops": 7.313919377303142e+16,
-      "act_bytes": 562305171456.0,
+      "act_bytes": 561768300544.0,
       "modules": [
         {
           "type": "InputLayerNorm",
@@ -5390,7 +5391,7 @@
           "params": 1572864,
           "bytes": 6291456.0,
           "flops": 3299340189696.0,
-          "act_bytes": 1073741824.0,
+          "act_bytes": 536870912.0,
           "extra": {}
         }
       ]
@@ -5404,7 +5405,7 @@
       "params": 9868032512,
       "bytes": 19739210752.0,
       "flops": 7.311953731833037e+16,
-      "act_bytes": 544521322496.0,
+      "act_bytes": 543984451584.0,
       "modules": [
         {
           "type": "InputLayerNorm",
@@ -5466,7 +5467,7 @@
           "params": 1572864,
           "bytes": 6291456.0,
           "flops": 3299340189696.0,
-          "act_bytes": 1073741824.0,
+          "act_bytes": 536870912.0,
           "extra": {}
         }
       ]
@@ -5480,7 +5481,7 @@
       "params": 9868032512,
       "bytes": 19739210752.0,
       "flops": 7.311953731833037e+16,
-      "act_bytes": 544521322496.0,
+      "act_bytes": 543984451584.0,
       "modules": [
         {
           "type": "InputLayerNorm",
@@ -5542,7 +5543,7 @@
           "params": 1572864,
           "bytes": 6291456.0,
           "flops": 3299340189696.0,
-          "act_bytes": 1073741824.0,
+          "act_bytes": 536870912.0,
           "extra": {}
         }
       ]
@@ -5556,7 +5557,7 @@
       "params": 9868032512,
       "bytes": 19739210752.0,
       "flops": 7.311953731833037e+16,
-      "act_bytes": 544521322496.0,
+      "act_bytes": 543984451584.0,
       "modules": [
         {
           "type": "InputLayerNorm",
@@ -5618,7 +5619,7 @@
           "params": 1572864,
           "bytes": 6291456.0,
           "flops": 3299340189696.0,
-          "act_bytes": 1073741824.0,
+          "act_bytes": 536870912.0,
           "extra": {}
         }
       ]
@@ -5632,7 +5633,7 @@
       "params": 9877404416,
       "bytes": 19757954560.0,
       "flops": 7.313919377303142e+16,
-      "act_bytes": 562305171456.0,
+      "act_bytes": 561768300544.0,
       "modules": [
         {
           "type": "InputLayerNorm",
@@ -5703,7 +5704,7 @@
           "params": 1572864,
           "bytes": 6291456.0,
           "flops": 3299340189696.0,
-          "act_bytes": 1073741824.0,
+          "act_bytes": 536870912.0,
           "extra": {}
         }
       ]
@@ -5717,7 +5718,7 @@
       "params": 9868032512,
       "bytes": 19739210752.0,
       "flops": 7.311953731833037e+16,
-      "act_bytes": 544521322496.0,
+      "act_bytes": 543984451584.0,
       "modules": [
         {
           "type": "InputLayerNorm",
@@ -5779,7 +5780,7 @@
           "params": 1572864,
           "bytes": 6291456.0,
           "flops": 3299340189696.0,
-          "act_bytes": 1073741824.0,
+          "act_bytes": 536870912.0,
           "extra": {}
         }
       ]
@@ -5793,7 +5794,7 @@
       "params": 9868032512,
       "bytes": 19739210752.0,
       "flops": 7.311953731833037e+16,
-      "act_bytes": 544521322496.0,
+      "act_bytes": 543984451584.0,
       "modules": [
         {
           "type": "InputLayerNorm",
@@ -5855,7 +5856,7 @@
           "params": 1572864,
           "bytes": 6291456.0,
           "flops": 3299340189696.0,
-          "act_bytes": 1073741824.0,
+          "act_bytes": 536870912.0,
           "extra": {}
         }
       ]
@@ -5869,7 +5870,7 @@
       "params": 9868032512,
       "bytes": 19739210752.0,
       "flops": 7.311953731833037e+16,
-      "act_bytes": 544521322496.0,
+      "act_bytes": 543984451584.0,
       "modules": [
         {
           "type": "InputLayerNorm",
@@ -5931,7 +5932,7 @@
           "params": 1572864,
           "bytes": 6291456.0,
           "flops": 3299340189696.0,
-          "act_bytes": 1073741824.0,
+          "act_bytes": 536870912.0,
           "extra": {}
         }
       ]
@@ -5945,7 +5946,7 @@
       "params": 9877404416,
       "bytes": 19757954560.0,
       "flops": 7.313919377303142e+16,
-      "act_bytes": 562305171456.0,
+      "act_bytes": 561768300544.0,
       "modules": [
         {
           "type": "InputLayerNorm",
@@ -6016,7 +6017,7 @@
           "params": 1572864,
           "bytes": 6291456.0,
           "flops": 3299340189696.0,
-          "act_bytes": 1073741824.0,
+          "act_bytes": 536870912.0,
           "extra": {}
         }
       ]
@@ -6030,7 +6031,7 @@
       "params": 9868032512,
       "bytes": 19739210752.0,
       "flops": 7.311953731833037e+16,
-      "act_bytes": 544521322496.0,
+      "act_bytes": 543984451584.0,
       "modules": [
         {
           "type": "InputLayerNorm",
@@ -6092,7 +6093,7 @@
           "params": 1572864,
           "bytes": 6291456.0,
           "flops": 3299340189696.0,
-          "act_bytes": 1073741824.0,
+          "act_bytes": 536870912.0,
           "extra": {}
         }
       ]
@@ -6106,7 +6107,7 @@
       "params": 9868032512,
       "bytes": 19739210752.0,
       "flops": 7.311953731833037e+16,
-      "act_bytes": 544521322496.0,
+      "act_bytes": 543984451584.0,
       "modules": [
         {
           "type": "InputLayerNorm",
@@ -6168,7 +6169,7 @@
           "params": 1572864,
           "bytes": 6291456.0,
           "flops": 3299340189696.0,
-          "act_bytes": 1073741824.0,
+          "act_bytes": 536870912.0,
           "extra": {}
         }
       ]
@@ -6182,7 +6183,7 @@
       "params": 9868032512,
       "bytes": 19739210752.0,
       "flops": 7.311953731833037e+16,
-      "act_bytes": 544521322496.0,
+      "act_bytes": 543984451584.0,
       "modules": [
         {
           "type": "InputLayerNorm",
@@ -6244,10 +6245,48 @@
           "params": 1572864,
           "bytes": 6291456.0,
           "flops": 3299340189696.0,
-          "act_bytes": 1073741824.0,
+          "act_bytes": 536870912.0,
           "extra": {}
         }
       ]
     }
-  ]
+  ],
+  "input_alignment": {
+    "workbook": "model_struct_input.xlsx",
+    "workbook_sha256": "4380a748a1c312609e4c596b7522311242d4f99ed5f96181dcd2c78b4c5f8883",
+    "sheet": "Sheet1",
+    "row": 18,
+    "key_parameters": {
+      "num_layers": 78,
+      "moe_intermediate_size": 2048,
+      "routed_experts": 256,
+      "top_k": 8,
+      "shared_experts": 1,
+      "attention_heads": 64
+    },
+    "key_parameters_match": true,
+    "vocabulary_size": 154880,
+    "vocabulary_policy": "Retain exact family/report vocabulary; workbook K shorthand is not a replacement value.",
+    "total_target_b": 743.0,
+    "total_actual_b": 743.377000704,
+    "total_delta_pct": 0.05074033701211178,
+    "total_within_tolerance": true,
+    "active_target_candidates_b": [
+      40.0
+    ],
+    "active_comparison_target_b": 40.0,
+    "active_actual_b": 41.250511104,
+    "active_delta_pct": 3.126277760000007,
+    "active_within_tolerance": true,
+    "engram_target_b": 0.0,
+    "engram_actual_b": 0.0,
+    "tolerance_pct": 5.0,
+    "aggregate_status": "within_tolerance",
+    "unspecified_dimensions_policy": "Retain existing family dimensions; new-model assumptions are recorded in config. Do not adjust formulas or invent dimensions to fit aggregate targets.",
+    "attention_name_policy": "Name differences ignored as requested.",
+    "vision": "—",
+    "vision_scope": "Language backbone only; workbook gives no encoder dimensions.",
+    "modeling_assumptions": {},
+    "config_sha256": "4a1b460b034045ac540733d642f90310ce2ae174d39c80e75df7b4185229b645"
+  }
 }

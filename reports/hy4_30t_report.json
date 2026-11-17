@@ -6,11 +6,12 @@
     "vocab_size": 120832,
     "max_seq_len": 4096,
     "dtype": "bf16",
+    "activation_dtype": "bf16",
     "variant": "30T",
     "mtp_layers": 1
   },
   "source": {
-    "architecture_file": "/home/Workspace/ModelTrainerSim_dl/ModelTrainerSim/src/models/hunyuan/config.json",
+    "architecture_file": "/home/l00619433/workspace/su_so_analysis/ModelTrainerSim/src/models/hunyuan/config.json",
     "sha256": "a2c0dc5ec7c5b85b83c5514d1f923dcaeb3510ac0aa0816c3c26a2418ee80f8d"
   },
   "model_params": {
@@ -7707,11 +7708,49 @@
     }
   ],
   "notes": [
-    "Hy4-preview 10T is a planning extension, not an official release; dimensions follow the workbook planning assumptions (E=2048, Top-64).",
+    "Hy4 variant 30T: 120 layers, E=4096, Top-24, shared=2; planning variants use scenario overrides on the pinned base architecture.",
     "MTP layer excluded from the backbone analysis (workbook D31).",
-    "Unsharded model; TP1/PP4/VPP2/EP64/CP1 are informational (workbook B7).",
+    "Whole-model logical parameter inventory; training-state sharding is reported separately.",
     "Weights count in BF16-equivalent bytes; logits default to FP32.",
     "Router correction bias counts toward weights but not gradients/optimizer states.",
     "All displayed GiB use 1e9 bytes. JSON carries raw bytes."
-  ]
+  ],
+  "input_alignment": {
+    "workbook": "model_struct_input.xlsx",
+    "workbook_sha256": "4380a748a1c312609e4c596b7522311242d4f99ed5f96181dcd2c78b4c5f8883",
+    "sheet": "Sheet1",
+    "row": 12,
+    "key_parameters": {
+      "num_layers": 120,
+      "moe_intermediate_size": 4608,
+      "routed_experts": 4096,
+      "top_k": 24,
+      "shared_experts": 2,
+      "attention_heads": 160
+    },
+    "key_parameters_match": true,
+    "vocabulary_size": 120832,
+    "vocabulary_policy": "Retain exact family/report vocabulary; workbook K shorthand is not a replacement value.",
+    "total_target_b": 42000.0,
+    "total_actual_b": 41501.366528869,
+    "total_delta_pct": -1.187222550311906,
+    "total_within_tolerance": true,
+    "active_target_candidates_b": [
+      320.0
+    ],
+    "active_comparison_target_b": 320.0,
+    "active_actual_b": 344.749652837,
+    "active_delta_pct": 7.734266511562504,
+    "active_within_tolerance": false,
+    "engram_target_b": 0.0,
+    "engram_actual_b": 0.0,
+    "tolerance_pct": 5.0,
+    "aggregate_status": "requires_review",
+    "unspecified_dimensions_policy": "Retain existing family dimensions; new-model assumptions are recorded in config. Do not adjust formulas or invent dimensions to fit aggregate targets.",
+    "attention_name_policy": "Name differences ignored as requested.",
+    "vision": "—",
+    "vision_scope": "Language backbone only; workbook gives no encoder dimensions.",
+    "modeling_assumptions": {},
+    "config_sha256": "3ccfdc724a17e39e799a03109f8c9cd2bb6003608f881fbdcc9a9ad047184a6a"
+  }
 }
