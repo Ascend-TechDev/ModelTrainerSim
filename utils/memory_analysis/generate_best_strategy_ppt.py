@@ -32,6 +32,10 @@ SCENARIOS = [
     {"name": "HBM=288GB / DDR=768GB", "hbm": 288, "ddr": 768},
     {"name": "HBM=192GB / DDR=512GB", "hbm": 192, "ddr": 512},
 ]
+HBM_DDR512_SCENARIOS = [
+    {"name": f"HBM={hbm}GB / DDR=512GB", "hbm": hbm, "ddr": 512}
+    for hbm in (96, 120, 144, 168, 192, 240, 288)
+]
 BASE_OUTPUT_DIR = PROJECT_ROOT / "reports_analyse" / "ep_fsdp_mem_hbm_d2h"
 
 FONT = "Microsoft YaHei"
@@ -45,11 +49,12 @@ DARK = RGBColor(43, 52, 61)
 
 def collect_scenario_results(weight_dtype: str = "bf16",
                              activation_dtype: str = "bf16") -> dict:
+    all_scenarios = SCENARIOS + HBM_DDR512_SCENARIOS
     results = {}
     for model_name, params_t, card_counts, config_name in MODELS:
         if config_name is None:
             for hardware, _, card_index in HARDWARES:
-                for scenario in SCENARIOS:
+                for scenario in all_scenarios:
                     results[(hardware, scenario["name"], model_name)] = {
                         "model": model_name,
                         "params_t": params_t,
@@ -67,7 +72,7 @@ def collect_scenario_results(weight_dtype: str = "bf16",
             for strategy in strategies_for(k):
                 if not strategy["valid"]:
                     continue
-                for scenario in SCENARIOS:
+                for scenario in all_scenarios:
                     calc = analyze_strategy(
                         model_data,
                         k,
@@ -90,7 +95,7 @@ def collect_scenario_results(weight_dtype: str = "bf16",
                         "model_data": model_data,
                     })
 
-            for scenario in SCENARIOS:
+            for scenario in all_scenarios:
                 scenario_candidates = [
                     candidate for candidate in candidates
                     if candidate["scenario"]["name"] == scenario["name"]
@@ -205,6 +210,12 @@ def add_line_chart(slide, title: str, labels: list[str], series: list[tuple[str,
     chart.category_axis.tick_labels.font.size = Pt(7)
     chart.category_axis.tick_labels.rotation = -45
     chart.has_title = True
+    plot = chart.plots[0]
+    plot.has_data_labels = True
+    plot.data_labels.show_value = True
+    plot.data_labels.number_format = "0"
+    plot.data_labels.font.name = FONT
+    plot.data_labels.font.size = Pt(6)
     for plot_series in chart.series:
         plot_series.format.line.width = Pt(2)
     return chart
@@ -387,6 +398,295 @@ def add_sweep_statistics_slide(prs: Presentation, results: dict, hardware: str, 
     )
 
 
+def add_hbm_ddr512_screening_slide(prs: Presentation, results: dict, hardware: str) -> None:
+    slide = new_slide(
+        prs,
+        f"{hardware} — DDR=512GB 对七档 HBM 的容量满足性",
+        "每格显示该 HBM 下按DDR收益优先选出的策略及全卸载容量结论；“满足”表示该策略全激活DDR诉求≤512GB。",
+    )
+    headers = ["模型"] + [f"HBM={scenario['hbm']}GB" for scenario in HBM_DDR512_SCENARIOS]
+    rows = []
+    for model_name, _, _, _ in MODELS:
+        cells = [model_name]
+        for scenario in HBM_DDR512_SCENARIOS:
+            item = result_for(results, hardware, scenario, model_name)
+            if not item["available"]:
+                cells.append("无匹配配置\n未计算")
+                continue
+            strategy = item["strategy"]
+            calc = item["calc"]
+            status = "满足" if item["ddr_benefit"] >= 25 - 1e-8 else "不足"
+            cells.append(
+                f"EP{strategy['ep']}/EF{strategy['efsdp']}\n"
+                f"EDP={strategy['edp']:,}\n"
+                f"DDR诉求 {calc['ddr_requirement_full_gb']:.1f}GB\n"
+                f"{item['ddr_benefit']:.1f}% · {status}"
+            )
+        rows.append(cells)
+    add_table(
+        slide,
+        headers,
+        rows,
+        Inches(0.25),
+        Inches(1.2),
+        Inches(12.83),
+        Inches(5.95),
+        font_size=6.2,
+        col_widths=[1.05] + [1.68] * len(HBM_DDR512_SCENARIOS),
+    )
+    slide.notes_slide.notes_text_frame.text = (
+        "容量满足性按DDR诉求（全卸载）判断：优化器与主权重 + 全激活 - HBM剩余 ≤ 512GB。"
+        "该筛选在每个HBM容量下遍历全部有效EP/EFSDP策略，并按既定规则选择端到端DDR收益最高策略。"
+        "“不足”表示该策略在DDR=512GB下只能部分卸载，表中收益为可实现的端到端收益。"
+    )
+
+
+def add_hbm_d2h_chart_slide(prs: Presentation, results: dict, hardware: str) -> None:
+    slide = new_slide(
+        prs,
+        f"{hardware} — 七档 HBM 下的 D2H 带宽诉求",
+        "每个 HBM 档位分别按 DDR=512GB 的策略选择规则确定 EP/EFSDP；曲线展示各模型对应策略的 D2H 需求。",
+    )
+    model_names = [model[0] for model in MODELS if model[3] is not None]
+    labels = [name.replace("Kimi-", "K") for name in model_names]
+    hbm_series = []
+    for scenario in HBM_DDR512_SCENARIOS:
+        items = [
+            result_for(results, hardware, scenario, model_name)
+            for model_name in model_names
+        ]
+        hbm_series.append((
+            f"HBM={scenario['hbm']}GB",
+            [item["calc"]["d2h_moe_gbps"] for item in items],
+        ))
+    add_line_chart(
+        slide,
+        "MoE 激活 D2H 带宽诉求",
+        labels,
+        hbm_series,
+        Inches(0.2),
+        Inches(1.25),
+        Inches(6.45),
+        Inches(5.65),
+        "GB/s",
+    )
+    hbm_series = []
+    for scenario in HBM_DDR512_SCENARIOS:
+        items = [
+            result_for(results, hardware, scenario, model_name)
+            for model_name in model_names
+        ]
+        hbm_series.append((
+            f"HBM={scenario['hbm']}GB",
+            [item["calc"]["d2h_full_gbps"] for item in items],
+        ))
+    add_line_chart(
+        slide,
+        "全激活 D2H 带宽诉求",
+        labels,
+        hbm_series,
+        Inches(6.75),
+        Inches(1.25),
+        Inches(6.4),
+        Inches(5.65),
+        "GB/s",
+    )
+    slide.notes_slide.notes_text_frame.text = (
+        "每个HBM档位使用HBM_DDR512_SCENARIOS对应的最优策略（以DDR=512GB端到端收益优先选择），"
+        "分别绘制MoE激活及全激活的D2H带宽诉求。折线图数据标签四舍五入为整数GB/s。"
+    )
+
+
+def add_hbm_strategy_details_slide(
+    prs: Presentation,
+    results: dict,
+    hardware: str,
+    scenario: dict,
+) -> None:
+    slide = new_slide(
+        prs,
+        f"{hardware} — HBM={scenario['hbm']}GB 最优并行策略与资源诉求",
+        "策略按 DDR=512GB 场景的端到端收益优先选择；D2H=200GB/s按80%利用率，收益均为消除重计算的端到端比例。",
+    )
+    headers = [
+        "模型",
+        "K",
+        "EP",
+        "EFSDP",
+        "EDP",
+        "HBM余量GB",
+        "DDR全卸载GB",
+        "DDR仅MoE卸载GB",
+        "D2H-MoE GB/s",
+        "D2H-Full GB/s",
+        "D2H=200收益",
+        "DDR=512收益",
+    ]
+    rows = []
+    for model_name, _, _, _ in MODELS:
+        item = result_for(results, hardware, scenario, model_name)
+        if not item["available"]:
+            rows.append([
+                model_name,
+                f"{item['k']:,}",
+                "—",
+                "—",
+                "—",
+                "—",
+                "—",
+                "—",
+                "—",
+                "—",
+                "—",
+                "—",
+            ])
+            continue
+        strategy = item["strategy"]
+        calc = item["calc"]
+        rows.append([
+            model_name,
+            f"{item['k']:,}",
+            str(strategy["ep"]),
+            str(strategy["efsdp"]),
+            f"{strategy['edp']:,}",
+            f"{calc['hbm_remaining_gb']:+.1f}",
+            f"{calc['ddr_requirement_full_gb']:.1f}",
+            f"{calc['ddr_requirement_moe_gb']:.1f}",
+            f"{calc['d2h_moe_gbps']:.1f}",
+            f"{calc['d2h_full_gbps']:.1f}",
+            f"{calc['bandwidth_benefits'][200]:.2f}%",
+            f"{item['ddr_benefit']:.2f}%",
+        ])
+    add_table(
+        slide,
+        headers,
+        rows,
+        Inches(0.35),
+        Inches(1.25),
+        Inches(12.65),
+        Inches(5.75),
+        font_size=6.8,
+        col_widths=[1.35, 0.8, 0.55, 0.65, 0.7, 1.05, 1.1, 1.35, 1.25, 1.25, 1.3, 1.3],
+    )
+    slide.notes_slide.notes_text_frame.text = (
+        f"HBM={scenario['hbm']}GB，策略按DDR=512GB场景的端到端收益优先选择；"
+        "HBM余量=0.95×HBM容量−静态HBM占用；DDR全卸载诉求和仅MoE卸载诉求分别按报告定义计算；"
+        "D2H-MoE及D2H-Full为对应卸载范围的带宽诉求；D2H=200GB/s收益使用有效带宽160GB/s，DDR收益基于512GB容量。"
+    )
+
+
+def add_hbm_resource_charts_slide(
+    prs: Presentation,
+    results: dict,
+    hardware: str,
+) -> None:
+    slide = new_slide(
+        prs,
+        f"{hardware} — HBM 档位与 HBM余量 / DDR诉求",
+        "每条曲线对应一种HBM档位；每个模型使用该档位下按DDR=512GB收益优先选出的策略。",
+    )
+    model_names = [model[0] for model in MODELS if model[3] is not None]
+    labels = [name.replace("Kimi-", "K") for name in model_names]
+    series = []
+    for scenario in HBM_DDR512_SCENARIOS:
+        items = [
+            result_for(results, hardware, scenario, model_name)
+            for model_name in model_names
+        ]
+        series.append((
+            f"HBM={scenario['hbm']}GB",
+            [item["calc"]["hbm_remaining_gb"] for item in items],
+        ))
+    add_line_chart(
+        slide,
+        "HBM余量（GB）",
+        labels,
+        series,
+        Inches(0.2),
+        Inches(1.25),
+        Inches(6.45),
+        Inches(5.65),
+        "GB",
+    )
+    series = []
+    for scenario in HBM_DDR512_SCENARIOS:
+        items = [
+            result_for(results, hardware, scenario, model_name)
+            for model_name in model_names
+        ]
+        series.append((
+            f"HBM={scenario['hbm']}GB",
+            [item["calc"]["ddr_requirement_full_gb"] for item in items],
+        ))
+    add_line_chart(
+        slide,
+        "DDR全卸载容量诉求（GB）",
+        labels,
+        series,
+        Inches(6.75),
+        Inches(1.25),
+        Inches(6.4),
+        Inches(5.65),
+        "GB",
+    )
+
+
+def add_hbm_benefit_charts_slide(
+    prs: Presentation,
+    results: dict,
+    hardware: str,
+) -> None:
+    slide = new_slide(
+        prs,
+        f"{hardware} — HBM 档位与端到端收益",
+        "收益表示可消除重计算比例；D2H=200GB/s按80%利用率（有效160GB/s），DDR收益按512GB容量计算。",
+    )
+    model_names = [model[0] for model in MODELS if model[3] is not None]
+    labels = [name.replace("Kimi-", "K") for name in model_names]
+    series = []
+    for scenario in HBM_DDR512_SCENARIOS:
+        items = [
+            result_for(results, hardware, scenario, model_name)
+            for model_name in model_names
+        ]
+        series.append((
+            f"HBM={scenario['hbm']}GB",
+            [item["calc"]["bandwidth_benefits"][200] for item in items],
+        ))
+    add_line_chart(
+        slide,
+        "D2H=200GB/s 时的端到端收益（%）",
+        labels,
+        series,
+        Inches(0.2),
+        Inches(1.25),
+        Inches(6.45),
+        Inches(5.65),
+        "%",
+    )
+    series = []
+    for scenario in HBM_DDR512_SCENARIOS:
+        items = [
+            result_for(results, hardware, scenario, model_name)
+            for model_name in model_names
+        ]
+        series.append((
+            f"HBM={scenario['hbm']}GB",
+            [item["ddr_benefit"] for item in items],
+        ))
+    add_line_chart(
+        slide,
+        "DDR=512GB 时的端到端收益（%）",
+        labels,
+        series,
+        Inches(6.75),
+        Inches(1.25),
+        Inches(6.4),
+        Inches(5.65),
+        "%",
+    )
+
+
 def make_presentation(results: dict, weight_dtype: str = "bf16",
                       activation_dtype: str = "bf16") -> Presentation:
     prs = Presentation()
@@ -415,6 +715,7 @@ def make_presentation(results: dict, weight_dtype: str = "bf16",
     paragraph = note.text_frame.paragraphs[0]
     paragraph.text = (
         "范围：EP=128/256/512/1024/2048，EFSDP=1/2/4/8/16/32；seq_len=4096，batch_size=1，MFU=0.40。\n"
+        "逐模型报告额外覆盖HBM=96/120/144/168/192/240/288GB；最佳策略表仍按任务指定的192GB与288GB场景。\n"
         "FP8权重场景使用FP8峰值算力；激活精度影响激活内存。\n"
         "参数结构按仓库配置计算；Qwen3.5-397B缺少匹配配置，GLM-10T配置参数量与卡数表不一致，已在报告中披露。"
     )
@@ -424,6 +725,13 @@ def make_presentation(results: dict, weight_dtype: str = "bf16",
 
     for hardware_spec in HARDWARES:
         add_best_strategy_slide(prs, results, hardware_spec)
+    for hardware, _, _ in HARDWARES:
+        add_hbm_ddr512_screening_slide(prs, results, hardware)
+        add_hbm_d2h_chart_slide(prs, results, hardware)
+        add_hbm_resource_charts_slide(prs, results, hardware)
+        add_hbm_benefit_charts_slide(prs, results, hardware)
+        for scenario in HBM_DDR512_SCENARIOS:
+            add_hbm_strategy_details_slide(prs, results, hardware, scenario)
     for hardware, _, _ in HARDWARES:
         for scenario in SCENARIOS:
             add_capacity_charts(prs, results, hardware, scenario)
