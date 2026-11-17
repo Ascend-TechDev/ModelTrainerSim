@@ -24,6 +24,11 @@
 - 算力规格：970DT — BF16 1769 Tops，FP8 3538 Tops，FP4 14155 Tops, 980DT — BF16 3538 Tops，FP8 7076 Tops，FP4 28310 Tops,
 - HBM 容量：192 GB / 288 GB 两种情况
 - MFU：0.40
+- weight-dtype: {bf16, fp8}两种情况
+- activation-dtype: {bf16, fp8}两种情况
+- 精度组合按笛卡尔积运行，共四组：bf16/bf16、bf16/fp8、fp8/bf16、fp8/fp8
+- FP8 权重组合的 D2H 掩盖计算使用硬件 FP8 峰值算力；激活 dtype 控制激活显存，不改变本次计算峰值选择
+- 每组报告和 PPT 单独写入 `reports_analyse/ep_fsdp_mem_hbm_d2h/weight_{weight_dtype}_activation_{activation_dtype}/`
 
 请查表"训练所需卡数"获取对应模型在 970DT 所需的训练卡数 K，遍历以下并行策略，执行任务一、二、三、四：
 请查表"训练所需卡数"获取对应模型在 980DT 所需的训练卡数 K，遍历以下并行策略，执行任务一、二、三、四：
@@ -107,14 +112,21 @@
 使用如下命令获取模型结构数据：
 
 ```
-python3 -m src.main --config configs/{config} --seq-len {seq_len} --batch-size {batch_size} --format json
+python3 -m src.main --config configs/{config} --seq-len {seq_len} --batch-size {batch_size} --weight-dtype {weight-dtype} --activation-dtype {activation-dtype} --format json
+```
+
+批量生成报告与 PPT 的命令示例：
+
+```
+python3 -m utils.memory_analysis.generate_ep_fsdp_reports --weight-dtype fp8 --activation-dtype bf16
+python3 -m utils.memory_analysis.generate_best_strategy_ppt --weight-dtype fp8 --activation-dtype bf16
 ```
 
 ### 静态 HBM 占用
 
 ```
-单卡MoE部分占用HBM     = MoE(BF16) / EP / EFSDP * 2
-单卡BackBone部分占用HBM = Backbone(BF16) / FSDP * 2
+单卡MoE部分占用HBM     = MoE(weight_dtype) / EP / EFSDP * 2
+单卡BackBone部分占用HBM = Backbone(weight_dtype) / FSDP * 2
 静态HBM占用 = 最大一层激活显存占用 + 单卡MoE部分占用HBM + 单卡BackBone部分占用HBM + 3 GB
 ```
 
@@ -132,7 +144,9 @@ HBM剩余          = HBM容量 * 0.95 - 静态HBM占用
 
 ```
 优化器与主权重占用空间 = (MoE(FP32) / EP / EFSDP + Backbone(FP32) / FSDP) * 2
-DDR容量诉求 = 优化器与主权重占用空间 + 全激活占用空间 - HBM剩余
+DDR容量诉求（全卸载） = 优化器与主权重占用空间 + 全激活占用空间 - HBM剩余
+DDR容量诉求（仅卸载MoE） = 优化器与主权重占用空间 + MoE激活占用空间 - HBM剩余
+
 ```
 
 ### 卸载比例
@@ -225,7 +239,7 @@ SSD用于存储训练 checkpoint。此处统计**每 GPU 的 checkpoint 分片�
 
 参考建模方法章节，执行下列任务：
 
-1. **任务一**：输出 DDR 容量诉求
+1. **任务一**：输出 DDR 容量诉求(全卸载)， 输出 DDR 容量诉求(仅卸载MoE)
 2. **任务二**：输出 D2H 带宽诉求
 3. **任务三**：不考虑 DDR 容量不够的情况下，遍历带宽，输出对应带宽下消除重计算比例（端到端收益）
 4. **任务四**：不考虑 D2H 带宽不够的情况下，遍历 DDR 容量，输出对应 DDR 容量下消除重计算比例（端到端收益）

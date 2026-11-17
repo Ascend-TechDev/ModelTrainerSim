@@ -94,7 +94,7 @@ class Indexer(BaseModule):
         from ....core.dtype import get_dtype_size
         NB = self._get_num_blocks(seq_len)
         B, S = batch_size, seq_len
-        elem = get_dtype_size(self.dtype)
+        elem = get_dtype_size(self.activation_dtype)
 
         act = 0.0
         act += B * S * self.indexer_inter_dim * elem    # FC1 output

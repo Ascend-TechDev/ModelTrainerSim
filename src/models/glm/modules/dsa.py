@@ -79,7 +79,7 @@ class DSA(BaseModule):
         H = self.hidden_size
         n_kv = self.num_kv_heads
         d_qk = self.qk_head_dim
-        elem = get_dtype_size(self.dtype)
+        elem = get_dtype_size(self.activation_dtype)
 
         act = 0.0
         act += B * S * n_kv * d_qk * elem    # U26

@@ -255,6 +255,7 @@ class Hy4Model:
                 "vocab_size": self.vocab_size,
                 "max_seq_len": self.seq_len,
                 "dtype": self.dtype.value,
+                "activation_dtype": self.config.get("activation_dtype", self.dtype.value),
                 "variant": self.config.get("variant", "10T"),
                 "mtp_layers": self.arch.get("mtp_layers", 1),
             },

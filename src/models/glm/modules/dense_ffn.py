@@ -79,7 +79,7 @@ class DenseFFN(BaseModule):
     def compute_activations(self, seq_len: int, batch_size: int = 1) -> float:
         B, S = batch_size, seq_len
         H, I = self.hidden_size, self.intermediate_size
-        elem = get_dtype_size(self.dtype)
+        elem = get_dtype_size(self.activation_dtype)
 
         act = 0.0
         act += B * S * I * elem     # U30

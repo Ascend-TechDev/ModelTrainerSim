@@ -84,6 +84,8 @@ class BaseModule(ABC):
     def __init__(self, name: str, config: dict[str, Any]):
         self.name = name
         self.config = config
+        self.activation_dtype = DType(
+            config.get("activation_dtype", config.get("dtype", "bf16")))
 
     # -- abstract -----------------------------------------------------------
 

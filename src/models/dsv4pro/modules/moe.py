@@ -47,6 +47,8 @@ class MoE(BaseModule):
         # When expert_dtype is set, expert weight bytes use that dtype; if absent
         # (e.g. for unquantized training analysis), experts use self.dtype.
         self.expert_dtype: DType = DType(config.get("expert_dtype", self.dtype.value))
+        self.activation_dtype = DType(
+            config.get("activation_dtype", self.expert_dtype.value))
 
     # -----------------------------------------------------------------
     # Parameters
@@ -167,7 +169,7 @@ class MoE(BaseModule):
         I = self.moe_intermediate_size
         E_act = self.num_activated_experts
         # FP4 byte width — matches Excel B41=1 (activation bytes)
-        act_elem = get_dtype_size(self.expert_dtype)
+        act_elem = get_dtype_size(self.activation_dtype)
 
         # L79 = B*S*I (moe_gate), L80 = B*S*I (moe_up), L81 = B*S*H (moe_down)
         per_layer = (B * S * I + B * S * I + B * S * H) * act_elem

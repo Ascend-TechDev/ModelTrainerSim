@@ -38,7 +38,7 @@ class Embedding(BaseModule):
 
     def compute_activations(self, seq_len: int, batch_size: int = 1) -> float:
         B, S = batch_size, seq_len
-        elem = get_dtype_size(self.dtype)
+        elem = get_dtype_size(self.activation_dtype)
         return B * S * self.hidden_size * elem
 
 
@@ -62,7 +62,7 @@ class InputLayerNorm(BaseModule):
 
     def compute_activations(self, seq_len: int, batch_size: int = 1) -> float:
         B, S = batch_size, seq_len
-        return B * S * self.hidden_size * get_dtype_size(self.dtype)
+        return B * S * self.hidden_size * get_dtype_size(self.activation_dtype)
 
 
 class PostAttentionLayerNorm(InputLayerNorm):
@@ -94,7 +94,7 @@ class OutputLayerNorm(BaseModule):
 
     def compute_activations(self, seq_len: int, batch_size: int = 1) -> float:
         B, S = batch_size, seq_len
-        return B * S * self.hidden_size * get_dtype_size(self.dtype)
+        return B * S * self.hidden_size * get_dtype_size(self.activation_dtype)
 
 
 class LMHead(BaseModule):
@@ -122,4 +122,4 @@ class LMHead(BaseModule):
 
     def compute_activations(self, seq_len: int, batch_size: int = 1) -> float:
         B, S = batch_size, seq_len
-        return B * S * self.vocab_size * get_dtype_size(self.dtype)
+        return B * S * self.vocab_size * get_dtype_size(self.activation_dtype)

@@ -106,7 +106,7 @@ class RoutedExperts(BaseModule):
         B, S = batch_size, seq_len
         H, I = self.hidden_size, self.moe_intermediate_size
         tk = self.num_experts_per_tok
-        elem = get_dtype_size(self.dtype)
+        elem = get_dtype_size(self.activation_dtype)
 
         act = 0.0
         act += B * S * tk * H * elem           # U42

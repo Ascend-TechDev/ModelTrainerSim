@@ -90,7 +90,7 @@ class SharedExperts(BaseModule):
     def compute_activations(self, seq_len: int, batch_size: int = 1) -> float:
         B, S = batch_size, seq_len
         H, I = self.hidden_size, self.moe_intermediate_size
-        elem = get_dtype_size(self.dtype)
+        elem = get_dtype_size(self.activation_dtype)
 
         act = 0.0
         # S36 = B*S*moe_intermediate_size*2 (gate_up fused output)

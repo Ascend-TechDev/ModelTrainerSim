@@ -82,6 +82,8 @@ class GLMModel:
         self.seq_len: int = config.get("max_seq_len", 4096)
         self.tie_word_embeddings: bool = config.get("tie_word_embeddings", False)
         self.dtype: DType = DType(config.get("dtype", "bf16"))
+        self.activation_dtype: DType = DType(
+            config.get("activation_dtype", self.dtype.value))
 
         # MoE / dense split
         self.first_k_dense: int = config.get("first_k_dense_replace", 3)
@@ -493,6 +495,7 @@ class GLMModel:
                 "vocab_size": self.vocab_size,
                 "max_seq_len": self.seq_len,
                 "dtype": self.dtype.value,
+                "activation_dtype": self.config.get("activation_dtype", self.dtype.value),
             },
             "model_params": {
                 "total_params": total_params,
@@ -543,7 +546,7 @@ class GLMModel:
         layer (NOT the full per-head K/V).
         """
         B, S = batch_size, seq_len
-        elem = get_dtype_size(self.dtype)
+        elem = get_dtype_size(self.activation_dtype)
         kv_lora = self.config.get("kv_lora_rank", 0)
         d_rope = self.config.get("qk_rope_head_dim", 0)
         per_token = (kv_lora + d_rope) * elem

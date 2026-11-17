@@ -2,6 +2,8 @@
 """Generate per-model EP/FSDP HBM, DDR, D2H, and SSD reports."""
 from __future__ import annotations
 
+import argparse
+from functools import lru_cache
 import re
 import sys
 from pathlib import Path
@@ -12,6 +14,11 @@ if str(PROJECT_ROOT) not in sys.path:
 
 from src.core.config_parser import ConfigParser
 from src.core.model_registry import ModelRegistry
+from src.main import (
+    _apply_activation_dtype,
+    _apply_weight_dtype,
+    _set_model_activation_dtype,
+)
 
 GB = 1e9
 MFU = 0.40
@@ -44,10 +51,18 @@ MODELS = [
 ]
 
 
-def load_report(config_name: str) -> dict:
+@lru_cache(maxsize=None)
+def load_report(
+    config_name: str,
+    weight_dtype: str = "bf16",
+    activation_dtype: str = "bf16",
+) -> dict:
     config_path = PROJECT_ROOT / "configs" / config_name
     config = ConfigParser(str(config_path)).load()
+    _apply_weight_dtype(config, weight_dtype)
+    _apply_activation_dtype(config, activation_dtype)
     model = ModelRegistry.build(config["model"], config)
+    _set_model_activation_dtype(model, activation_dtype, force=True)
     return model.analyze(seq_len=4096, batch_size=1)
 
 
@@ -68,6 +83,18 @@ def get_moe_weight_bytes(report: dict) -> float:
     if "moe" in groups:
         return groups["moe"].get("weights", 0.0)
     raise ValueError(f"Cannot determine MoE weight bytes for {report['model_family']}")
+
+
+def get_moe_parameter_count(report: dict) -> int:
+    summaries = report.get("per_module_summary_excel") or report.get("per_module_summary", {})
+    moe_keys = [
+        key for key in summaries
+        if "expert" in key.lower()
+        or key.lower() in {"moe", "gate", "moerouter"}
+    ]
+    if not moe_keys:
+        raise ValueError(f"Cannot determine MoE parameter count for {report['model_family']}")
+    return sum(summaries[key].get("params", 0) for key in moe_keys)
 
 
 def extract_model_data(report: dict) -> dict:
@@ -91,6 +118,7 @@ def extract_model_data(report: dict) -> dict:
     layer_flops = [layer["flops"] for layer in layers]
     return {
         "config_params": report["model_params"]["total_params"],
+        "moe_params": get_moe_parameter_count(report),
         "layers": len(layers),
         "total_weight_bytes": total_weight_bytes,
         "moe_weight_bytes": moe_weight_bytes,
@@ -182,8 +210,8 @@ def analyze_strategy(
     )
     hbm_remaining = hbm_gb * GB * HBM_SAFETY - static_hbm
     opt_master_per_card = (
-        data["moe_weight_bytes"] * 2 / ep / efsdp
-        + data["backbone_weight_bytes"] * 2 / k
+        data["moe_params"] * 4 / ep / efsdp
+        + (data["config_params"] - data["moe_params"]) * 4 / k
     ) * 2
     moe_checkpoint_state, backbone_checkpoint_state = checkpoint_state_split(data)
     checkpoint_moe_per_card = (
@@ -192,8 +220,11 @@ def analyze_strategy(
     checkpoint_backbone_per_card = (
         data["backbone_weight_bytes"] + backbone_checkpoint_state
     ) / k
-    ddr_requirement = (
+    ddr_requirement_full = (
         opt_master_per_card + data["total_act_bytes"] - hbm_remaining
+    )
+    ddr_requirement_moe = (
+        opt_master_per_card + data["moe_act_bytes"] - hbm_remaining
     )
 
     moe_offload = (
@@ -254,7 +285,8 @@ def analyze_strategy(
         "backbone_per_card_gb": backbone_per_card / GB,
         "static_hbm_gb": static_hbm / GB,
         "hbm_remaining_gb": hbm_remaining / GB,
-        "ddr_requirement_gb": ddr_requirement / GB,
+        "ddr_requirement_full_gb": ddr_requirement_full / GB,
+        "ddr_requirement_moe_gb": ddr_requirement_moe / GB,
         "moe_offload": moe_offload,
         "full_offload": full_offload,
         "opt_master_gb": opt_master_per_card / GB,
@@ -282,26 +314,33 @@ def make_report(
     config_name: str | None,
     hardware: str = "970DT",
     bf16_tflops: float = 1769.0,
+    weight_dtype: str = "bf16",
+    activation_dtype: str = "bf16",
 ) -> str:
     if config_name is None:
         return (
             f"# EP/FSDP 内存分析 — {hardware}\n\n"
             f"## {model_name} ({table_params_t:g}T params) — K={k:,}\n\n"
+            f"- 精度：weight_dtype={weight_dtype}，activation_dtype={activation_dtype}\n\n"
             "**未生成数值结果：** 仓库中没有与 Qwen3.5-397B 对应的模型结构配置。"
             "现存 `qwen35_35b_config.json` 的 CLI 模型族为 DSV41Flash，且仅约 0.034T "
             "参数，不能作为 0.397T Qwen3.5 的结构代替。需要补充正确配置后才能按同一公式计算。\n"
         )
 
-    report = load_report(config_name)
+    report = load_report(config_name, weight_dtype, activation_dtype)
     data = extract_model_data(report)
+    peak_tflops = bf16_tflops * (2 if weight_dtype == "fp8" else 1)
     lines = [
         f"# EP/FSDP 内存分析 — {hardware}",
         "",
         f"## {model_name} ({table_params_t:g}T params) — K={k:,}",
         "",
         f"- 配置：[`{config_name}`](../../configs/{config_name})",
+        f"- 精度：weight_dtype={weight_dtype}，activation_dtype={activation_dtype}",
         f"- 配置实际参数量：{data['config_params'] / 1e12:.4f}T；层数：{data['layers']}",
-        f"- 输入：seq_len=4096，batch_size=1；BF16={bf16_tflops:g} TFLOPS，MFU={MFU:.2f}",
+        f"- 输入：seq_len=4096，batch_size=1；{weight_dtype.upper()}={peak_tflops:g} TFLOPS，MFU={MFU:.2f}",
+        "- 计算峰值按权重精度选取；激活精度只影响激活内存，不改变硬件峰值选择。",
+        "- 优化器与主权重容量按参数量换算FP32后乘2，符合任务定义，不随存储权重精度缩放。",
         "- 静态HBM按公式包含最大单层激活、权重与梯度及 3GB buffer；HBM预算为容量的 95%。",
     ]
     if abs(data["config_params"] / 1e12 - table_params_t) > 0.01:
@@ -328,25 +367,28 @@ def make_report(
             "",
             "#### 任务一: DDR容量诉求 / 任务二: D2H带宽诉求",
             "",
-            "| EP | FSDP=K | EDP | EFSDP | 单卡MoE(GB) | 单卡BB(GB) | 静态HBM(GB) | HBM剩余(GB) | DDR诉求(GB) | MoE卸载% | 全卸载% | D2H-MoE(GB/s) | D2H-Full(GB/s) |",
-            "|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|",
+            "| EP | FSDP=K | EDP | EFSDP | 单卡MoE(GB) | 单卡BB(GB) | 静态HBM(GB) | HBM剩余(GB) | DDR诉求-全卸载(GB) | DDR诉求-仅MoE卸载(GB) | MoE卸载% | 全卸载% | D2H-MoE(GB/s) | D2H-Full(GB/s) |",
+            "|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|",
         ])
         for strategy, result in rows:
             identity = row_identity(strategy, k)
             if result is None:
-                values = ["—"] * 8 + ["— ⚠️ 无效"]
+                values = ["—"] * 9 + ["— ⚠️ 无效"]
                 lines.append(identity + " " + " | ".join(values) + " |")
                 continue
             hbm = result["hbm_remaining_gb"]
-            ddr = result["ddr_requirement_gb"]
+            ddr_full = result["ddr_requirement_full_gb"]
+            ddr_moe = result["ddr_requirement_moe_gb"]
             hbm_marker = " ⚠️" if hbm < 0 else " ✓"
-            ddr_marker = " ⚠️" if ddr > 0 else " ✓"
+            ddr_full_marker = " ⚠️" if ddr_full > 0 else " ✓"
+            ddr_moe_marker = " ⚠️" if ddr_moe > 0 else " ✓"
             values = [
                 f"{result['moe_per_card_gb']:.2f}",
                 f"{result['backbone_per_card_gb']:.3f}",
                 f"{result['static_hbm_gb']:.2f}",
                 f"{hbm:+.2f}{hbm_marker}",
-                f"{ddr:+.2f}{ddr_marker}",
+                f"{ddr_full:+.2f}{ddr_full_marker}",
+                f"{ddr_moe:+.2f}{ddr_moe_marker}",
                 f"{result['moe_offload'] * 100:.1f}%",
                 f"{result['full_offload'] * 100:.1f}%",
                 f"{result['d2h_moe_gbps']:.2f}",
@@ -439,7 +481,14 @@ def slugify(name: str) -> str:
 
 
 def main() -> None:
-    out_dir = PROJECT_ROOT / "reports_analyse" / "ep_fsdp_mem_hbm_d2h"
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--weight-dtype", choices=["bf16", "fp8"], default="bf16")
+    parser.add_argument("--activation-dtype", choices=["bf16", "fp8"], default="bf16")
+    args = parser.parse_args()
+    out_dir = (
+        PROJECT_ROOT / "reports_analyse" / "ep_fsdp_mem_hbm_d2h"
+        / f"weight_{args.weight_dtype}_activation_{args.activation_dtype}"
+    )
     out_dir.mkdir(parents=True, exist_ok=True)
     hardware_specs = [("970DT", 1769.0, 0), ("980DT", 3538.0, 1)]
     for name, params_t, card_counts, config_name in MODELS:
@@ -452,6 +501,8 @@ def main() -> None:
                 config_name,
                 hardware=hardware,
                 bf16_tflops=bf16_tflops,
+                weight_dtype=args.weight_dtype,
+                activation_dtype=args.activation_dtype,
             )
             output = out_dir / f"{slugify(name)}_{hardware}.md"
             output.write_text(text, encoding="utf-8")

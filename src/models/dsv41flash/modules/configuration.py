@@ -125,8 +125,8 @@ def normalize_config(config: dict, base_dir: Path | None = None) -> dict:
     for key, default in (("dtype", "bf16"), ("activation_dtype", "bf16"),
                          ("logits_dtype", "fp32"), ("cache_dtype", "bf16")):
         cfg.setdefault(key, default)
-        if cfg[key] not in ("bf16", "fp16", "fp32"):
-            raise ValueError(f"{key} must be bf16, fp16, or fp32 in the first training-analysis version")
+        if cfg[key] not in ("bf16", "fp16", "fp32", "fp8"):
+            raise ValueError(f"{key} must be bf16, fp16, fp32, or fp8")
     training = cfg.setdefault("training", {})
     if not isinstance(training, dict):
         raise ValueError("training must be an object")
@@ -149,7 +149,7 @@ def normalize_config(config: dict, base_dir: Path | None = None) -> dict:
         if group["optimizer"] not in OPTIMIZER_STATES:
             raise ValueError(f"Unsupported optimizer in group {name}")
         for key in ("weight_dtype", "gradient_dtype", "master_dtype", "optimizer_dtype"):
-            allowed = ("bf16", "fp16", "fp32", "none") if key == "master_dtype" else ("bf16", "fp16", "fp32")
+            allowed = ("bf16", "fp16", "fp32", "none") if key == "master_dtype" else ("bf16", "fp16", "fp32", "fp8")
             if group[key] not in allowed:
                 raise ValueError(f"Unsupported {key} in group {name}; use {allowed}")
         _positive(group["shards"], f"{name}.shards")

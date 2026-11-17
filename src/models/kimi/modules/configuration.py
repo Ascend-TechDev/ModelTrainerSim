@@ -88,8 +88,8 @@ def normalize_config(config: dict, base_dir: Path | None = None) -> dict:
     cfg.setdefault("max_seq_len", 4096)
     _positive(cfg["max_seq_len"], "max_seq_len")
     cfg.setdefault("dtype", "bf16")
-    if cfg["dtype"] not in ("bf16", "fp16", "fp32"):
-        raise ValueError("dtype must be bf16, fp16, or fp32")
+    if cfg["dtype"] not in ("bf16", "fp16", "fp32", "fp8"):
+        raise ValueError("dtype must be bf16, fp16, fp32, or fp8")
 
     byte_defaults = {"param": 2, "activation": 2, "fp32": 4, "grad": 2,
                      "optimizer_adamw": 12, "optimizer_muon": 8, "master": 0, "logits": 4}
@@ -134,7 +134,7 @@ def normalize_config(config: dict, base_dir: Path | None = None) -> dict:
         if group["optimizer"] not in ("adamw", "muon"):
             raise ValueError(f"Unsupported optimizer in group {name}")
         for key in ("weight_dtype", "gradient_dtype", "master_dtype"):
-            allowed = ("bf16", "fp16", "fp32", "none") if key == "master_dtype" else ("bf16", "fp16", "fp32")
+            allowed = ("bf16", "fp16", "fp32", "none") if key == "master_dtype" else ("bf16", "fp16", "fp32", "fp8")
             if group[key] not in allowed:
                 raise ValueError(f"Unsupported {key} in group {name}; use {allowed}")
         if (isinstance(group["optimizer_bytes_per_param"], bool)

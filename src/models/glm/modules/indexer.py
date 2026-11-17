@@ -119,7 +119,7 @@ class Indexer(BaseModule):
         q_lora = self.q_lora_rank
         idx_d = self.index_head_dim
         idx_h = self.index_n_heads
-        elem = get_dtype_size(self.dtype)
+        elem = get_dtype_size(self.activation_dtype)
 
         act = 0.0
         act += B * S * idx_h * idx_d * elem      # U19

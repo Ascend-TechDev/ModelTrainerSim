@@ -71,6 +71,8 @@ class DenseFFN(BaseModule):
         self.hidden_size: int = config["hidden_size"]
         self.intermediate_size: int = config["intermediate_size"]
         self.dtype: DType = DType(config.get("dtype", "bf16"))
+        self.activation_dtype: DType = DType(
+            config.get("activation_dtype", self.dtype.value))
 
     def compute_params(self) -> list[ModuleParamBreakdown]:
         H, I = self.hidden_size, self.intermediate_size
@@ -90,7 +92,7 @@ class DenseFFN(BaseModule):
     def compute_activations(self, seq_len: int, batch_size: int = 1) -> float:
         B, S = batch_size, seq_len
         H, I = self.hidden_size, self.intermediate_size
-        elem = get_dtype_size(self.dtype)
+        elem = get_dtype_size(self.activation_dtype)
         return B * S * I * elem * 2 + B * S * H * elem
 
 
@@ -165,7 +167,7 @@ class Embedding(BaseModule):
 
     def compute_activations(self, seq_len: int, batch_size: int = 1) -> float:
         B, S = batch_size, seq_len
-        elem = get_dtype_size(self.dtype)
+        elem = get_dtype_size(self.activation_dtype)
         return B * S * self.hidden_size * elem
 
 
@@ -190,6 +192,8 @@ class DSV4ProModel:
         self.seq_len: int = config.get("max_seq_len", 4096)
         self.tie_word_embeddings: bool = config.get("tie_word_embeddings", False)
         self.dtype: DType = DType(config.get("dtype", "bf16"))
+        self.activation_dtype: DType = DType(
+            config.get("activation_dtype", self.dtype.value))
 
         # Embedding
         self.embedding = Embedding("embedding", {
@@ -622,6 +626,7 @@ class DSV4ProModel:
                 "vocab_size": self.vocab_size,
                 "max_seq_len": self.seq_len,
                 "dtype": self.dtype.value,
+                "activation_dtype": self.config.get("activation_dtype", self.dtype.value),
             },
             "model_params": {
                 "total_params": total_params,
@@ -676,7 +681,7 @@ class DSV4ProModel:
         token, not the full per-head K/V.
         """
         B, S = batch_size, seq_len
-        elem = get_dtype_size(self.dtype)
+        elem = get_dtype_size(self.activation_dtype)
         total = 0.0
 
         for spec, modules in zip(self.layer_specs, self.layers):

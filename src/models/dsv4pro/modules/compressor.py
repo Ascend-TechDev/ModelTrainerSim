@@ -103,6 +103,6 @@ class Compressor(BaseModule):
         r = max(self.compress_ratio, 1)
         B = batch_size
         n_blocks = max(1, (seq_len + r - 1) // r)
-        elem = get_dtype_size(self.dtype)
+        elem = get_dtype_size(self.activation_dtype)
         # Compressed KV representation: B × n_blocks × D_c
         return B * n_blocks * D_c * elem

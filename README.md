@@ -125,6 +125,9 @@ python -m src.main --config configs/dsv4pro_config.json
 # 指定序列长度和 batch size
 python -m src.main --config configs/dsv4pro_config.json --seq-len 8192 --batch-size 4
 
+# 覆盖权重和激活精度（支持 fp32、fp16、bf16、fp8；不指定时使用配置文件）
+python -m src.main --config configs/dsv4pro_config.json --weight-dtype fp8 --activation-dtype fp16
+
 # 输出 JSON 格式
 python -m src.main --config configs/dsv4pro_config.json --format json --output report.json
 

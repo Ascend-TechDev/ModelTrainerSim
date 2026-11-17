@@ -118,8 +118,8 @@ def normalize_config(config: dict, base_dir: Path | None = None) -> dict:
     cfg.setdefault("max_seq_len", 4096)
     _positive(cfg["max_seq_len"], "max_seq_len")
     cfg.setdefault("dtype", "bf16")
-    if cfg["dtype"] not in ("bf16", "fp16", "fp32"):
-        raise ValueError("dtype must be bf16, fp16, or fp32")
+    if cfg["dtype"] not in ("bf16", "fp16", "fp32", "fp8"):
+        raise ValueError("dtype must be bf16, fp16, fp32, or fp8")
 
     # Workbook byte assumptions (Hy4-10T sheet A38-A45): defaults match.
     byte_defaults = {"param": 2, "activation": 2, "fp32": 4, "grad": 2,
@@ -154,7 +154,7 @@ def normalize_config(config: dict, base_dir: Path | None = None) -> dict:
         if group["optimizer"] not in OPTIMIZER_STATES:
             raise ValueError(f"Unsupported optimizer in group {name}")
         for key in ("weight_dtype", "gradient_dtype", "master_dtype", "optimizer_dtype"):
-            allowed = ("bf16", "fp16", "fp32", "none") if key == "master_dtype" else ("bf16", "fp16", "fp32")
+            allowed = ("bf16", "fp16", "fp32", "none") if key == "master_dtype" else ("bf16", "fp16", "fp32", "fp8")
             if group[key] not in allowed:
                 raise ValueError(f"Unsupported {key} in group {name}; use {allowed}")
         _positive(group["shards"], f"{name}.shards")

@@ -70,12 +70,12 @@ class MoERouter(BaseModule):
 
     # -----------------------------------------------------------------
     # Activations — Excel rows 47-48 do not list a separate activation
-    #   cell for the router.  We return a small bf16 gate-logits buffer.
+    #   cell for the router, so account for its gate-logits buffer only.
     # -----------------------------------------------------------------
 
     def compute_activations(self, seq_len: int, batch_size: int = 1) -> float:
         from ....core.dtype import get_dtype_size
         B, S = batch_size, seq_len
         E = self.n_routed_experts
-        elem = get_dtype_size(self.gate_dtype)
+        elem = get_dtype_size(self.activation_dtype)
         return B * S * E * elem

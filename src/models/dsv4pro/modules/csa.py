@@ -213,7 +213,7 @@ class CSA(BaseModule):
         o_lora = self.o_lora_rank
         o_groups = self.o_groups
         r = self.compressor.compress_ratio  # 4 for CSA
-        elem = get_dtype_size(self.dtype)
+        elem = get_dtype_size(self.activation_dtype)
 
         act = 0.0
         act += B * S * q_lora * elem            # L21  W_q_a input

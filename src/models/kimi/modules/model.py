@@ -213,6 +213,7 @@ class KimiModel:
                 "vocab_size": self.vocab_size,
                 "max_seq_len": self.seq_len,
                 "dtype": self.dtype.value,
+                "activation_dtype": self.config.get("activation_dtype", self.dtype.value),
                 "variant": self.config.get("variant", "deep-v2"),
             },
             "source": self.config.get("source", {}),

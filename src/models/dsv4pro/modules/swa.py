@@ -163,7 +163,7 @@ class SWA(BaseModule):
         q_lora = self.q_lora_rank
         o_lora = self.o_lora_rank
         o_groups = self.o_groups
-        elem = get_dtype_size(self.dtype)
+        elem = get_dtype_size(self.activation_dtype)
 
         act = 0.0
         act += B * S * q_lora * elem            # L10  W_q_a input

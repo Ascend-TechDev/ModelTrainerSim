@@ -192,7 +192,7 @@ class HCA(BaseModule):
         o_lora = self.o_lora_rank
         o_groups = self.o_groups
         r = self.block_size  # 128 for HCA
-        elem = get_dtype_size(self.dtype)
+        elem = get_dtype_size(self.activation_dtype)
 
         act = 0.0
         act += B * S * q_lora * elem            # L36  W_q_a input

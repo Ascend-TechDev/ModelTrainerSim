@@ -149,7 +149,7 @@ class MLA(BaseModule):
         n_kv = self.num_kv_heads
         d_nope = self.qk_nope_head_dim
         v_hd = self.v_head_dim
-        elem = get_dtype_size(self.dtype)
+        elem = get_dtype_size(self.activation_dtype)
 
         act = 0.0
         act += B * S * q_lora * elem                  # U10
