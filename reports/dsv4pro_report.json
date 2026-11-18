@@ -5,7 +5,8 @@
     "num_layers": 61,
     "vocab_size": 129280,
     "max_seq_len": 131072,
-    "dtype": "bf16"
+    "dtype": "bf16",
+    "activation_dtype": "bf16"
   },
   "model_params": {
     "total_params": 1573579339072,
@@ -3710,5 +3711,43 @@
         }
       ]
     }
-  ]
+  ],
+  "input_alignment": {
+    "workbook": "model_struct_input.xlsx",
+    "workbook_sha256": "4380a748a1c312609e4c596b7522311242d4f99ed5f96181dcd2c78b4c5f8883",
+    "sheet": "Sheet1",
+    "row": 4,
+    "key_parameters": {
+      "num_layers": 61,
+      "moe_intermediate_size": 3072,
+      "routed_experts": 384,
+      "top_k": 6,
+      "shared_experts": 1,
+      "attention_heads": 128
+    },
+    "key_parameters_match": true,
+    "vocabulary_size": 129280,
+    "vocabulary_policy": "Retain exact family/report vocabulary; workbook K shorthand is not a replacement value.",
+    "total_target_b": 1600.0,
+    "total_actual_b": 1573.579339072,
+    "total_delta_pct": -1.6512913080000025,
+    "total_within_tolerance": true,
+    "active_target_candidates_b": [
+      49.0
+    ],
+    "active_comparison_target_b": 49.0,
+    "active_actual_b": 49.386324928,
+    "active_delta_pct": 0.7884182204081602,
+    "active_within_tolerance": true,
+    "engram_target_b": 0.0,
+    "engram_actual_b": 0.0,
+    "tolerance_pct": 5.0,
+    "aggregate_status": "within_tolerance",
+    "unspecified_dimensions_policy": "Retain existing family dimensions; new-model assumptions are recorded in config. Do not adjust formulas or invent dimensions to fit aggregate targets.",
+    "attention_name_policy": "Name differences ignored as requested.",
+    "vision": "—",
+    "vision_scope": "Language backbone only; workbook gives no encoder dimensions.",
+    "modeling_assumptions": {},
+    "config_sha256": "d14b669b2b854e6b32c37eb85db869be3162d03bda931edaa32c3644da4ab0af"
+  }
 }

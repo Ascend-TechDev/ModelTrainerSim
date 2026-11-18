@@ -6,6 +6,7 @@
     "vocab_size": 129280,
     "max_seq_len": 4096,
     "dtype": "bf16",
+    "activation_dtype": "bf16",
     "include_engram": true,
     "include_dspark": false,
     "training": {
@@ -46,7 +47,7 @@
     }
   },
   "source": {
-    "architecture_file": "/home/Workspace/ModelTrainerSim_dl/ModelTrainerSim/src/models/dsv41flash/config_next_base.json",
+    "architecture_file": "/home/l00619433/workspace/su_so_analysis/ModelTrainerSim/src/models/dsv41flash/config_next_base.json",
     "sha256": "2556d92c24838d208ffa023342669c968ae8d5cc7a742477ed11141fd8bbb4ab",
     "implementation": "DeepSeek-V4.1-Flash/inference/model.py",
     "scope": "Text path; excludes vision tower/aligner and quantization metadata.",
@@ -122697,5 +122698,43 @@
     "Engram CPU placement moves the table and its states only; projection/gate and lookup tensors remain in GPU computations.",
     "Per-device static assumes balanced shards; activation volume and inference caches are separate, not added into a claimed training peak.",
     "Vision tower/aligner and quantization scales are excluded; source-created router bias_vl is retained."
-  ]
+  ],
+  "input_alignment": {
+    "workbook": "model_struct_input.xlsx",
+    "workbook_sha256": "4380a748a1c312609e4c596b7522311242d4f99ed5f96181dcd2c78b4c5f8883",
+    "sheet": "Sheet1",
+    "row": 9,
+    "key_parameters": {
+      "num_layers": 120,
+      "moe_intermediate_size": 6144,
+      "routed_experts": 8192,
+      "top_k": 32,
+      "shared_experts": 6,
+      "attention_heads": 224
+    },
+    "key_parameters_match": true,
+    "vocabulary_size": 129280,
+    "vocabulary_policy": "Retain exact family/report vocabulary; workbook K shorthand is not a replacement value.",
+    "total_target_b": 126000.0,
+    "total_actual_b": 126484.047489104,
+    "total_delta_pct": 0.3841646738920623,
+    "total_within_tolerance": true,
+    "active_target_candidates_b": [
+      470.0
+    ],
+    "active_comparison_target_b": 470.0,
+    "active_actual_b": 474.479864912,
+    "active_delta_pct": 0.9531627472340487,
+    "active_within_tolerance": true,
+    "engram_target_b": 33600.0,
+    "engram_actual_b": 33600.0,
+    "tolerance_pct": 5.0,
+    "aggregate_status": "within_tolerance",
+    "unspecified_dimensions_policy": "Retain existing family dimensions; new-model assumptions are recorded in config. Do not adjust formulas or invent dimensions to fit aggregate targets.",
+    "attention_name_policy": "Name differences ignored as requested.",
+    "vision": "Deepseek-ViT",
+    "vision_scope": "Language backbone only; workbook gives no encoder dimensions.",
+    "modeling_assumptions": {},
+    "config_sha256": "6bb79ab100fd131742d6bedcb415ca1c9b50dd8fce864cd64297f33ff7c3e5a2"
+  }
 }
