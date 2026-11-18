@@ -1,23 +1,3 @@
-## 训练所需卡数
-
-| 模型 | 家族 | 总参数 | 激活/token | 代际档位 | 训练 token D | 950DT | 960DT | 970DT | 980DT |
-|---|---|---:|---:|---:|---:|---:|---:|---:|---:|
-| Qwen3.5-397B | Qwen | 0.397 T | 17.00 B | 0.5T | 34.62 T tok | 6,307 | 2,890 | 1,541 | 771 |
-| GLM-5.2 | GLM | 0.743 T | 41.25 B | 1T | 45.00 T tok | 19,894 | 9,114 | 4,859 | 2,430 |
-| DSV41Flash | DeepSeek | 0.748 T | 16.13 B | 1T | 45.00 T tok | 7,780 | 3,564 | 1,900 | 950 |
-| DSV4Pro | DeepSeek | 1.574 T | 49.39 B | 1T | 45.00 T tok | 23,817 | 10,911 | 5,817 | 2,909 |
-| Kimi-10T-D | Kimi | 9.283 T | 155.06 B | 10T | 98.86 T tok | 164,286 | 75,262 | 40,120 | 20,060 |
-| Hy4-10T | Hunyuan | 10.074 T | 342.57 B | 10T | 98.86 T tok | 362,956 | 166,275 | 88,636 | 44,318 |
-| GLM-10T | GLM | 11.295 T | 145.30 B | 10T | 98.86 T tok | 153,945 | 70,525 | 37,595 | 18,798 |
-| Kimi-10T-W | Kimi | 11.918 T | 248.80 B | 10T | 98.86 T tok | 263,603 | 120,760 | 64,374 | 32,187 |
-| DS-10T | DeepSeek | 15.835 T | 140.02 B | 10T | 98.86 T tok | 148,358 | 67,965 | 36,230 | 18,115 |
-| DS-20T | DeepSeek | 31.656 T | 213.13 B | 20T | 128.52 T tok | 293,560 | 134,484 | 71,689 | 35,845 |
-| Hy4-30T | Hunyuan | 41.501 T | 344.75 B | 40T | 167.08 T tok | 617,300 | 282,793 | 150,748 | 75,374 |
-| Kimi-50T | Kimi | 49.996 T | 684.15 B | 40T | 167.08 T tok | 1,225,025 | 561,199 | 299,158 | 149,579 |
-| DS-40T | DeepSeek | 63.269 T | 354.19 B | 40T | 167.08 T tok | 634,196 | 290,534 | 154,875 | 77,438 |
-| Kimi-100T | Kimi | 105.003 T | 1122.36 B | 80T | 217.21 T tok | 2,612,555 | 1,196,844 | 638,001 | 319,001 |
-| DS-80T | DeepSeek | 126.484 T | 474.48 B | 80T | 217.21 T tok | 1,104,468 | 505,971 | 269,718 | 134,859 |
-
 ## 实验设定
 
 - 配置文件：`configs/` 目录下带有 [`qwen_`, `dsv`, `glm_`, `hy4_`, `kimi_`, `qwen`] 前缀的配置文件
@@ -30,40 +10,56 @@
 - FP8 权重组合的 D2H 掩盖计算使用硬件 FP8 峰值算力；激活 dtype 控制激活显存，不改变本次计算峰值选择
 - 每组报告和 PPT 单独写入 `reports_analyse/ep_fsdp_mem_hbm_d2h/weight_{weight_dtype}_activation_{activation_dtype}/`；PPT包含原定最佳策略场景HBM=288GB/DDR=768GB和HBM=192GB/DDR=512GB，并额外筛选HBM七档均使用DDR=512GB时的容量满足情况。PPT考虑下在HBM=[96, 120, 144, 168, 192, 240, 288]GB七种情况，DDR=512能否满足训练要求。
 
-请查表"训练所需卡数"获取对应模型在 970DT 所需的训练卡数 K，遍历以下并行策略，执行任务一、二、三、四：
-请查表"训练所需卡数"获取对应模型在 980DT 所需的训练卡数 K，遍历以下并行策略，执行任务一、二、三、四：
-
-
-1. EP=128,  EDP=floor(K/128),   EFSDP=1,  FSDP=K
-2. EP=128,  EDP=floor(K/128/2),   EFSDP=2,  FSDP=K
-3. EP=128,  EDP=floor(K/128/4),   EFSDP=4,  FSDP=K
-3. EP=128,  EDP=floor(K/128/8),   EFSDP=8,  FSDP=K
-4. EP=128,  EDP=floor(K/128/16),   EFSDP=16,  FSDP=K
-5. EP=128,  EDP=floor(K/128/32),   EFSDP=32,  FSDP=K
-6. EP=256,  EDP=floor(K/256),   EFSDP=1,  FSDP=K
-7. EP=256,  EDP=floor(K/256/2),   EFSDP=2,  FSDP=K
-8. EP=256,  EDP=floor(K/256/4),   EFSDP=4,  FSDP=K
-9. EP=256,  EDP=floor(K/256/8),   EFSDP=8,  FSDP=K
-10. EP=256,  EDP=floor(K/256/16),   EFSDP=16,  FSDP=K
-11. EP=256,  EDP=floor(K/256/32),   EFSDP=32,  FSDP=K
-12. EP=512,  EDP=floor(K/512),   EFSDP=1,  FSDP=K
-13. EP=512,  EDP=floor(K/512/2),   EFSDP=2,  FSDP=K
-14. EP=512,  EDP=floor(K/512/4),   EFSDP=4,  FSDP=K
-15. EP=512,  EDP=floor(K/512/8),   EFSDP=8,  FSDP=K
-16. EP=512,  EDP=floor(K/512/16),   EFSDP=16,  FSDP=K
-17. EP=512,  EDP=floor(K/512/32),   EFSDP=32,  FSDP=K
-18. EP=1024, EDP=floor(K/1024),  EFSDP=1,  FSDP=K
-19. EP=1024, EDP=floor(K/1024/2),  EFSDP=2,  FSDP=K
-20. EP=1024, EDP=floor(K/1024/4),  EFSDP=4,  FSDP=K
-21. EP=1024, EDP=floor(K/1024/8),  EFSDP=8,  FSDP=K
-22. EP=1024, EDP=floor(K/1024/16),  EFSDP=16,  FSDP=K
-23. EP=1024, EDP=floor(K/1024/32),  EFSDP=32,  FSDP=K
-24. EP=2048, EDP=floor(K/2048),  EFSDP=1,  FSDP=K
-25. EP=2048, EDP=floor(K/2048/2),  EFSDP=2,  FSDP=K
-26. EP=2048, EDP=floor(K/2048/4),  EFSDP=4,  FSDP=K
-27. EP=2048, EDP=floor(K/2048/8),  EFSDP=8,  FSDP=K
-28. EP=2048, EDP=floor(K/2048/16),  EFSDP=16,  FSDP=K
-29. EP=2048, EDP=floor(K/2048/32),  EFSDP=32,  FSDP=K
+假设训练所需卡数K=12288，遍历以下并行策略，执行任务一、二、三、四：
+EP=8, EDP=floor(K/8), EFSDP=1, FSDP=K
+EP=8, EDP=floor(K/8/2), EFSDP=2, FSDP=K
+EP=8, EDP=floor(K/8/4), EFSDP=4, FSDP=K
+EP=16, EDP=floor(K/16), EFSDP=1, FSDP=K
+EP=16, EDP=floor(K/16/2), EFSDP=2, FSDP=K
+EP=16, EDP=floor(K/16/4), EFSDP=4, FSDP=K
+EP=16, EDP=floor(K/16/8), EFSDP=8, FSDP=K
+EP=32, EDP=floor(K/32), EFSDP=1, FSDP=K
+EP=32, EDP=floor(K/32/2), EFSDP=2, FSDP=K
+EP=32, EDP=floor(K/32/4), EFSDP=4, FSDP=K
+EP=32, EDP=floor(K/32/8), EFSDP=8, FSDP=K
+EP=32, EDP=floor(K/32/16), EFSDP=16, FSDP=K
+EP=32, EDP=floor(K/32/32), EFSDP=32, FSDP=K
+EP=64, EDP=floor(K/64), EFSDP=1, FSDP=K
+EP=64, EDP=floor(K/64/2), EFSDP=2, FSDP=K
+EP=64, EDP=floor(K/64/4), EFSDP=4, FSDP=K
+EP=64, EDP=floor(K/64/8), EFSDP=8, FSDP=K
+EP=64, EDP=floor(K/64/16), EFSDP=16, FSDP=K
+EP=64, EDP=floor(K/64/32), EFSDP=32, FSDP=K
+EP=128,EDP=floor(K/128), EFSDP=1, FSDP=K
+EP=128,EDP=floor(K/128/2), EFSDP=2, FSDP=K
+EP=128,EDP=floor(K/128/4), EFSDP=4, FSDP=K
+EP=128,EDP=floor(K/128/8), EFSDP=8, FSDP=K
+EP=128,EDP=floor(K/128/16), EFSDP=16, FSDP=K
+EP=128,EDP=floor(K/128/32), EFSDP=32, FSDP=K
+EP=256,EDP=floor(K/256), EFSDP=1, FSDP=K
+EP=256,EDP=floor(K/256/2), EFSDP=2, FSDP=K
+EP=256,EDP=floor(K/256/4), EFSDP=4, FSDP=K
+EP=256,EDP=floor(K/256/8), EFSDP=8, FSDP=K
+EP=256,EDP=floor(K/256/16), EFSDP=16, FSDP=K
+EP=256,EDP=floor(K/256/32), EFSDP=32, FSDP=K
+EP=512,EDP=floor(K/512), EFSDP=1, FSDP=K
+EP=512,EDP=floor(K/512/2), EFSDP=2, FSDP=K
+EP=512,EDP=floor(K/512/4), EFSDP=4, FSDP=K
+EP=512,EDP=floor(K/512/8), EFSDP=8, FSDP=K
+EP=512,EDP=floor(K/512/16), EFSDP=16, FSDP=K
+EP=512,EDP=floor(K/512/32), EFSDP=32, FSDP=K
+EP=1024,EDP=floor(K/1024), EFSDP=1, FSDP=K
+EP=1024,EDP=floor(K/1024/2), EFSDP=2, FSDP=K
+EP=1024,EDP=floor(K/1024/4), EFSDP=4, FSDP=K
+EP=1024,EDP=floor(K/1024/8), EFSDP=8, FSDP=K
+EP=1024,EDP=floor(K/1024/16), EFSDP=16, FSDP=K
+EP=1024,EDP=floor(K/1024/32), EFSDP=32, FSDP=K
+EP=2048,EDP=floor(K/2048), EFSDP=1, FSDP=K
+EP=2048,EDP=floor(K/2048/2), EFSDP=2, FSDP=K
+EP=2048,EDP=floor(K/2048/4), EFSDP=4, FSDP=K
+EP=2048,EDP=floor(K/2048/8), EFSDP=8, FSDP=K
+EP=2048,EDP=floor(K/2048/16), EFSDP=16, FSDP=K
+EP=2048,EDP=floor(K/2048/32), EFSDP=32, FSDP=K
 
 ## 输入
 
@@ -247,6 +243,7 @@ SSD用于存储训练 checkpoint。此处统计**每 GPU 的 checkpoint 分片�
 
 
 注意：所有折线图均添加数据标签，数据标签仅保留0位小数。
+最佳并行策略是EFSDP=1，考虑在EP最小的情况，并且HBM有剩余空间。
 1. 在HBM=288GB，DDR=768GB时候，给出各个模型的最佳并行策略；在HBM=192GB，DDR=512GB时候，给出各个模型的最佳并行策略。做成表格的形式。
 2. 给出在上述并行策略下，各个模型的DDR容量诉求，做成PPT插入图表的折线图。
 3. 给出在上述并行策略下，各个模型的SSD容量诉求，做成PPT插入图表的折线图。
@@ -255,3 +252,5 @@ SSD用于存储训练 checkpoint。此处统计**每 GPU 的 checkpoint 分片�
 6. 给出在上述并行策略下，各个模型随着DDR容量增加，统计能消除重计算的模型个数，统计消除重计算的平均值，绘制成PPT表格。
 7. 在HBM=96/120/144/168/192/240/288GB各档位，按DDR=512GB场景分别选出最佳并行策略，展示各模型MoE激活及全激活的D2H带宽诉求折线图。
 8. 在HBM=96/120/144/168/192/240/288GB各档位，按DDR=512GB场景的策略选择规则给出最佳并行策略，并用表格列出HBM余量、DDR全卸载及仅MoE卸载容量诉求、D2H-MoE及D2H-Full带宽诉求，以及D2H=200GB/s（80%利用率）和DDR=512GB时的端到端收益；另以折线图展示HBM余量、DDR全卸载诉求和两种收益随模型及HBM档位的变化。Qwen3.5因缺少匹配配置不纳入数值折线图。
+9. 在HBM=96/120/144/168/192/240/288GB各档位，按对应档位策略计算D2H=200GB/s（80%利用率，有效带宽160GB/s）时的端到端收益，不考虑DDR容量限制；以表格列出模型与各档位收益，并以折线图展示收益随HBM档位的变化。Qwen3.5因缺少匹配配置，在表中标记为未计算且不纳入数值折线图。
+9. 给出在HBM=96/120/144/168/192/240/288GB各档位，不考虑DDR容量不够的情况下，200GB/s的D2H带宽，端到端收益，给出折线图和表格。

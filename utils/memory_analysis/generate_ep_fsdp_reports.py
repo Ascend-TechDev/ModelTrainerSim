@@ -24,30 +24,34 @@ GB = 1e9
 MFU = 0.40
 HBM_SAFETY = 0.95
 BUFFER_GB = 3.0
+TRAINING_GPU_COUNT = 12288
 HBM_CAPACITIES_GB = [96, 120, 144, 168, 192, 240, 288]
 BANDWIDTHS_GBS = [200, 250, 300, 350, 400, 450, 500]
 DDR_CAPACITIES_GB = [256, 384, 512, 540, 768]
-EP_VALUES = [128, 256, 512, 1024, 2048]
+EP_VALUES = [8, 16, 32, 64, 128, 256, 512, 1024, 2048]
 EFSDP_VALUES = [1, 2, 4, 8, 16, 32]
+# Experiment spec caps EFSDP at 4 for EP=8 and at 8 for EP=16; other EPs
+# traverse the full EFSDP list.
+EFSDP_MAX_BY_EP = {8: 4, 16: 8}
 
-# Parameter counts and 970DT card counts come from the table in
-# EP_FSDP_MEM_HBM_D2H.md. Configurations provide the layer and memory model.
+# Parameter counts come from EP_FSDP_MEM_HBM_D2H.md. All models use the
+# requested fixed training GPU count; configurations provide the memory model.
 MODELS = [
-    ("Qwen3.5-397B", 0.397, (1541, 771), None),
-    ("GLM-5.2", 0.743, (4859, 2430), "glm_5_2_config.json"),
-    ("DSV41Flash", 0.748, (1900, 950), "dsv41flash_config.json"),
-    ("DSV4Pro", 1.574, (5817, 2909), "dsv4pro_config.json"),
-    ("Kimi-10T-D", 9.283, (40120, 20060), "kimi_10t_deep_v2_config.json"),
-    ("Hy4-10T", 10.074, (88636, 44318), "hy4_10t_config.json"),
-    ("GLM-10T", 11.295, (37595, 18798), "glm_10t_config.json"),
-    ("Kimi-10T-W", 11.918, (64374, 32187), "kimi_10t_wide_v2_config.json"),
-    ("DS-10T", 15.835, (36230, 18115), "dsv41next10t_config.json"),
-    ("DS-20T", 31.656, (71689, 35845), "dsv41next20t_config.json"),
-    ("Hy4-30T", 41.501, (150748, 75374), "hy4_30t_config.json"),
-    ("Kimi-50T", 49.996, (299158, 149579), "kimi_50t_config.json"),
-    ("DS-40T", 63.269, (154875, 77438), "dsv41next40t_config.json"),
-    ("Kimi-100T", 105.003, (638001, 319001), "kimi_100t_config.json"),
-    ("DS-80T", 126.484, (269718, 134859), "dsv41next80t_config.json"),
+    ("Qwen3.5-397B", 0.397, None),
+    ("GLM-5.2", 0.743, "glm_5_2_config.json"),
+    ("DSV41Flash", 0.748, "dsv41flash_config.json"),
+    ("DSV4Pro", 1.574, "dsv4pro_config.json"),
+    ("Kimi-10T-D", 9.283, "kimi_10t_deep_v2_config.json"),
+    ("Hy4-10T", 10.074, "hy4_10t_config.json"),
+    ("GLM-10T", 11.295, "glm_10t_config.json"),
+    ("Kimi-10T-W", 11.918, "kimi_10t_wide_v2_config.json"),
+    ("DS-10T", 15.835, "dsv41next10t_config.json"),
+    ("DS-20T", 31.656, "dsv41next20t_config.json"),
+    ("Hy4-30T", 41.501, "hy4_30t_config.json"),
+    ("Kimi-50T", 49.996, "kimi_50t_config.json"),
+    ("DS-40T", 63.269, "dsv41next40t_config.json"),
+    ("Kimi-100T", 105.003, "kimi_100t_config.json"),
+    ("DS-80T", 126.484, "dsv41next80t_config.json"),
 ]
 
 
@@ -181,7 +185,10 @@ def checkpoint_state_split(data: dict) -> tuple[float, float]:
 def strategies_for(k: int) -> list[dict]:
     strategies = []
     for ep in EP_VALUES:
+        efsdp_cap = EFSDP_MAX_BY_EP.get(ep, EFSDP_VALUES[-1])
         for efsdp in EFSDP_VALUES:
+            if efsdp > efsdp_cap:
+                continue
             strategies.append({
                 "ep": ep,
                 "efsdp": efsdp,
@@ -356,7 +363,7 @@ def make_report(
         rows = []
         for strategy in strategies:
             if strategy["valid"]:
-                result = analyze_strategy(data, k, strategy, hbm_gb, bf16_tflops)
+                result = analyze_strategy(data, k, strategy, hbm_gb, peak_tflops)
                 analyzed_by_hbm[(hbm_gb, strategy["ep"], strategy["efsdp"])] = result
             else:
                 result = None
@@ -490,10 +497,10 @@ def main() -> None:
         / f"weight_{args.weight_dtype}_activation_{args.activation_dtype}"
     )
     out_dir.mkdir(parents=True, exist_ok=True)
-    hardware_specs = [("970DT", 1769.0, 0), ("980DT", 3538.0, 1)]
-    for name, params_t, card_counts, config_name in MODELS:
-        for hardware, bf16_tflops, card_count_index in hardware_specs:
-            k = card_counts[card_count_index]
+    hardware_specs = [("970DT", 1769.0), ("980DT", 3538.0)]
+    for name, params_t, config_name in MODELS:
+        for hardware, bf16_tflops in hardware_specs:
+            k = TRAINING_GPU_COUNT
             text = make_report(
                 name,
                 params_t,
